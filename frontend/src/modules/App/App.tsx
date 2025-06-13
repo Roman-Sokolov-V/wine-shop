@@ -10,7 +10,6 @@ import '../../styles/main.scss';
 import { FooterElem } from '../../components/FooterElem';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
 import { useAppSelector } from '../../app/hooks';
-import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 function App() {
   const { visible: mobileMenuVisible } = useAppSelector(
@@ -29,8 +28,6 @@ function App() {
       size="full"
     >
       <Header />
-
-      <Breadcrumbs />
 
       {!mobileMenuVisible && (
         <Container className={classNames('', style.main_container)}>

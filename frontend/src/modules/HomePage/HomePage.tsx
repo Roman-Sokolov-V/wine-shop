@@ -1,8 +1,6 @@
 import React from 'react';
-import style from './HomePage.module.scss';
 import 'react-calendar/dist/Calendar.css';
 import { Container, Heading, Section } from 'react-bulma-components';
-import classNames from 'classnames';
 import { SubscribeNews } from '../../components/SubscribeNews';
 
 export const HomePage = () => {
