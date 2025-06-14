@@ -27,10 +27,12 @@ function App() {
       )}
       size="full"
     >
-      <Header />
+      <Container>
+        <Header />
+      </Container>
 
       {!mobileMenuVisible && (
-        <Container className={classNames('', style.main_container)}>
+        <Container className={classNames(style.main_container)}>
           <Outlet />
         </Container>
       )}
