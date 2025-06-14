@@ -18,6 +18,12 @@ class Pet(models.Model):
     is_sterilized = models.BooleanField(null=True, blank=True, default=None)
     description = models.TextField(null=True, blank=True)
 
+    class Meta:
+        verbose_name_plural = "pets"
+
+    def __str__(self):
+        return f"id {self.id}, a {self.type} named {self.name.capitalize()}"
+
 
 
 
