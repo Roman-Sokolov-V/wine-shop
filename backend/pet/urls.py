@@ -7,7 +7,6 @@ pets_list_create = PetViewSet.as_view(actions={"get": "list", "post": "create"})
 pet_detail = PetViewSet.as_view(
     actions={
         "get": "retrieve",
-        "put": "update",
         "patch": "partial_update",
         "delete": "destroy"
     }
