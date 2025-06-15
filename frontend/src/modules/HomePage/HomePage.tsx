@@ -1,35 +1,38 @@
 import React from 'react';
-import style from './HomePage.module.scss';
 import 'react-calendar/dist/Calendar.css';
-import { Container, Heading, Section } from 'react-bulma-components';
-import classNames from 'classnames';
+import { Container, Section } from 'react-bulma-components';
 import { SubscribeNews } from '../../components/SubscribeNews';
+import { OneShotNotification } from '../../components/OneShotNotification';
+import classNames from 'classnames';
+import style from './HomePage.module.scss';
+import { HomeBanner1 } from '../../components/HomeBanner1';
+import { CatalogSlider } from '../../components/CatalogSlider';
+import { getHomePageCatData, getHomePageDogData } from '../../api/pets';
 
 export const HomePage = () => {
   return (
-    <Container className="px-3">
-      <h1 style={{ position: 'absolute', visibility: 'hidden' }}>
-        Test Deploy 0.0.1
-      </h1>
+    <Container className={classNames('', style.container)}>
+      <OneShotNotification />
 
-      <Heading
-        className="m-0 mt-3 p-0"
-        textAlign="center"
-        size={1}
-      >
-        The Bottle Reserve
-      </Heading>
-
-      <Section>
-        <div
-          className="is-flex"
-          style={{ width: '100%', height: '500px' }}
-        >
-          <Heading className="m-auto">Catalog here</Heading>
-        </div>
+      <Section className="p-2">
+        <HomeBanner1 />
       </Section>
 
-      <Section>
+      <Section className="p-2">
+        <CatalogSlider
+          title="Our Dogs"
+          pets={getHomePageDogData()}
+        />
+      </Section>
+
+      <Section className="p-2">
+        <CatalogSlider
+          title="Our Cats"
+          pets={getHomePageCatData()}
+        />
+      </Section>
+
+      <Section className="p-2">
         <SubscribeNews />
       </Section>
     </Container>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import { Block, Box, Button, Container, Heading } from 'react-bulma-components';
-import { submitNewSubscriber } from '../../api/newsSubscriber';
+// import { submitNewSubscriber } from '../../api/newsSubscriber';
 import { ModalError } from '../ModalError';
 import { ModalSuccess } from '../ModalSuccess';
 
@@ -13,16 +13,16 @@ export function SubscribeNews() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      const response = await submitNewSubscriber(email);
-      if (response.data.status !== 'mail_sent') {
-        setShowError(true);
-      } else {
-        setShowSuccess(true);
-      }
-    } catch (error) {
-      setShowError(true);
-    }
+    // try {
+    //   const response = await submitNewSubscriber(email);
+    //   if (response.data.status !== 'mail_sent') {
+    //     setShowError(true);
+    //   } else {
+    //     setShowSuccess(true);
+    //   }
+    // } catch (error) {
+    //   setShowError(true);
+    // }
     setEmail('');
   };
 
