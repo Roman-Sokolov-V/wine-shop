@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import style from './HomePage.module.scss';
 import { HomeBanner1 } from '../../components/HomeBanner1';
 import { CatalogSlider } from '../../components/CatalogSlider';
+import { getHomePageCatData, getHomePageDogData } from '../../api/pets';
 
 export const HomePage = () => {
   return (
@@ -18,11 +19,17 @@ export const HomePage = () => {
       </Section>
 
       <Section className="p-2">
-        <CatalogSlider title="Our Dogs" />
+        <CatalogSlider
+          title="Our Dogs"
+          pets={getHomePageDogData()}
+        />
       </Section>
 
       <Section className="p-2">
-        <CatalogSlider title="Our Cats" />
+        <CatalogSlider
+          title="Our Cats"
+          pets={getHomePageCatData()}
+        />
       </Section>
 
       <Section className="p-2">

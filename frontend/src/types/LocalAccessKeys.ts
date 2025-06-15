@@ -1,4 +1,4 @@
 export enum LocalAccessKeys {
-  URGENT_NOTICE_SHOW = 'oneShotPromo',
+  NOTICE_SHOW = 'UrgentNoticeShow',
   LOGGEDIN = 'loggedIn',
 }
