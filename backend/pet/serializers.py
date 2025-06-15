@@ -2,11 +2,18 @@ from datetime import date
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from pet.models import Pet, Image
 
-from pet.models import Pet
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ("file",)
 
 
 class PetSerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True)
+
     class Meta:
         model = Pet
         fields = (
@@ -20,7 +27,8 @@ class PetSerializer(serializers.ModelSerializer):
             "weight",
             "is_sterilized",
             "description",
-            #"owner"
+            "images",
+            # "owner"
         )
 
     def validate(self, data):
@@ -47,7 +55,6 @@ class PetSerializer(serializers.ModelSerializer):
                 is_sterilized=is_sterilized,
                 description=description,
                 date_created=date_added,
-
             ).exists():
                 raise ValidationError(
                     "Pet with the same parameters already added to db today. "
@@ -55,3 +62,34 @@ class PetSerializer(serializers.ModelSerializer):
                     "If not just change any field"
                 )
                 return data
+
+
+class UploadImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ("pet", "file",)
+
+
+# class UploadImageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Image
+#         fields = ("pet", "file")
+#
+#     def to_internal_value(self, data):
+#         print("RAW DATA:", data)
+#         result = super().to_internal_value(data)
+#         print("INTERNAL VALUE:", result)
+#         return result
+#
+#     def create(self, validated_data):
+#         print("VALIDATED DATA:", validated_data)
+#         print("VALIDATED DATA KEYS:", list(validated_data.keys()))
+#         print("PET TYPE:", type(validated_data.get('pet')))
+#         print("FILE TYPE:", type(validated_data.get('file')))
+#
+#         try:
+#             return Image.objects.create(**validated_data)
+#         except Exception as e:
+#             print("CREATE ERROR:", str(e))
+#             print("ERROR ARGS:", e.args)
+#             raise
