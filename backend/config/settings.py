@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "pet",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -127,7 +128,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
+# django-storages settings
 
 STORAGES = {
     "default": {
@@ -137,8 +138,14 @@ STORAGES = {
             "secret_key": os.getenv("S3_SECRET_KEY"),
             "bucket_name": os.getenv("S3_BUCKET_NAME"),
             "endpoint_url": os.getenv("S3_ENDPOINT_URL"),
+            "default_acl": None,
+            "querystring_auth": True,
+            "file_overwrite": False,
             "region_name": "us-east-1",
-            "addressing_style": "path",
+            "signature_version": "s3v4",
         },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
