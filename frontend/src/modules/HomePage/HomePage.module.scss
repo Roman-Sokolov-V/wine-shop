@@ -1,12 +1,2 @@
 @use 'bulma/sass/utilities/mixins';
 @import '../../styles/main';
-
-.bunnerFirst {
-  border-radius: 40px 40px 0 0;
-  background: no-repeat center/cover url('../../../public/assets/bg1.png');
-
-  &__txt_container {
-    width: 60%;
-    height: 80%;
-  }
-}

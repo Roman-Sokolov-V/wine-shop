@@ -105,7 +105,7 @@ export const Header = () => {
           <Navbar.Item
             className=""
             hoverable
-            onClick={() => onLinkClick('/animals')}
+            onClick={() => onLinkClick('/catalog')}
           >
             <Button rounded>
               <Navbar.Link
@@ -113,7 +113,7 @@ export const Header = () => {
                 // arrowless={mobileMenuVisible}
                 className={classNames('', style.header_txt)}
               >
-                Animals
+                Find All
               </Navbar.Link>
             </Button>
 
