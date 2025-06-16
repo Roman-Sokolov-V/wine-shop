@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == "create":
             return [permissions.AllowAny()]
         elif self.action in ["update", "partial_update", "retrieve"]:
-            return [permissions.IsAdminUser() | IsOwner()]
+            return [permissions.OR(permissions.IsAdminUser(), IsOwner())]
         return [permissions.IsAdminUser()]
 
 
