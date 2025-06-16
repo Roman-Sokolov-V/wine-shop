@@ -2,15 +2,13 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import MinValueValidator
 
-# User = get_user_model()
+User = get_user_model()
 
 SEX_CHOICES = [
     ("M", "Male"),
     ("F", "Female"),
     ("U", "Unknown"),
 ]
-
-
 
 
 class Pet(models.Model):
@@ -26,7 +24,7 @@ class Pet(models.Model):
     is_sterilized = models.BooleanField(null=True, blank=True, default=None)
     description = models.TextField(null=True, blank=True)
     date_created = models.DateField(auto_now_add=True)
-    # owner = models.ForeignKey(User, on_delete=models.CASCADE, unique=True, default=None)
+    owner = models.ForeignKey(User, null=True, blank=True, related_name="pets", on_delete=models.PROTECT)
 
     class Meta:
         verbose_name_plural = "pets"
