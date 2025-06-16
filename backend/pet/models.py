@@ -1,12 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import MinValueValidator
-from storages.backends.s3boto3 import S3Boto3Storage
+
 # User = get_user_model()
 
 SEX_CHOICES = [
     ("M", "Male"),
     ("F", "Female"),
+    ("U", "Unknown"),
 ]
 
 
