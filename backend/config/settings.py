@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "pet",
     "storages",
     "django_filters",
+    "user"
 ]
 
 MIDDLEWARE = [
