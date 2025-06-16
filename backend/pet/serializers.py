@@ -12,7 +12,7 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class PetSerializer(serializers.ModelSerializer):
-    images = ImageSerializer(many=True)
+    images = ImageSerializer(many=True, required=False, read_only=True)
 
     class Meta:
         model = Pet
@@ -30,6 +30,48 @@ class PetSerializer(serializers.ModelSerializer):
             "images",
             # "owner"
         )
+
+    def validate_images_files(self, files):
+        """Базова валідація зображень"""
+        if not files:
+            return files
+
+        # Перевіряємо що це список
+        if not isinstance(files, list):
+            raise serializers.ValidationError("Images має бути списком файлів")
+
+        # Перевіряємо що кожен елемент - зображення
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif',
+                         'image/webp']
+
+        for file in files:
+            if not hasattr(file, 'content_type'):
+                raise serializers.ValidationError("Невалідний файл")
+
+            if file.content_type not in allowed_types:
+                raise serializers.ValidationError(
+                    f"Файл {file.name} не є зображенням. "
+                    f"Дозволені типи: JPEG, PNG, GIF, WebP"
+                )
+
+        return files
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        files = request.FILES.getlist('images') if request else []
+
+        # Валідуємо файли
+        validated_files = self.validate_images_files(files)
+
+        pet = Pet.objects.create(**validated_data)
+
+        if validated_files:
+            images = [Image(pet=pet, file=file) for file in validated_files]
+            Image.objects.bulk_create(images)
+
+        return pet
+
+
 
     def validate(self, data):
         if self.instance is None:
@@ -61,7 +103,7 @@ class PetSerializer(serializers.ModelSerializer):
                     "Make sure you not try to add the same pet by mistake. "
                     "If not just change any field"
                 )
-                return data
+        return data
 
 
 class UploadImageSerializer(serializers.ModelSerializer):
@@ -70,26 +112,12 @@ class UploadImageSerializer(serializers.ModelSerializer):
         fields = ("pet", "file",)
 
 
-# class UploadImageSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Image
-#         fields = ("pet", "file")
-#
-#     def to_internal_value(self, data):
-#         print("RAW DATA:", data)
-#         result = super().to_internal_value(data)
-#         print("INTERNAL VALUE:", result)
-#         return result
-#
-#     def create(self, validated_data):
-#         print("VALIDATED DATA:", validated_data)
-#         print("VALIDATED DATA KEYS:", list(validated_data.keys()))
-#         print("PET TYPE:", type(validated_data.get('pet')))
-#         print("FILE TYPE:", type(validated_data.get('file')))
-#
-#         try:
-#             return Image.objects.create(**validated_data)
-#         except Exception as e:
-#             print("CREATE ERROR:", str(e))
-#             print("ERROR ARGS:", e.args)
-#             raise
+class FileSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+
+class UploadImagesSerializer(serializers.Serializer):
+    pet = serializers.IntegerField()
+    files = FileSerializer(many=True)
+
+
