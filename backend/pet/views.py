@@ -1,4 +1,4 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -44,10 +44,18 @@ class PetViewSet(viewsets.ModelViewSet):
             return queryset.select_related("owner")
         return queryset.filter(owner=None)
 
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action in ["list", "retrieve"]:
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
 
 
 class UploadImageView(generics.ListCreateAPIView):
     queryset = Image.objects.all()
     serializer_class = UploadImageSerializer
+    permissions = permissions.IsAdminUser
 
 
