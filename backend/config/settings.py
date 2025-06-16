@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "storages",
     "django_filters",
     "user",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -154,3 +155,20 @@ STORAGES = {
 }
 
 AUTH_USER_MODEL = "user.User"
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Pet shelter',
+    'DESCRIPTION': 'backend',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    "SWAGGER_UI_SETTINGS": {
+        "deeplink": True,
+        "defaultModelRendering": "model",
+        "defaultModelExpandDepth": 2,
+        "defaultModelsExpandDepth": 2,
+    },
+}
