@@ -9,7 +9,6 @@ from pet.serializers import PetSerializer, UploadImageSerializer
 
 
 class PetViewSet(viewsets.ModelViewSet):
-    queryset = Pet.objects.all()
     serializer_class = PetSerializer
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
@@ -24,6 +23,7 @@ class PetViewSet(viewsets.ModelViewSet):
         "coloration",
         "weight",
         "is_sterilized",
+        "owner",
         ]
     search_fields = [
         "id",
@@ -35,7 +35,14 @@ class PetViewSet(viewsets.ModelViewSet):
         "coloration",
         "weight",
         "is_sterilized",
+        "owner",
         ]
+
+    def get_queryset(self):
+        queryset = Pet.objects.all()
+        if self.request.user.is_staff:
+            return queryset.select_related("owner")
+        return queryset.filter(owner=None)
 
 
 
