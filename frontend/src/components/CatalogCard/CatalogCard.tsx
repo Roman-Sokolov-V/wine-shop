@@ -1,6 +1,6 @@
 import React from 'react';
-import style from './SliderCard.module.scss';
-import { Pet } from '../../../types/Pet';
+import style from './CatalogCard.module.scss';
+import { Pet } from '../../types/Pet';
 import { Button, Heading } from 'react-bulma-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
@@ -8,13 +8,13 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 interface Props {
   petData: Pet;
 }
-export const SliderCard: React.FC<Props> = ({ petData }) => {
+export const CatalogCard: React.FC<Props> = ({ petData }) => {
   if (!petData) {
     return <></>;
   }
+
   return (
     <div className={style.container}>
-      {/* 1. This container defines the space for the image */}
       <div className={style.cardImageContainer}>
         <img
           src={petData.picture}
@@ -26,8 +26,8 @@ export const SliderCard: React.FC<Props> = ({ petData }) => {
         <Heading size={4}>{petData.name}</Heading>
 
         <div>
-          <p>Bread: {petData.breed}</p>
-          <p>Age: {petData.age}</p>
+          <p>{petData.breed}</p>
+          <p>{petData.age}</p>
         </div>
 
         <div className={style.cardActions}>

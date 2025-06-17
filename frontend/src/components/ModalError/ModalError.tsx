@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 type Props = {
   title: string;
   body: string;
-  isActive: boolean;
+  isActive?: boolean;
   onClose?: () => void;
 };
 export const ModalError: React.FC<Props> = ({
