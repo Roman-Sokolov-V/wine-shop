@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 load_dotenv(BASE_DIR / ".env")
 
@@ -37,17 +37,18 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
-    "rest_framework.authtoken",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "pet",
     "storages",
     "django_filters",
     "user",
     "drf_spectacular",
+    "notification",
 ]
 
 MIDDLEWARE = [
@@ -172,3 +173,17 @@ SPECTACULAR_SETTINGS = {
         "defaultModelsExpandDepth": 2,
     },
 }
+
+# Mail conf
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "sandbox.smtp.mailtrap.io"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "5c6b085a53cf80"
+EMAIL_HOST_PASSWORD = "7227dfef88f396"
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+# for prod
+# EMAIL_HOST = os.getenv("EMAIL_HOST")z
+# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")

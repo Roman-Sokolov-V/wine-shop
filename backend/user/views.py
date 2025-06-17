@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 
-from backend.user.serializers import UserSerializer, LoginSerializer
+from user.serializers import UserSerializer, LoginSerializer
 from user.permissions import IsOwner
 
 User = get_user_model()
