@@ -26,8 +26,8 @@ export const SliderCard: React.FC<Props> = ({ petData }) => {
         <Heading size={4}>{petData.name}</Heading>
 
         <div>
-          <p>{petData.breed}</p>
-          <p>{petData.age}</p>
+          <p>Bread: {petData.breed}</p>
+          <p>Age: {petData.age}</p>
         </div>
 
         <div className={style.cardActions}>

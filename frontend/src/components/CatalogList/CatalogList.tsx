@@ -11,15 +11,17 @@ export const CatalogList: React.FC<Props> = ({ pets }) => {
   }
 
   return (
-    <>
+    <div className="grid is-col-min-10">
       {pets.map((itm, indx) => {
         return (
-          <CatalogCard
+          <div
             key={indx}
-            petData={itm}
-          />
+            className="cell"
+          >
+            <CatalogCard petData={itm} />
+          </div>
         );
       })}
-    </>
+    </div>
   );
 };

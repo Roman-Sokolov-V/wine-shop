@@ -109,7 +109,7 @@ export const Header = () => {
           >
             <Button rounded>
               <Navbar.Link
-                arrowless
+                // arrowless
                 // arrowless={mobileMenuVisible}
                 className={classNames('', style.header_txt)}
               >

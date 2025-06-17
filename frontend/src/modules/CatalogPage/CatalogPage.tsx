@@ -6,8 +6,7 @@ import { ModalLoader } from '../../components/ModalLoader';
 import { CatalogList } from '../../components/CatalogList';
 import { CatalogViewSetter } from '../../components/CatalogViewSetter';
 import { CatalogFilter } from '../../components/CatalogFilter';
-import { Pagination } from 'react-bulma-components';
-import { current } from '@reduxjs/toolkit';
+import { Columns, Pagination } from 'react-bulma-components';
 
 export const CatalogPage = () => {
   const [petData, setPetData] = useState<Pet[]>([]);
@@ -58,41 +57,43 @@ export const CatalogPage = () => {
 
       {loading && <ModalLoader />}
 
-      <div>
-        <div>
-          <CatalogViewSetter
-            onPerPage={handlePerPageChange}
-            onSearch={handleSearch}
-            onSort={handleSortChange}
-          />
-        </div>
-
-        <div>
+      <Columns>
+        <Columns.Column size="one-quarter">
           <CatalogFilter
             filterData={filters}
             onChange={() => {}}
           />
-        </div>
-        <div>
+        </Columns.Column>
+
+        <Columns.Column>
+          <div className="mb-2">
+            <CatalogViewSetter
+              onPerPage={handlePerPageChange}
+              onSearch={handleSearch}
+              onSort={handleSortChange}
+            />
+          </div>
+
           <CatalogList pets={petData} />
-        </div>
-        <div>
-          <Pagination
-            total={100}
-            current={curPage}
-            delta={2}
-            next=">"
-            previous="<"
-            showPrevNext
-            autoHide
-            showFirstLast
-            size="small"
-            align="center"
-            onChange={e => setCurPage(e)}
-            rounded
-          />
-        </div>
-      </div>
+
+          <div className="my-2">
+            <Pagination
+              total={100}
+              current={curPage}
+              delta={2}
+              next=">"
+              previous="<"
+              showPrevNext
+              autoHide
+              showFirstLast
+              size="small"
+              align="center"
+              onChange={e => setCurPage(e)}
+              rounded
+            />
+          </div>
+        </Columns.Column>
+      </Columns>
     </div>
   );
 };
