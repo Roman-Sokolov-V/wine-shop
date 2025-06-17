@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.authtoken import views
-from backend.user.views import UserViewSet, LoginView
+from user.views import UserViewSet, LoginView
 
 app_name = "user"
 

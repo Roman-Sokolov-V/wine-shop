@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Ми знайшли вашого улюбленця!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #212529;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .pet-info {
+      margin-top: 20px;
+    }
+    .pet-info p {
+      margin: 5px 0;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+      <h2>🎉 Вітаємо!</h2>
+      <p>Ми знайшли питомця, якого ви шукали.</p>
+
+      <div class="pet-info">
+        <h3>Інформація про улюбленця:</h3>
+
+        <p><strong>Ім'я:</strong> {{ pet.name }}</p>
+        <p><strong>Тип:</strong> {{ pet.pet_type }}</p>
+        {% if pet.breed %}
+          <p><strong>Порода:</strong> {{ pet.breed }} кг</p>
+        {% endif %}
+        {% if pet.age %}
+          <p><strong>Вік:</strong> {{ pet.age }} років</p>
+        {% endif %}
+        {% if pet.weight %}
+          <p><strong>Вага:</strong> {{ pet.weight }} кг</p>
+        {% endif %}
+        {% if pet.sex %}
+          <p><strong>Стать:</strong> {{ pet.get_sex_display }} </p>
+        {% endif %}
+        {% if pet.age %}
+          <p><strong>Масть:</strong> {{ pet.coloration }} </p>
+        {% endif %}
+        {% if pet.is_sterilized is None %}
+          <p><strong>Стерилізован:</strong> невідомо </p>
+        {% endif %}
+        {% if pet.is_sterilized is True %}
+          <p><strong>Стерилізован:</strong> так </p>
+        {% endif %}
+        {% if pet.is_sterilized is False %}
+          <p><strong>Стерилізован:</strong> ні </p>
+        {% endif %}
+
+        {% if pet.description %}
+        <p><strong>Опис:</strong> {{ pet.description }} </p>
+        {% endif %}
+
+        <p><strong>Дата створення анкети:</strong> {{ pet.date_created }}</p>
+      </div>
+
+
+      <h3>Фотографії улюбленця:</h3>
+      {% if pet.images.all %}
+          {% for image in pet.images.all %}
+              <div style="margin-bottom: 10px;">
+                  <img src="{{ image.file.url }}" alt="Фото {{ pet.name }}" style="max-width: 100%; border-radius: 8px;">
+              </div>
+          {% endfor %}
+      {% else %}
+          <p>Фото недоступні.</p>
+      {% endif %}
+      <p>
+        Будь ласка, перейдіть до нашого  <a href="{{ site_url }}">сайту</a>, щоб дізнатись більше та зв’язатися з нами.
+      </p>
+      <p>
+        Перейдіть на сторінку питомця:
+        <a href="{{ site_url }}/pets/{{ pet.id }}/">Деталі про {{ pet.name }}</a>   <!-- Вказати правильний шлях -->
+      </p>
+
+      <div class="footer">
+          <p>З повагою,<br>Команда Wine-Shop Pet Rescue</p>
+      </div>
+    </div>
+
+
+</body>
+</html>
