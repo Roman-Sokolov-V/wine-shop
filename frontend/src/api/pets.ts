@@ -1502,7 +1502,35 @@ const tempData = JSON.stringify([
     picture: 'https://placehold.co/600x400/EEE/31343C?text=Zephyr',
   },
 ]);
-export const getPetData = (): Pet[] => {
+
+export const getPetDataAsync = () => {
+  return new Promise(res => {
+    setTimeout(() => res(getPetDataTemp()), 1000);
+  });
+};
+
+export const getFilters = () => {
+  return new Promise(res => {
+    setTimeout(() => {
+      const data = getPetDataTemp();
+      const filter = {
+        type: Array.from(new Set(data.map(itm => itm.pet_type))),
+        minAge: Math.min(...data.map(itm => itm.age)),
+        maxAge: Math.max(...data.map(itm => itm.age)),
+        breed: Array.from(new Set(data.map(itm => itm.breed))),
+        sex: Array.from(new Set(data.map(itm => itm.sex))),
+        coloration: Array.from(new Set(data.map(itm => itm.coloration))),
+        weightMin: Math.min(...data.map(itm => itm.weight)),
+        weightMax: Math.max(...data.map(itm => itm.weight)),
+        isSterilized: ['Yes', 'No'],
+      };
+
+      res(filter);
+    }, 1000);
+  });
+};
+
+export const getPetDataTemp = (): Pet[] => {
   // return api.get(`/api/v1/pets`);
 
   return JSON.parse(tempData).map((itm: Pet) => {
@@ -1511,13 +1539,13 @@ export const getPetData = (): Pet[] => {
 };
 
 export const getHomePageDogData = () => {
-  return getPetData()
+  return getPetDataTemp()
     .filter(pet => pet.pet_type === 'Dog')
     .slice(0, 10);
 };
 
 export const getHomePageCatData = () => {
-  return getPetData()
+  return getPetDataTemp()
     .filter(pet => pet.pet_type === 'Cat')
     .slice(0, 10);
 };

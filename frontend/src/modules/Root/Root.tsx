@@ -7,6 +7,7 @@ import {
   Routes,
 } from 'react-router-dom';
 import { HomePage } from '../HomePage';
+import { CatalogPage } from '../CatalogPage';
 import App from '../App/App';
 import client from '../../lib/apollos';
 import { ProtectedRoute } from '../../components/ProtectedRoute/ProtectedRoute';
@@ -34,6 +35,11 @@ export const Root = () => {
                   replace
                 />
               }
+            />
+
+            <Route
+              path={VALID_ROUTES.CATALOG}
+              element={<CatalogPage />}
             />
 
             <Route
