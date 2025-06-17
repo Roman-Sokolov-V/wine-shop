@@ -12,7 +12,6 @@ from pet.serializers import PetSerializer, UploadImageSerializer
 
 
 class PetViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = PetSerializer
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
@@ -48,13 +47,13 @@ class PetViewSet(viewsets.ModelViewSet):
             return queryset.select_related("owner")
         return queryset.filter(owner=None)
 
-    # def get_permissions(self):
-    #     """
-    #     Instantiates and returns the list of permissions that this view requires.
-    #     """
-    #     if self.action in ["list", "retrieve"]:
-    #         return [permissions.IsAuthenticated()]
-    #     return [permissions.IsAdminUser()]
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action in ["list", "retrieve"]:
+            return [permissions.IsAuthenticated()]
+        return [permissions.IsAdminUser()]
 
     def perform_create(self, serializer):
         return serializer.save()
