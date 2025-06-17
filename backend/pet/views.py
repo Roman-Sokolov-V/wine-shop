@@ -1,4 +1,4 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -9,7 +9,6 @@ from pet.serializers import PetSerializer, UploadImageSerializer
 
 
 class PetViewSet(viewsets.ModelViewSet):
-    queryset = Pet.objects.all()
     serializer_class = PetSerializer
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
@@ -24,6 +23,7 @@ class PetViewSet(viewsets.ModelViewSet):
         "coloration",
         "weight",
         "is_sterilized",
+        "owner",
         ]
     search_fields = [
         "id",
@@ -35,12 +35,27 @@ class PetViewSet(viewsets.ModelViewSet):
         "coloration",
         "weight",
         "is_sterilized",
+        "owner",
         ]
 
+    def get_queryset(self):
+        queryset = Pet.objects.all()
+        if self.request.user.is_staff:
+            return queryset.select_related("owner")
+        return queryset.filter(owner=None)
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action in ["list", "retrieve"]:
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
 
 
 class UploadImageView(generics.ListCreateAPIView):
     queryset = Image.objects.all()
     serializer_class = UploadImageSerializer
+    permissions = permissions.IsAdminUser
 
 
