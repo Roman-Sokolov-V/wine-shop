@@ -1,16 +1,49 @@
-# wine-shop
+# Pet Shelter
 
-Setup
+## Setup with Docker (recommended)
 
-`cd backend/`  
-`python -m venv venv`  
-`venv\scripts\activate`  Windows  
-`source venv/scripts/activate` Mac  
-`source venv/bin/activate` Linux  
-`poetry install`  
-`python manage.py makemigrations`  
-`python manage.py migrate`  
-`python manage.py runserver`
+### Install Docker
+
+#### For Windows:
+1. Visit the official Docker documentation:  
+   [https://docs.docker.com/desktop/setup/install/windows-install/](https://docs.docker.com/desktop/setup/install/windows-install/)
+2. Download the appropriate installer for your PC.
+3. Install Docker on your system.
+4. Verify the installation by running the following command:  
+   ```bash
+   docker --version
+
+
+If Docker is installed correctly, you’ll see something like:
+
+```
+Docker version 24.8.6, build ...
+```
+
+### Run the Backend in Docker
+
+1. Rename the file `.env.sample` to `.env`.
+2. ⚠️ **IMPORTANT:** After every `git pull develop`, always check for changes in the `.env` file.
+3. Navigate to the backend directory:
+
+   ```bash
+   cd backend/
+   ```
+4. Start the containers:
+
+   ```bash
+   docker compose up --build
+   ```
+5. When finished working, stop the containers:
+
+   ```bash
+   docker compose down
+   ```
+
+> **Note:**
+> If something goes wrong when starting the containers, it might mean you forgot to stop them last time.
+> Try running `docker compose down` and then start again with `docker compose up --build`.
+
 
 endpoints for now:
 
@@ -19,4 +52,15 @@ GET http://127.0.0.1:8000/api/v1/pets/ - list all pets
 GET http://127.0.0.1:8000/api/v1/pets/1/ - retrieve pet by id  
 DELETE http://127.0.0.1:8000/api/v1/pets/1/  - delete pet by id
 PATCH http://127.0.0.1:8000/api/v1/pets/1/  - partial update pet by id
+
+
+
+
+
+
+
+
+
+
+
 
