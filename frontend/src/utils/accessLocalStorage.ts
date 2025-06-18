@@ -2,7 +2,7 @@ import { LocalAccessKeys } from '../types/LocalAccessKeys';
 
 export const accessLocalStorage = {
   get(key: LocalAccessKeys) {
-    const data = sessionStorage.getItem(key);
+    const data = localStorage.getItem(key);
 
     try {
       return data ? JSON.parse(data) : undefined;
@@ -13,7 +13,7 @@ export const accessLocalStorage = {
 
   set(key: LocalAccessKeys, data: unknown) {
     try {
-      sessionStorage.setItem(key, JSON.stringify(data));
+      localStorage.setItem(key, JSON.stringify(data));
 
       return this.get(key);
     } catch {

@@ -9,12 +9,10 @@ import store from './app/store';
 import { accessLocalStorage } from './utils/accessLocalStorage';
 import { LocalAccessKeys } from './types/LocalAccessKeys';
 
-const showUrgentNotice = accessLocalStorage.get(
-  LocalAccessKeys.URGENT_NOTICE_SHOW,
-);
+const showUrgentNotice = accessLocalStorage.get(LocalAccessKeys.NOTICE_SHOW);
 
 if (showUrgentNotice === undefined) {
-  accessLocalStorage.set(LocalAccessKeys.URGENT_NOTICE_SHOW, true);
+  accessLocalStorage.set(LocalAccessKeys.NOTICE_SHOW, true);
 }
 
 createRoot(document.getElementById('root') as HTMLElement).render(

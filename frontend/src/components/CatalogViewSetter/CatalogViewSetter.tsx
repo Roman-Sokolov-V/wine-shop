@@ -3,9 +3,7 @@ import { faAngleDown, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import { Dropdown } from 'react-bulma-components';
-
-type SortOrder = 'acc' | 'dec';
-type PageSize = 5 | 10 | 15 | 25 | 'all';
+import { PageSize, SortOrder } from '../../types/ViewControlle';
 
 interface Props {
   onSort: (order: SortOrder) => void;
@@ -18,7 +16,8 @@ export const CatalogViewSetter: React.FC<Props> = ({
   onPerPage,
   onSearch,
 }) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState<string>('');
+
   return (
     <div className="is-flex">
       <div>
@@ -29,7 +28,7 @@ export const CatalogViewSetter: React.FC<Props> = ({
               className={classNames('has-text-black pl-1')}
             />
           }
-          label="Sort By"
+          label="Sort"
           closeOnSelect
           onChange={(e: SortOrder) => onSort(e)}
           className="mr-5"
@@ -106,6 +105,11 @@ export const CatalogViewSetter: React.FC<Props> = ({
             placeholder="Seach here"
             value={query}
             onChange={e => setQuery(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                onSearch(query);
+              }
+            }}
           />
           <span className="icon is-small is-left">
             <FontAwesomeIcon

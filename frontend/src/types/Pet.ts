@@ -10,5 +10,5 @@ export interface Pet {
   is_sterilized: boolean;
   description: string;
   date_created: Date;
-  picture: string;
+  images: string[];
 }

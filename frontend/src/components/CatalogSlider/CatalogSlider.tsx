@@ -4,11 +4,11 @@ import { Heading } from 'react-bulma-components';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation, Scrollbar, A11y } from 'swiper/modules';
-import { SliderCard } from './SliderCard';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Pet } from '../../types/Pet';
+import { CatalogCard } from '../CatalogCard';
 
 interface Props {
   title: string;
@@ -31,7 +31,7 @@ export const CatalogSlider: React.FC<Props> = ({ title, pets }) => {
         {pets.map(pet => {
           return (
             <SwiperSlide key={pet.id}>
-              <SliderCard petData={pet} />
+              <CatalogCard petData={pet} />
             </SwiperSlide>
           );
         })}

@@ -1,23 +1,12 @@
 import React, { useEffect, useState } from 'react';
-
-export interface FilterProps {
-  type: string[];
-  minAge: number | null;
-  maxAge: number | null;
-  breed: string[];
-  sex: string[];
-  coloration: string[];
-  weightMin: number | null;
-  weightMax: number | null;
-  isSterilized: string[];
-}
+import { Filters } from '../../types/Filters';
 
 type Props = {
-  filterData: FilterProps;
-  onChange: (fltr: FilterProps) => void;
+  filterData: Filters;
+  onChange: (fltr: Filters) => void;
 };
 
-const initialFilterState: FilterProps = {
+const initialFilterState: Filters = {
   type: [],
   minAge: null,
   maxAge: null,
@@ -30,7 +19,7 @@ const initialFilterState: FilterProps = {
 };
 
 export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
-  const [filter, setFilter] = useState<FilterProps>(initialFilterState);
+  const [filter, setFilter] = useState<Filters>(initialFilterState);
 
   useEffect(() => {
     if (filterData) {
@@ -39,7 +28,7 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
   }, [filterData]);
 
   // Toggles a value in a string array (for checkboxes).
-  const handleCheckboxChange = (field: keyof FilterProps, value: string) => {
+  const handleCheckboxChange = (field: keyof Filters, value: string) => {
     const currentValues = filter[field] as string[];
     const newValues = currentValues.includes(value)
       ? currentValues.filter(item => item !== value) // Remove if it exists
@@ -49,7 +38,7 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
   };
 
   // Updates a number field, converting empty strings to null.
-  const handleNumberChange = (field: keyof FilterProps, value: string) => {
+  const handleNumberChange = (field: keyof Filters, value: string) => {
     const numericValue = value === '' ? null : parseInt(value, 10);
     setFilter({ ...filter, [field]: numericValue });
   };
@@ -64,7 +53,7 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
   };
 
   // Handles text input for comma-separated values like 'coloration'.
-  const handleArrayInputChange = (field: keyof FilterProps, value: string) => {
+  const handleArrayInputChange = (field: keyof Filters, value: string) => {
     const newValues = value
       .split(',')
       .map(s => s.trim())
