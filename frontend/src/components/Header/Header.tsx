@@ -15,8 +15,8 @@ export const Header = () => {
   const { visible: mobileMenuVisible } = useAppSelector(
     state => state.menuVisible,
   );
+  const { favorites } = useAppSelector(state => state.favorite);
   const navigate = useNavigate();
-  const [favCount, setFavCount] = useState(99);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -27,9 +27,21 @@ export const Header = () => {
     });
   }, []);
 
-  function onLinkClick(pth: string) {
+  function onLinkClick(pth: string, filterKey = '', filteVal = '') {
     dispatch(menuActions.setMenuVisibility(false));
-    navigate(pth);
+    const params = new URLSearchParams();
+    params.set(filterKey, filteVal);
+
+    if (filteVal && filterKey) {
+      navigate({
+        pathname: pth,
+        search: params.toString(),
+      });
+    } else {
+      navigate({
+        pathname: pth,
+      });
+    }
   }
 
   return (
@@ -88,12 +100,9 @@ export const Header = () => {
       >
         <Navbar.Container
           align="left"
-          className=""
+          className="py-2"
         >
-          <Navbar.Item
-            className=""
-            onClick={() => onLinkClick('/')}
-          >
+          <Navbar.Item onClick={() => onLinkClick('/')}>
             <Button
               rounded
               className={style.header_txt}
@@ -102,39 +111,45 @@ export const Header = () => {
             </Button>
           </Navbar.Item>
 
-          <Navbar.Item
-            className=""
-            hoverable
-            onClick={() => onLinkClick('/catalog')}
-          >
-            <Button rounded>
-              <Navbar.Link
-                // arrowless
-                // arrowless={mobileMenuVisible}
-                className={classNames('', style.header_txt)}
-              >
-                Find All
-              </Navbar.Link>
+          <Navbar.Item hoverable>
+            <Button
+              rounded
+              className={style.header_txt}
+            >
+              <Navbar.Link arrowless>Find All</Navbar.Link>
             </Button>
 
             {!mobileMenuVisible && (
               <>
                 <Navbar.Dropdown>
-                  <Navbar.Item href="#">
-                    <Navbar.Link arrowless>
-                      <Link to="/">Cats</Link>
+                  <Navbar.Item
+                    onClick={() => onLinkClick('/catalog', 'pet_type', 'cat')}
+                  >
+                    <Navbar.Link
+                      arrowless
+                      style={{ width: '100%' }}
+                    >
+                      Cat
                     </Navbar.Link>
                   </Navbar.Item>
 
-                  <Navbar.Item href="#">
-                    <Navbar.Link arrowless>
-                      <Link to="/">Dogs</Link>
+                  <Navbar.Item
+                    onClick={() => onLinkClick('/catalog', 'pet_type', 'dog')}
+                  >
+                    <Navbar.Link
+                      arrowless
+                      style={{ width: '100%' }}
+                    >
+                      Dogs
                     </Navbar.Link>
                   </Navbar.Item>
 
-                  <Navbar.Item href="#">
-                    <Navbar.Link arrowless>
-                      <Link to="/">Other animals</Link>
+                  <Navbar.Item onClick={() => onLinkClick('/catalog')}>
+                    <Navbar.Link
+                      arrowless
+                      style={{ width: '100%' }}
+                    >
+                      All animals
                     </Navbar.Link>
                   </Navbar.Item>
                 </Navbar.Dropdown>
@@ -189,9 +204,9 @@ export const Header = () => {
                   <span className={classNames('has-text-black')}>Favorite</span>
                 </span>
 
-                {favCount > 0 && !mobileMenuVisible && (
+                {favorites.length > 0 && !mobileMenuVisible && (
                   <div className={style.container_count}>
-                    <span className={style.count}>{49}</span>
+                    <span className={style.count}>{favorites.length}</span>
                   </div>
                 )}
               </Navbar.Link>

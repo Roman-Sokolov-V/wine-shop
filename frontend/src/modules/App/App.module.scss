@@ -1,6 +1,7 @@
 @use 'bulma/sass/utilities/mixins';
 
 .app {
+  display: flex;
   min-height: 100vh;
   &.menu_visible {
     @include mixins.touch {

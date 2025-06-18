@@ -86,7 +86,9 @@ const PetSlice = createSlice({
       //Pet Type filtering
       if (pet_type && pet_type.length > 0) {
         state.filteredPets = state.filteredPets.filter(pet =>
-          pet_type.includes(pet.pet_type),
+          pet_type
+            .map(i => i.toLocaleLowerCase())
+            .includes(pet.pet_type.toLocaleLowerCase()),
         );
       }
 
@@ -107,14 +109,18 @@ const PetSlice = createSlice({
       //Pet breed filtering
       if (breed && breed.length > 0) {
         state.filteredPets = state.filteredPets.filter(pet =>
-          breed.includes(pet.breed),
+          breed
+            .map(i => i.toLocaleLowerCase())
+            .includes(pet.breed.toLocaleLowerCase()),
         );
       }
 
       //Pet Coloration filtering
       if (coloration && coloration.length > 0) {
         state.filteredPets = state.filteredPets.filter(pet =>
-          coloration.includes(pet.coloration),
+          coloration
+            .map(i => i.toLocaleLowerCase())
+            .includes(pet.coloration.toLocaleLowerCase()),
         );
       }
 

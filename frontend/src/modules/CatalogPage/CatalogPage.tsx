@@ -78,8 +78,8 @@ export const CatalogPage = () => {
     const query = searchParams.get(QueryNames.QUERY) || '';
     const sortOrder =
       (searchParams.get(QueryNames.SORTED) as SortOrder) || 'acc';
-
     const currentFilters: Partial<Filters> = {};
+
     for (const key of filterKeys) {
       const values = searchParams.getAll(key);
       if (values.length > 0) {
@@ -161,7 +161,7 @@ export const CatalogPage = () => {
 
       {loading && <ModalLoader />}
 
-      <Columns>
+      <Columns className="mt-3">
         <Columns.Column size="one-quarter">
           <CatalogFilter
             filterData={availableFilters}
@@ -170,7 +170,7 @@ export const CatalogPage = () => {
         </Columns.Column>
 
         <Columns.Column>
-          <div className="mb-2">
+          <div className="mb-5">
             <CatalogViewSetter
               onPerPage={handlePerPageChange}
               onSearch={handleQueryChange}

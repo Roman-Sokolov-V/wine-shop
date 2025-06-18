@@ -12,6 +12,7 @@ import App from '../App/App';
 import client from '../../lib/apollos';
 import { ProtectedRoute } from '../../components/ProtectedRoute/ProtectedRoute';
 import { VALID_ROUTES } from '../../types/validRoutes';
+import { FavoritePage } from '../FavoritePage';
 
 export const Root = () => {
   return (
@@ -40,6 +41,11 @@ export const Root = () => {
             <Route
               path={VALID_ROUTES.CATALOG}
               element={<CatalogPage />}
+            />
+
+            <Route
+              path={VALID_ROUTES.FAVORITES}
+              element={<FavoritePage />}
             />
 
             <Route

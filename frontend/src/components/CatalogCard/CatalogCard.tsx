@@ -1,15 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import style from './CatalogCard.module.scss';
 import { Pet } from '../../types/Pet';
 import { Button, Heading } from 'react-bulma-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import * as FavoriteAction from '../../features/favorites';
+import classNames from 'classnames';
 
 interface Props {
   petData: Pet;
 }
 export const CatalogCard: React.FC<Props> = ({ petData }) => {
+  const { favorites } = useAppSelector(state => state.favorite);
+  const dispatch = useAppDispatch();
   const [picture, setPicture] = useState('');
+
+  const inFav = useMemo(
+    () => favorites.includes(petData.id),
+    [petData, favorites],
+  );
 
   useEffect(() => {
     if (petData.images.length < 1) {
@@ -39,27 +49,40 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
       </div>
 
       <div className={style.cardContent}>
-        <Heading size={4}>{petData.name}</Heading>
+        <Heading
+          size={4}
+          pt={3}
+          mb={1}
+        >
+          {petData.name}
+        </Heading>
 
         <div>
-          <p>{petData.breed}</p>
-          <p>{petData.age}</p>
+          <p>Breed: {petData.breed}</p>
+          <p>Age: {petData.age}</p>
         </div>
+      </div>
 
-        <div className={style.cardActions}>
-          <Button
-            rounded
-            color="primary"
-          >
-            Adopt
-          </Button>
-          <Button rounded>
-            <FontAwesomeIcon
-              icon={faHeart}
-              size="lg"
-            />
-          </Button>
-        </div>
+      <div className={style.cardActions}>
+        <Button
+          rounded
+          color="primary"
+        >
+          More Details
+        </Button>
+
+        <Button
+          rounded
+          onClick={() => {
+            dispatch(FavoriteAction.actions.toggle(petData.id));
+          }}
+        >
+          <FontAwesomeIcon
+            className={classNames({ 'has-text-danger': inFav })}
+            icon={faHeart}
+            size="lg"
+          />
+        </Button>
       </div>
     </div>
   );
