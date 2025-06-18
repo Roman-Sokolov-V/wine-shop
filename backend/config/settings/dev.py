@@ -49,10 +49,12 @@ INSTALLED_APPS = [
     "user",
     "drf_spectacular",
     "notification",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -189,7 +191,15 @@ EMAIL_HOST_PASSWORD = "7227dfef88f396"
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-# for prod
+##################################################################### for prod
 # EMAIL_HOST = os.getenv("EMAIL_HOST")z
 # EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Разрешаем доступ фронтенду с порта 3000
+]
+
+###################################################################### for prod  CORS_ALLOWED_ORIGINS need change with actual value
+
