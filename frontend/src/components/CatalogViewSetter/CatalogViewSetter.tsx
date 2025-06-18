@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { faAngleDown, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleDown,
+  faSearch,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
-import { Dropdown } from 'react-bulma-components';
+import { Button, Dropdown } from 'react-bulma-components';
 import { PageSize, SortOrder } from '../../types/ViewControlle';
 
 interface Props {
@@ -97,7 +101,26 @@ export const CatalogViewSetter: React.FC<Props> = ({
         </Dropdown>
       </div>
 
-      <div className="field is-flex has-addons ml-5 is-flex-grow-1">
+      <div className="field is-flex has-addons ml-5 is-flex-grow-1 is-align-items-center">
+        <Button
+          className={classNames('icon is-small is-left mr-1', {
+            'is-invisible': !query,
+          })}
+          color="danger"
+          colorVariant="light"
+          rounded
+          style={{ height: '90%', width: '36px' }}
+          onClick={() => {
+            setQuery('');
+            onSearch('');
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faXmark}
+            size="2x"
+            className={classNames('pl-1')}
+          />
+        </Button>
         <p className="control has-icons-left is-flex-grow-1">
           <input
             className="input"
@@ -108,6 +131,12 @@ export const CatalogViewSetter: React.FC<Props> = ({
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 onSearch(query);
+                return;
+              }
+              if (e.key === 'Escape') {
+                setQuery('');
+                onSearch('');
+                return;
               }
             }}
           />

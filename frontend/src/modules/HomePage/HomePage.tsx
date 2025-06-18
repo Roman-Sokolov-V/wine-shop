@@ -7,18 +7,27 @@ import classNames from 'classnames';
 import style from './HomePage.module.scss';
 import { HomeBanner1 } from '../../components/HomeBanner1';
 import { CatalogSlider } from '../../components/CatalogSlider';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import * as PetActions from '../../features/pets';
+import { useAppSelector } from '../../app/hooks';
 import { Pet } from '../../types/Pet';
-import { filterPetBy } from '../../utils/helperPet';
+import { filterPetBy, getRandomSampleFromArray } from '../../utils/helperPet';
 
 export const HomePage = () => {
   const { pets } = useAppSelector(state => state.pet);
   const [dogs, setDogs] = useState<Pet[]>([]);
   const [cats, setCats] = useState<Pet[]>([]);
   useEffect(() => {
-    setDogs(filterPetBy(pets, 'pet_type' as keyof Pet, 'dog'));
-    setCats(filterPetBy(pets, 'pet_type' as keyof Pet, 'cat'));
+    setDogs(
+      getRandomSampleFromArray(
+        filterPetBy(pets, 'pet_type' as keyof Pet, 'dog'),
+        10,
+      ),
+    );
+    setCats(
+      getRandomSampleFromArray(
+        filterPetBy(pets, 'pet_type' as keyof Pet, 'cat'),
+        10,
+      ),
+    );
   }, [pets]);
 
   return (

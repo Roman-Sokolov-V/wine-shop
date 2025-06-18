@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Filters } from '../../types/Filters';
 
 type Props = {
   filterData: Filters;
-  onChange: (fltr: Filters) => void;
+  onChange: (selectedFilters: Filters) => void;
 };
 
-const initialFilterState: Filters = {
-  type: [],
+const initialSelectedFilters: Filters = {
+  pet_type: [],
   minAge: null,
   maxAge: null,
   breed: [],
@@ -19,61 +19,48 @@ const initialFilterState: Filters = {
 };
 
 export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
-  const [filter, setFilter] = useState<Filters>(initialFilterState);
+  const [selectedFilters, setSelectedFilters] = useState<Filters>(
+    initialSelectedFilters,
+  );
 
-  useEffect(() => {
-    if (filterData) {
-      setFilter(filterData);
-    }
-  }, [filterData]);
-
-  // Toggles a value in a string array (for checkboxes).
   const handleCheckboxChange = (field: keyof Filters, value: string) => {
-    const currentValues = filter[field] as string[];
+    const currentValues = selectedFilters[field] as string[];
     const newValues = currentValues.includes(value)
-      ? currentValues.filter(item => item !== value) // Remove if it exists
-      : [...currentValues, value]; // Add if it doesn't
+      ? currentValues.filter(item => item !== value)
+      : [...currentValues, value];
 
-    setFilter({ ...filter, [field]: newValues });
+    setSelectedFilters({ ...selectedFilters, [field]: newValues });
   };
 
-  // Updates a number field, converting empty strings to null.
   const handleNumberChange = (field: keyof Filters, value: string) => {
     const numericValue = value === '' ? null : parseInt(value, 10);
-    setFilter({ ...filter, [field]: numericValue });
+    setSelectedFilters({ ...selectedFilters, [field]: numericValue });
   };
 
-  // Handles the multi-select dropdown for breeds.
-  const handleMultiSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedBreeds = Array.from(
+  const handleMultiSelectChange = (
+    field: keyof Filters,
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const selectedOptions = Array.from(
       e.target.selectedOptions,
       option => option.value,
     );
-    setFilter({ ...filter, breed: selectedBreeds });
+    setSelectedFilters({ ...selectedFilters, [field]: selectedOptions });
   };
 
-  // Handles text input for comma-separated values like 'coloration'.
-  const handleArrayInputChange = (field: keyof Filters, value: string) => {
-    const newValues = value
-      .split(',')
-      .map(s => s.trim())
-      .filter(Boolean);
-    setFilter({ ...filter, [field]: newValues });
-  };
-
-  // --- Handlers to communicate with the parent component ---
-
-  // When the form is submitted, call the parent's onChange with the new filters.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onChange(filter);
+    onChange(selectedFilters);
   };
 
-  // Reset the local form and notify the parent of the reset.
   const handleReset = () => {
-    setFilter(initialFilterState);
-    onChange(initialFilterState);
+    setSelectedFilters(initialSelectedFilters);
+    onChange(initialSelectedFilters);
   };
+
+  if (!filterData) {
+    return <div className="box">Loading filters...</div>;
+  }
 
   return (
     <div className="box">
@@ -82,15 +69,19 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
         <div className="field">
           <label className="label">Type of Pet</label>
           <div className="control">
-            {filter.type.map(type => (
+            {(filterData.pet_type || []).map(type => (
               <label
                 className="checkbox mr-4"
                 key={type}
               >
                 <input
                   type="checkbox"
-                  checked={filter.type.includes(type)}
-                  onChange={() => handleCheckboxChange('type', type)}
+                  checked={
+                    selectedFilters.pet_type
+                      ? selectedFilters.pet_type.includes(type)
+                      : false
+                  }
+                  onChange={() => handleCheckboxChange('pet_type', type)}
                 />
                 {` ${type}`}
               </label>
@@ -102,26 +93,26 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
           <label className="label">Age Range (Years)</label>
           <div className="field-body">
             <div className="field">
-              <div className="control">
+              <p className="control">
                 <input
                   className="input"
                   type="number"
                   placeholder="Min"
-                  value={filter.minAge ?? ''}
+                  value={selectedFilters.minAge ?? ''}
                   onChange={e => handleNumberChange('minAge', e.target.value)}
                 />
-              </div>
+              </p>
             </div>
             <div className="field">
-              <div className="control">
+              <p className="control">
                 <input
                   className="input"
                   type="number"
                   placeholder="Max"
-                  value={filter.maxAge ?? ''}
+                  value={selectedFilters.maxAge ?? ''}
                   onChange={e => handleNumberChange('maxAge', e.target.value)}
                 />
-              </div>
+              </p>
             </div>
           </div>
         </div>
@@ -133,11 +124,10 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
               <select
                 multiple
                 size={5}
-                value={filter.breed}
-                onChange={handleMultiSelectChange}
-                style={{ width: '100%' }}
+                value={selectedFilters.breed}
+                onChange={e => handleMultiSelectChange('breed', e)}
               >
-                {filter.breed.map(breed => (
+                {(filterData.breed || []).map(breed => (
                   <option
                     key={breed}
                     value={breed}
@@ -153,33 +143,44 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
         <div className="field">
           <label className="label">Coloration</label>
           <div className="control">
-            <input
-              className="input"
-              type="text"
-              placeholder="e.g. Black, White, Golden"
-              value={filter.coloration.join(', ')}
-              onChange={e =>
-                handleArrayInputChange('coloration', e.target.value)
-              }
-            />
+            <div className="select is-multiple is-fullwidth">
+              <select
+                multiple
+                size={5}
+                value={selectedFilters.coloration}
+                onChange={e => handleMultiSelectChange('coloration', e)}
+              >
+                {(filterData.coloration || []).map(color => (
+                  <option
+                    key={color}
+                    value={color}
+                  >
+                    {color}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <p className="help">Enter colors separated by commas</p>
         </div>
 
         <div className="field">
           <label className="label">Sex</label>
           <div className="control">
-            {filter.sex.map(sex => (
+            {(filterData.sex || []).map(sexOption => (
               <label
                 className="checkbox mr-4"
-                key={sex}
+                key={sexOption}
               >
                 <input
                   type="checkbox"
-                  checked={filter.sex.includes(sex)}
-                  onChange={() => handleCheckboxChange('sex', sex)}
+                  checked={
+                    selectedFilters.sex
+                      ? selectedFilters.sex.includes(sexOption)
+                      : false
+                  }
+                  onChange={() => handleCheckboxChange('sex', sexOption)}
                 />
-                {` ${sex}`}
+                {` ${sexOption}`}
               </label>
             ))}
           </div>
@@ -188,14 +189,18 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
         <div className="field">
           <label className="label">Sterilized</label>
           <div className="control">
-            {filter.isSterilized.map(option => (
+            {(filterData.isSterilized || []).map(option => (
               <label
                 className="checkbox mr-4"
                 key={option}
               >
                 <input
                   type="checkbox"
-                  checked={filter.isSterilized.includes(option)}
+                  checked={
+                    selectedFilters.isSterilized
+                      ? selectedFilters.isSterilized.includes(option)
+                      : false
+                  }
                   onChange={() => handleCheckboxChange('isSterilized', option)}
                 />
                 {` ${option}`}
@@ -208,30 +213,30 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
           <label className="label">Weight Range (kg)</label>
           <div className="field-body">
             <div className="field">
-              <div className="control">
+              <p className="control">
                 <input
                   className="input"
                   type="number"
                   placeholder="Min"
-                  value={filter.weightMin ?? ''}
+                  value={selectedFilters.weightMin ?? ''}
                   onChange={e =>
                     handleNumberChange('weightMin', e.target.value)
                   }
                 />
-              </div>
+              </p>
             </div>
             <div className="field">
-              <div className="control">
+              <p className="control">
                 <input
                   className="input"
                   type="number"
                   placeholder="Max"
-                  value={filter.weightMax ?? ''}
+                  value={selectedFilters.weightMax ?? ''}
                   onChange={e =>
                     handleNumberChange('weightMax', e.target.value)
                   }
                 />
-              </div>
+              </p>
             </div>
           </div>
         </div>
