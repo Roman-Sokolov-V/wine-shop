@@ -1,6 +1,5 @@
 from django.urls import path
-from rest_framework.authtoken import views
-from user.views import UserViewSet, LoginView
+from user.views import UserViewSet, LoginView, LogoutView
 
 app_name = "user"
 
@@ -17,10 +16,7 @@ user_detail = UserViewSet.as_view(
 urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("register/", user_create, name="register"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path("<pk>/", user_detail, name="user-detail"),
     path("", users_list, name="users-list"),
-
-]
-urlpatterns += [
-    path('api-token-auth/', views.obtain_auth_token)
 ]
