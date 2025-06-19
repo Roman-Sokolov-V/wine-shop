@@ -13,6 +13,9 @@ import client from '../../lib/apollos';
 import { ProtectedRoute } from '../../components/ProtectedRoute/ProtectedRoute';
 import { VALID_ROUTES } from '../../types/validRoutes';
 import { FavoritePage } from '../FavoritePage';
+import { PetInfoPage } from '../PetInfoPage';
+import { LogInPage } from '../LogInPage';
+import { RegisterPage } from '../RegisterPage';
 
 export const Root = () => {
   return (
@@ -50,12 +53,21 @@ export const Root = () => {
 
             <Route
               path={VALID_ROUTES.LOGIN}
-              element={<p>Login</p>}
+              element={<LogInPage />}
             />
 
             <Route
               path={VALID_ROUTES.LOGOUT}
               element={<p>Logout</p>}
+            />
+            <Route
+              path={VALID_ROUTES.REGISTER}
+              element={<RegisterPage />}
+            />
+
+            <Route
+              path="/pet/:id"
+              element={<PetInfoPage />}
             />
 
             <Route element={<ProtectedRoute />}>

@@ -7,6 +7,7 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import * as FavoriteAction from '../../features/favorites';
 import classNames from 'classnames';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   petData: Pet;
@@ -14,6 +15,7 @@ interface Props {
 export const CatalogCard: React.FC<Props> = ({ petData }) => {
   const { favorites } = useAppSelector(state => state.favorite);
   const dispatch = useAppDispatch();
+  const naviagate = useNavigate();
   const [picture, setPicture] = useState('');
 
   const inFav = useMemo(
@@ -67,6 +69,9 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
         <Button
           rounded
           color="primary"
+          onClick={() => {
+            naviagate(`/pet/${petData.id}`);
+          }}
         >
           More Details
         </Button>

@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { CatalogList } from '../../components/CatalogList';
 import { Button } from 'react-bulma-components';
 import style from './Favorite.module.scss';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { actions as FavoriteAction } from '../../features/favorites';
-import { Pet } from '../../types/Pet';
 
 export const FavoritePage = () => {
   const { favorites } = useAppSelector(state => state.favorite);

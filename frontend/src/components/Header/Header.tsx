@@ -10,6 +10,7 @@ import { faUser, faPaw } from '@fortawesome/free-solid-svg-icons';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { actions as menuActions } from '../../features/mobilMenu';
+import { AcountLinkHeader } from '../AcountLinkHeader';
 
 export const Header = () => {
   const { visible: mobileMenuVisible } = useAppSelector(
@@ -220,63 +221,8 @@ export const Header = () => {
             )}
           </Navbar.Item>
 
-          <Navbar.Item
-            hoverable
-            onClick={() => onLinkClick('/account')}
-          >
-            {!mobileMenuVisible ? (
-              <>
-                <Navbar.Link
-                  arrowless
-                  className={classNames('p-0', {
-                    [style.custom_hover]: !mobileMenuVisible,
-                    [style.header_txt]: mobileMenuVisible,
-                  })}
-                >
-                  <span
-                    className={classNames(
-                      'icon-text has-text-link',
-                      'is-align-items-center',
-                      'is-flex-direction-column',
-                      style.icon_text_header,
-                    )}
-                  >
-                    <span className={classNames('icon')}>
-                      <FontAwesomeIcon
-                        icon={faUser}
-                        size="2x"
-                        className={classNames('has-text-black')}
-                      />
-                    </span>
-
-                    <span className={classNames('has-text-black')}>
-                      Account
-                    </span>
-                  </span>
-                </Navbar.Link>
-
-                <Navbar.Dropdown right>
-                  <Navbar.Item>
-                    <Navbar.Link arrowless>
-                      <Link to="/login">Login</Link>
-                    </Navbar.Link>
-                  </Navbar.Item>
-
-                  <Navbar.Item href="#">
-                    <Navbar.Link arrowless>
-                      <Link to="/signup">Signup</Link>
-                    </Navbar.Link>
-                  </Navbar.Item>
-                </Navbar.Dropdown>
-              </>
-            ) : (
-              <Button
-                rounded
-                className={style.header_txt}
-              >
-                Account
-              </Button>
-            )}
+          <Navbar.Item hoverable>
+            <AcountLinkHeader />
           </Navbar.Item>
         </Navbar.Container>
       </Navbar.Menu>

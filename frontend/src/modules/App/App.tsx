@@ -36,7 +36,7 @@ function App() {
       .catch(e => {
         setError(e?.message ? e.message : 'Error Occured');
       })
-      .then(() => setLoading(false));
+      .finally(() => setLoading(false));
 
     dispatch(FavActions.actions.init());
   }, []);
