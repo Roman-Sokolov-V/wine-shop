@@ -74,6 +74,6 @@ class PetViewSet(viewsets.ModelViewSet):
 class UploadImageView(generics.ListCreateAPIView):
     queryset = Image.objects.all()
     serializer_class = UploadImageSerializer
-    permissions = permissions.IsAdminUser
+    permission_classes = [permissions.IsAdminUser]
 
 
