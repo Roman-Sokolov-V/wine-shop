@@ -66,3 +66,13 @@ class UploadImageView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAdminUser]
 
 
+class AddToFavoriteView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Pet.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        user = request.user
+        user.favorites.add(obj)
+        user.save()
+        return Response(status=status.HTTP_200_OK)
