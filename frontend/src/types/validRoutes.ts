@@ -3,9 +3,9 @@ export enum VALID_ROUTES {
   CATALOG = 'catalog',
   FAVORITES = 'favorites',
   LOGIN = 'login',
-  LOGOUT = 'logout',
   REGISTER = 'register',
   ACCOUNT = 'account',
   CONTACT_US = 'contact-us',
   DONATE = 'donate',
+  HOW_TO_HELP = 'how-to-help',
 }

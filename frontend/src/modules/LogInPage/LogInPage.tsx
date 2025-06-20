@@ -31,7 +31,7 @@ export const LogInPage = () => {
     }
 
     setLoading(true);
-    setError(''); // Clear previous errors
+    setError('');
     login(email, password)
       .then((res: AxiosResponse) => {
         const token = res.data;
@@ -112,6 +112,12 @@ export const LogInPage = () => {
                     name="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        handleSubmit(e);
+                        return;
+                      }
+                    }}
                     required
                   />
                 </div>

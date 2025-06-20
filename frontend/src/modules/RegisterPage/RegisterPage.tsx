@@ -18,6 +18,7 @@ export const RegisterPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [error, setError] = useState('');
@@ -28,6 +29,11 @@ export const RegisterPage = () => {
 
     if (!email || !password) {
       setError('Email and Passord are mandatory fields');
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      setError("Passwords you entered doesn't match");
       return;
     }
 
@@ -138,10 +144,25 @@ export const RegisterPage = () => {
                   <input
                     className="input"
                     type="password"
-                    placeholder="Enter your phone number"
+                    placeholder="Enter your password"
                     name="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="field">
+                <label className="label">Confirm Password</label>
+                <div className="control">
+                  <input
+                    className="input"
+                    type="password"
+                    placeholder="Please consfirm your password"
+                    name="passwordConsfirm"
+                    value={passwordConfirm}
+                    onChange={e => setPasswordConfirm(e.target.value)}
                     required
                   />
                 </div>
