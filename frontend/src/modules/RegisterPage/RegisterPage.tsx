@@ -7,12 +7,10 @@ import {
   Heading,
 } from 'react-bulma-components';
 import { useNavigate } from 'react-router-dom';
-import { login, register } from '../../api/auth';
+import { register } from '../../api/auth';
 import { AxiosError, AxiosResponse } from 'axios';
 import { ModalLoader } from '../../components/ModalLoader';
 import { ModalError } from '../../components/ModalError';
-import { useDispatch } from 'react-redux';
-import { actions as AuthAction } from '../../features/authentication';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();

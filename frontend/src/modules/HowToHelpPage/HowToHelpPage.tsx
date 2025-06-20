@@ -14,6 +14,14 @@ export const HowToHelpPage = () => {
       <Columns centered>
         <Columns.Column size="four-fifths">
           <Box>
+            <figure className="image is-2by1 mb-5">
+              <img
+                src="https://placehold.co/1200x600/A8D5E2/4F646F?text=Be+Their+Hero"
+                alt="A banner showing happy pets"
+                style={{ borderRadius: '8px' }}
+              />
+            </figure>
+
             <Heading className="has-text-centered">How You Can Help</Heading>
             <Content>
               <p className="is-size-5 has-text-centered">

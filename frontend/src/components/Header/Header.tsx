@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useEffect } from 'react';
 import style from './Header.module.scss';
 import classNames from 'classnames';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Navbar } from 'react-bulma-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPaw } from '@fortawesome/free-solid-svg-icons';
+import { faPaw } from '@fortawesome/free-solid-svg-icons';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { actions as menuActions } from '../../features/mobilMenu';

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import style from './App.module.scss';
 import '../../styles/main.scss';
 import { Outlet } from 'react-router-dom';
-import { Section, Container } from 'react-bulma-components';
+import { Container } from 'react-bulma-components';
 import classNames from 'classnames';
 import { Header } from '../../components/Header';
 
@@ -15,6 +15,7 @@ import { ModalLoader } from '../../components/ModalLoader';
 import { ModalError } from '../../components/ModalError';
 import * as PetActions from '../../features/pets';
 import * as FavActions from '../../features/favorites';
+import { AIAgent } from '../../components/AIAgent/AIAgent';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -78,6 +79,7 @@ function App() {
       {!mobileMenuVisible && <FooterElem />}
 
       <ScrollToTop />
+      <AIAgent />
     </Container>
   );
 }
