@@ -24,7 +24,8 @@ class UserSerializer(serializers.ModelSerializer):
             "is_staff",
             "is_superuser",
             "date_joined",
-            "is_active"
+            "is_active",
+            "favorites"
         )
         extra_kwargs = {
             "id": {"read_only": True},
@@ -32,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_superuser": {"read_only": True},
             "date_joined": {"read_only": True},
             "is_active": {"read_only": True},
+            "favorites": {"read_only": True},
             "password": {"write_only": True, "min_length": 5},
             "email": {"required": True},
         }
