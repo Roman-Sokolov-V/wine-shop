@@ -1,9 +1,9 @@
 import django_filters
-
 from pet.models import Pet
 
 
 class PetFilter(django_filters.FilterSet):
+
     weight__gt = django_filters.NumberFilter(field_name="weight", lookup_expr="gt")
     weight__lt = django_filters.NumberFilter(field_name="weight", lookup_expr="lt")
     weight__gte = django_filters.NumberFilter(field_name="weight",
@@ -33,6 +33,20 @@ class PetFilter(django_filters.FilterSet):
         label="Created on or before"
     )
 
+
     class Meta:
         model = Pet
-        fields = ["weight", "age", "date_created"]
+        fields = [
+            "id",
+            "name",
+            "pet_type",
+            "age",
+            "breed",
+            "sex",
+            "coloration",
+            "weight",
+            "is_sterilized",
+            "owner",
+            "weight",
+            "date_created"
+        ]
