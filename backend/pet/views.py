@@ -16,18 +16,7 @@ class PetViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = PetFilter
-    filterset_fields = [
-        "id",
-        "name",
-        "pet_type",
-        "age",
-        "breed",
-        "sex",
-        "coloration",
-        "weight",
-        "is_sterilized",
-        "owner",
-        ]
+
     search_fields = [
         "id",
         "name",
