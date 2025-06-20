@@ -25,6 +25,7 @@ class Pet(models.Model):
     description = models.TextField(null=True, blank=True)
     date_created = models.DateField(auto_now_add=True)
     owner = models.ForeignKey(User, null=True, blank=True, related_name="pets", on_delete=models.PROTECT)
+    users_like = models.ManyToManyField(User, related_name="favorites", blank=True)
 
     class Meta:
         verbose_name_plural = "pets"
