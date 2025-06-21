@@ -3,9 +3,12 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 from pet.models import Pet
+from user.models import TempToken
+
+from django.conf import settings
 
 User = get_user_model()
-
+restore_form_url = settings.FRONT_HOST + settings.RESTORE_FORM_URL
 
 def notify_we_found_pet_for_you(pet: Pet, user: User):
 
@@ -22,7 +25,7 @@ def notify_we_found_pet_for_you(pet: Pet, user: User):
     msg = EmailMultiAlternatives(
         "We have found a pet for you!",
         text_content,
-        "from@example.com",
+        settings.DEFAULT_FROM_EMAIL,
         [user.email],
         headers={"List-Unsubscribe": "<mailto:unsub@example.com>"},
     )
@@ -30,10 +33,25 @@ def notify_we_found_pet_for_you(pet: Pet, user: User):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
-def main():
-    pet = Pet.objects.first()
-    user = User.objects.first()
-    notify_we_found_pet_for_you(pet, user)
+def send_email_restore_password_token(token: TempToken.key, user: User):
 
-if __name__ == "__main__":
-    main()
+    text_content = render_to_string(
+        "emails/restore_password.txt",
+        context={"token": token, "site_url": restore_form_url},
+    )
+
+    html_content = render_to_string(
+        "emails/restore_password.html",
+        context={"token": token, "site_url": restore_form_url},
+    )
+
+    msg = EmailMultiAlternatives(
+        "Password Restore",
+        text_content,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        headers={"List-Unsubscribe": "<mailto:unsub@example.com>"},
+    )
+
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()

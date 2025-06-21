@@ -196,22 +196,21 @@ SPECTACULAR_SETTINGS = {
 
 # Mail conf
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "sandbox.smtp.mailtrap.io"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "5c6b085a53cf80"
-EMAIL_HOST_PASSWORD = "7227dfef88f396"
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-##################################################################### for prod
-# EMAIL_HOST = os.getenv("EMAIL_HOST")z
-# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = "Pet Shelter <noreply@petshelter.com>"
+
 
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Разрешаем доступ фронтенду с порта 3000
-]
+]  ###################################################################### for prod  CORS_ALLOWED_ORIGINS need change with actual value
 
-###################################################################### for prod  CORS_ALLOWED_ORIGINS need change with actual value
-
+# Front
+FRONT_HOST = os.getenv("FRONT_HOST")
+RESTORE_FORM_URL = os.getenv("RESTORE_FORM_URL")

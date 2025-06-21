@@ -81,9 +81,9 @@ DELETE http://127.0.0.1:8000/api/v1/users/id/ - delete user by id (staff only)
 
 
 
-
-
-
-
-
+## Mail service
+Sign Up https://mailtrap.io and select Sandbox  
+Open Settings by backend/config/settings/dev.py  
+Find Section # Mail conf  
+Edit EMAIL_HOST_USER and EMAIL_HOST_PASSWORD values provided by Mailtrap service when registering
 

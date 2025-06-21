@@ -121,3 +121,5 @@ class UploadImagesSerializer(serializers.Serializer):
     files = FileSerializer(many=True)
 
 
+class EmptySerializer(serializers.Serializer):
+    pass
