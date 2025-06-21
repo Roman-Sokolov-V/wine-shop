@@ -16,18 +16,7 @@ class PetViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = PetFilter
-    filterset_fields = [
-        "id",
-        "name",
-        "pet_type",
-        "age",
-        "breed",
-        "sex",
-        "coloration",
-        "weight",
-        "is_sterilized",
-        "owner",
-        ]
+
     search_fields = [
         "id",
         "name",
@@ -74,6 +63,16 @@ class PetViewSet(viewsets.ModelViewSet):
 class UploadImageView(generics.ListCreateAPIView):
     queryset = Image.objects.all()
     serializer_class = UploadImageSerializer
-    permissions = permissions.IsAdminUser
+    permission_classes = [permissions.IsAdminUser]
 
 
+class AddToFavoriteView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Pet.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        user = request.user
+        user.favorites.add(obj)
+        user.save()
+        return Response(status=status.HTTP_200_OK)
