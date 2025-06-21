@@ -1,6 +1,11 @@
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+
+from user.models import TempToken
+from django.conf import settings
 
 
 User = get_user_model()
@@ -66,6 +71,7 @@ class LoginSerializer(serializers.Serializer):
     is_active = serializers.BooleanField(read_only=True)
     date_joined = serializers.DateTimeField(read_only=True)
 
+
     def validate(self, attrs):
         email = attrs.get('email')
         password = attrs.get('password')
@@ -81,4 +87,57 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code='authorization')
 
         attrs['user'] = user
+        return attrs
+
+
+class TempTokenSerializer(serializers.Serializer):
+    email = serializers.CharField(
+        #label=_("Email address"),
+        write_only=True
+    )
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(
+                "Not a valid email address."
+            )
+        attrs["user"] = user
+        return attrs
+
+class UpdatePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(
+        label=_("Password"),
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True,
+        required = True,
+        min_length = 5,
+    )
+    token = serializers.CharField(write_only=True, required=True)
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
+
+    def validate(self, attrs):
+        token = attrs.get("token")
+
+        try:
+            temp_token = TempToken.objects.get(key=token)
+        except TempToken.DoesNotExist:
+            raise serializers.ValidationError(
+                "Token not found in database"
+            )
+
+        if timezone.now() > temp_token.created + timedelta(hours=1):
+            if settings.DEBUG:
+                raise serializers.ValidationError("Restore token has expired")
+            else:
+                raise serializers.ValidationError(
+                    "Token is not valid, or user does not exist")
+        attrs["temp_token"] = temp_token
         return attrs
