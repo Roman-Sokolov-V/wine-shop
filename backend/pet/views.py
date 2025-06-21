@@ -8,7 +8,11 @@ from rest_framework.response import Response
 from notification.notification import notify_we_found_pet_for_you
 from pet.filters import PetFilter
 from pet.models import Pet, Image
-from pet.serializers import PetSerializer, UploadImageSerializer
+from pet.serializers import (
+    PetSerializer,
+    UploadImageSerializer,
+    EmptySerializer
+)
 
 
 class PetViewSet(viewsets.ModelViewSet):
@@ -67,8 +71,10 @@ class UploadImageView(generics.ListCreateAPIView):
 
 
 class AddToFavoriteView(generics.GenericAPIView):
+    """Add a pet to the authenticated user's favorites."""
     permission_classes = [permissions.IsAuthenticated]
     queryset = Pet.objects.all()
+    serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
         obj = self.get_object()
