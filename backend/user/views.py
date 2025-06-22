@@ -81,7 +81,7 @@ class LogoutView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Logs out the authenticated user by deleting their token.
+        Logout the authenticated user by deleting their token.
         """
         try:
             token = Token.objects.get(user=request.user)

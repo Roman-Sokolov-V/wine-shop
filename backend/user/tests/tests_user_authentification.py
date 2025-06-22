@@ -283,6 +283,24 @@ class AuthenticatedUserTestCase(TestCase):
             status.HTTP_200_OK,
             response.status_code
         ), "authenticated user should be able to logout"
+        self.assertEqual(
+            "Successfully logged out.",
+            response.json()["detail"]
+        )
+
+    def test_logout_user_if_token_missed(self):
+        self.token.delete()
+        response = self.client.post(reverse("user:logout"))
+        print(response.json())
+        self.assertEqual(
+            status.HTTP_400_BAD_REQUEST,
+            response.status_code
+        )
+        self.assertEqual(
+            'Token not found for user.',
+            response.json()["detail"]
+        )
+
 
     def test_me(self):
         response = self.client.get(reverse("user:me"))
@@ -340,7 +358,6 @@ class AuthenticatedUserTestCase(TestCase):
             reverse("user:update-password"),
             data={"token": invalid_token, "password": "<updatedPASSWORD>"}
         )
-        print(response.json())
         self.assertEqual(
             status.HTTP_400_BAD_REQUEST,
             response.status_code
@@ -353,7 +370,6 @@ class AuthenticatedUserTestCase(TestCase):
             reverse("user:update-password"),
             data={"token": self.temp_token.key, "password": "<updatedPASSWORD>"}
         )
-        print(response.json())
         self.assertEqual(
             status.HTTP_400_BAD_REQUEST,
             response.status_code
@@ -535,7 +551,6 @@ class StaffUserTestCase(TestCase):
             reverse("user:update-password"),
             data={"token": invalid_token, "password": "<updatedPASSWORD>"}
         )
-        print(response.json())
         self.assertEqual(
             status.HTTP_400_BAD_REQUEST,
             response.status_code
@@ -548,7 +563,6 @@ class StaffUserTestCase(TestCase):
             reverse("user:update-password"),
             data={"token": self.temp_token.key, "password": "<updatedPASSWORD>"}
         )
-        print(response.json())
         self.assertEqual(
             status.HTTP_400_BAD_REQUEST,
             response.status_code
