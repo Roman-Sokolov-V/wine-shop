@@ -22,18 +22,19 @@ Docker version 24.8.6, build ...
 
 ### Run the Backend in Docker
 
-1. Rename the file `.env.sample` to `.env`.
-2. ⚠️ **IMPORTANT:** After every `git pull develop`, always check for changes in the `.env` file.
+~~1. Rename the file `.env.sample` to `.env`.~~  
+~~2. ⚠️ **IMPORTANT:** After every `git pull develop`, always check for changes in the `.env` file.~~  
 3. Navigate to the backend directory:
-
+~~
    ```bash
    cd backend/
    ```
 4. Start the containers:
 
-   ```bash
-   docker compose up --build
-   ```
+~~docker compose up --build~~
+```  bash
+   python run.py
+```
 5. When finished working, stop the containers:
 
    ```bash
