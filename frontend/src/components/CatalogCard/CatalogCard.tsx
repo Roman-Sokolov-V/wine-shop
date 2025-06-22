@@ -79,7 +79,7 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
         <Button
           rounded
           onClick={() => {
-            dispatch(FavoriteAction.actions.toggle(petData.id));
+            dispatch(FavoriteAction.toggle(petData.id));
           }}
         >
           <FontAwesomeIcon

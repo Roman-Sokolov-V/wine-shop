@@ -16,6 +16,7 @@ import { ModalError } from '../../components/ModalError';
 import * as PetActions from '../../features/pets';
 import * as FavActions from '../../features/favorites';
 import { AIAgent } from '../../components/AIAgent/AIAgent';
+import { getUserMe } from '../../api/users';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -39,7 +40,20 @@ function App() {
       })
       .finally(() => setLoading(false));
 
-    dispatch(FavActions.actions.init());
+    setLoading(true);
+
+    getUserMe()
+      .then(res => {
+        if (res?.data?.favorites) {
+          dispatch(FavActions.init(res?.data?.favorites.map(parseInt)));
+        } else {
+          dispatch(FavActions.init([]));
+        }
+      })
+      .catch(e => {
+        setError(e?.message ? e.message : 'Error Occured');
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   if (error) {

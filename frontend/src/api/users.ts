@@ -11,10 +11,10 @@ export const getUserData = (): Promise<AxiosResponse> => {
   });
 };
 
-export const getUser = (): Promise<AxiosResponse> => {
-  return api.get(`api/v1/users/`, {
+export const getUserMe = (): Promise<AxiosResponse> => {
+  return api.get(`api/v1/users/me`, {
     headers: {
-      Authorization: '',
+      Authorization: `Token ${accessLocalStorage.get(LocalAccessKeys.LOGGEDIN)?.token}`,
     },
   });
 };

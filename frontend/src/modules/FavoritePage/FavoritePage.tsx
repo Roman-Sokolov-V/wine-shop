@@ -4,7 +4,9 @@ import { Button } from 'react-bulma-components';
 import style from './Favorite.module.scss';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { actions as FavoriteAction } from '../../features/favorites';
+import FavoriteAction, {
+  clear as clearFavorite,
+} from '../../features/favorites';
 
 export const FavoritePage = () => {
   const { favorites } = useAppSelector(state => state.favorite);
@@ -28,7 +30,7 @@ export const FavoritePage = () => {
             color="danger"
             colorVariant="light"
             className="is-flex-grow-1 m-5"
-            onClick={() => dispatch(FavoriteAction.clear())}
+            onClick={() => dispatch(clearFavorite())}
           >
             Clear Favorites
           </Button>

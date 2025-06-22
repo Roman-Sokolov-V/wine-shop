@@ -7,7 +7,7 @@ import { CatalogViewSetter } from '../../components/CatalogViewSetter';
 import { CatalogFilter } from '../../components/CatalogFilter';
 import { Columns, Pagination } from 'react-bulma-components';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { QueryNames, SortOrder } from '../../types/ViewControlle';
 import * as PetsAction from '../../features/pets';
 import { getAvaliableFilters } from '../../utils/helperPet';

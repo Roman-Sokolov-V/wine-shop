@@ -26,8 +26,10 @@ import {
 import { AppointmentModal } from '../../components/AppointmentModal';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import * as FavoriteAction from '../../features/favorites';
 import classNames from 'classnames';
+import FavoriteAction, {
+  toggle as toggleFavote,
+} from '../../features/favorites';
 
 interface AppointmentFormData {
   name: string;
@@ -156,7 +158,7 @@ export const PetInfoPage = () => {
               <Button
                 rounded
                 onClick={() => {
-                  dispatch(FavoriteAction.actions.toggle(pet.id));
+                  dispatch(toggleFavote(pet.id));
                 }}
               >
                 <FontAwesomeIcon

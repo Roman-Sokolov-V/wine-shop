@@ -22,6 +22,6 @@ export const accessLocalStorage = {
   },
 
   clearKey(key: LocalAccessKeys) {
-    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
   },
 };
