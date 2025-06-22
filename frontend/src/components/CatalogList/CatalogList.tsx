@@ -11,7 +11,10 @@ export const CatalogList: React.FC<Props> = ({ pets }) => {
   }
 
   return (
-    <div className="grid is-col-min-10">
+    <div
+      className="grid is-col-min-9 is-gap-2"
+      style={{ width: '100%' }}
+    >
       {pets.map((itm, indx) => {
         return (
           <div

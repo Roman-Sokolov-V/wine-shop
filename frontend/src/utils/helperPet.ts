@@ -1,4 +1,12 @@
+import { Filters } from '../types/Filters';
 import { Pet } from '../types/Pet';
+
+function capitalizeFirstLetter(str: string) {
+  if (str.length === 0) {
+    return ''; // Handle empty strings
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 export function filterPetBy(pets: Pet[], filterName: keyof Pet, value: string) {
   if (pets.length === 0) {
@@ -18,16 +26,18 @@ export function searchPets(pets: Pet[], query: string) {
     return [];
   }
 
-  return pets.filter(pet => {
+  const filted = pets.filter(pet => {
     const bulkTxt = Object.values(pet).join(' ').toLocaleLowerCase();
     return bulkTxt.includes(query.toLocaleLowerCase());
   });
+
+  return filted;
 }
 
-export function getAvaliableFilters(data: Pet[]) {
+export function getAvaliableFilters(data: Pet[]): Filters {
   if (!data.length) {
     return {
-      type: [],
+      pet_type: [],
       minAge: 0,
       maxAge: 99,
       breed: [],
@@ -39,14 +49,43 @@ export function getAvaliableFilters(data: Pet[]) {
     };
   }
   return {
-    type: Array.from(new Set(data.map(itm => itm.pet_type))),
+    pet_type: Array.from(
+      new Set(data.map(itm => capitalizeFirstLetter(itm.pet_type))),
+    ),
     minAge: Math.min(...data.map(itm => itm.age)),
     maxAge: Math.max(...data.map(itm => itm.age)),
-    breed: Array.from(new Set(data.map(itm => itm.breed))),
-    sex: ['Male', 'Female', 'UnKnown'],
-    coloration: Array.from(new Set(data.map(itm => itm.coloration))),
+    breed: Array.from(
+      new Set(data.map(itm => capitalizeFirstLetter(itm.breed))),
+    ),
+    sex: ['Male', 'Female', 'Unknown'],
+    coloration: Array.from(
+      new Set(data.map(itm => capitalizeFirstLetter(itm.coloration))),
+    ),
     weightMin: Math.min(...data.map(itm => itm.weight)),
     weightMax: Math.max(...data.map(itm => itm.weight)),
     isSterilized: ['Yes', 'No', 'Unknown'],
   };
+}
+
+export function getRandomSampleFromArray<T>(inputArray: T[], quantity: number) {
+  if (inputArray.length <= quantity) {
+    return [...inputArray];
+  } else {
+    const shuffled = [...inputArray];
+
+    let currentIndex = shuffled.length;
+    let randomIndex;
+
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [shuffled[currentIndex], shuffled[randomIndex]] = [
+        shuffled[randomIndex],
+        shuffled[currentIndex],
+      ];
+    }
+
+    return shuffled.slice(0, quantity);
+  }
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import style from './App.module.scss';
 import '../../styles/main.scss';
 import { Outlet } from 'react-router-dom';
-import { Section, Container } from 'react-bulma-components';
+import { Container } from 'react-bulma-components';
 import classNames from 'classnames';
 import { Header } from '../../components/Header';
 
@@ -14,6 +14,8 @@ import { getPetsData } from '../../api/pets';
 import { ModalLoader } from '../../components/ModalLoader';
 import { ModalError } from '../../components/ModalError';
 import * as PetActions from '../../features/pets';
+import * as FavActions from '../../features/favorites';
+import { AIAgent } from '../../components/AIAgent/AIAgent';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -35,7 +37,9 @@ function App() {
       .catch(e => {
         setError(e?.message ? e.message : 'Error Occured');
       })
-      .then(() => setLoading(false));
+      .finally(() => setLoading(false));
+
+    dispatch(FavActions.actions.init());
   }, []);
 
   if (error) {
@@ -53,7 +57,7 @@ function App() {
   }
 
   return (
-    <Section
+    <Container
       className={classNames(
         'p-0 is-flex is-flex-direction-column has-background-white',
         style.app,
@@ -61,14 +65,13 @@ function App() {
           [style.menu_visible]: mobileMenuVisible,
         },
       )}
-      size="full"
     >
-      <Container>
+      <div>
         <Header />
-      </Container>
+      </div>
 
       {!mobileMenuVisible && (
-        <Container className={classNames(style.main_container)}>
+        <Container className={'is-flex'}>
           <Outlet />
         </Container>
       )}
@@ -76,7 +79,8 @@ function App() {
       {!mobileMenuVisible && <FooterElem />}
 
       <ScrollToTop />
-    </Section>
+      <AIAgent />
+    </Container>
   );
 }
 

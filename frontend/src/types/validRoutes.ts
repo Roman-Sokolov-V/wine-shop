@@ -1,11 +1,11 @@
 export enum VALID_ROUTES {
   HOME = 'home',
   CATALOG = 'catalog',
+  FAVORITES = 'favorites',
   LOGIN = 'login',
-  FORGET_PASSWORD = 'login/forget-password',
-  SET_PASSWORD = 'set-password',
-  LOGOUT = 'logout',
+  REGISTER = 'register',
   ACCOUNT = 'account',
   CONTACT_US = 'contact-us',
   DONATE = 'donate',
+  HOW_TO_HELP = 'how-to-help',
 }

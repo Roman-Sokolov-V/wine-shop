@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Pet } from '../../types/Pet';
 import { ModalError } from '../../components/ModalError';
 import { ModalLoader } from '../../components/ModalLoader';
@@ -11,6 +11,19 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { QueryNames, SortOrder } from '../../types/ViewControlle';
 import * as PetsAction from '../../features/pets';
 import { getAvaliableFilters } from '../../utils/helperPet';
+import { Filters } from '../../types/Filters';
+
+const filterKeys: (keyof Filters)[] = [
+  'pet_type',
+  'minAge',
+  'maxAge',
+  'breed',
+  'sex',
+  'coloration',
+  'weightMin',
+  'weightMax',
+  'isSterilized',
+];
 
 function genPages(items: Pet[], perPage: string) {
   if (perPage === 'all') {
@@ -42,85 +55,98 @@ export const CatalogPage = () => {
   const dispatch = useAppDispatch();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [prevSearchParams, setPrevSearchParams] = useState<string>(
-    searchParams.toString(),
-  );
-  const location = useLocation();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const [pages, setPages] = useState<Pet[][]>([]);
-  const [curPage, setCurPage] = useState(0);
-  const [strQuery, setStrQuery] = useState('');
-  const [sorted, setSorted] = useState<SortOrder>('acc');
+  // Get current values from URL or set defaults. This makes the URL the source of truth.
+  const currentPage = parseInt(
+    searchParams.get(QueryNames.CUR_PAGE) || '1',
+    10,
+  );
+  const itemsPerPage = searchParams.get(QueryNames.PER_PAGE) || '10';
 
-  const [filters, setFilters] = useState<any>(undefined);
-  const [petsToShow, setPetsToShow] = useState<Pet[]>([]);
+  const availableFilters = useMemo(() => getAvaliableFilters(pets), [pets]);
 
-  useEffect(() => {
-    if (!searchParams.get(QueryNames.CUR_PAGE)) {
-      updateSearchParams(QueryNames.CUR_PAGE, '1');
-    }
-    if (!searchParams.get(QueryNames.PER_PAGE)) {
-      updateSearchParams(QueryNames.PER_PAGE, '10');
-    }
-    setFilters(getAvaliableFilters(pets));
-    setCurPage(1);
-  }, []);
+  const pages = useMemo(() => {
+    return genPages(filteredPets, itemsPerPage);
+  }, [filteredPets, itemsPerPage]);
+
+  const petsToShow = pages[currentPage - 1] || [];
 
   useEffect(() => {
-    const x = new URLSearchParams(prevSearchParams);
-    handlePerPageChange(searchParams.get(QueryNames.PER_PAGE));
-    handleSortChange(
-      (searchParams.get(QueryNames.SORTED) || 'acc') as keyof SortOrder,
-    );
-    handleSearch(searchParams.get(QueryNames.QUERY) || '');
-  }, [searchParams]);
+    const query = searchParams.get(QueryNames.QUERY) || '';
+    const sortOrder =
+      (searchParams.get(QueryNames.SORTED) as SortOrder) || 'acc';
+    const currentFilters: Partial<Filters> = {};
 
-  useEffect(() => {
-    // handlePageChange(1);
-    setPages(
-      genPages(
-        filteredPets,
-        (searchParams.get(QueryNames.PER_PAGE) ?? '10').toString(),
-      ),
-    );
-  }, [filteredPets]);
-
-  function updateSearchParams(key: string, val: string | number) {
-    setPrevSearchParams(searchParams.toString());
-    const newSearchParams = new URLSearchParams(searchParams);
-    if (!val) {
-      newSearchParams.delete(String(key));
-      setSearchParams(newSearchParams);
-      return;
+    for (const key of filterKeys) {
+      const values = searchParams.getAll(key);
+      if (values.length > 0) {
+        // Handle single number values vs multi-value arrays
+        if (
+          key === 'minAge' ||
+          key === 'maxAge' ||
+          key === 'weightMin' ||
+          key === 'weightMax'
+        ) {
+          currentFilters[key] = parseInt(values[0], 10);
+        } else {
+          currentFilters[key] = values;
+        }
+      }
     }
 
-    newSearchParams.set(key, val.toString());
-    setSearchParams(newSearchParams);
+    dispatch(PetsAction.actions.search(query));
+    dispatch(PetsAction.actions.sortFiltered(sortOrder));
+    dispatch(PetsAction.actions.applyFilter(currentFilters as Filters));
+  }, [searchParams, dispatch]);
+
+  function handleQueryChange(newQuery: string) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(QueryNames.QUERY, newQuery);
+    newParams.set(QueryNames.CUR_PAGE, '1');
+    setSearchParams(newParams);
   }
 
-  function handleSearch(query: string) {
-    dispatch(PetsAction.actions.searchFilted(query));
-  }
-
-  function handlePerPageChange(count: string | null) {
-    if (!count) {
-      setPages(genPages(filteredPets, '10'));
-      return;
+  function handleFilterChange(filters: Filters) {
+    const newParams = new URLSearchParams(searchParams);
+    for (const key of Object.keys(availableFilters)) {
+      newParams.delete(key);
     }
-    setPages(genPages(filteredPets, count));
+
+    for (const [key, value] of Object.entries(filters)) {
+      if (Array.isArray(value) && value.length > 0) {
+        value.forEach(item => {
+          newParams.append(key, item);
+        });
+      } else if (!Array.isArray(value) && value !== null) {
+        newParams.set(key, String(value));
+      }
+    }
+
+    newParams.set(QueryNames.CUR_PAGE, '1');
+    setSearchParams(newParams);
   }
 
-  function handleSortChange(order: keyof SortOrder) {
-    dispatch(PetsAction.actions.sortFiltered(order.toString()));
+  function handleSortChange(newOrder: SortOrder) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(QueryNames.SORTED, newOrder);
+    setSearchParams(newParams);
   }
 
-  function handlePageChange(page: number) {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-    setCurPage(page);
-    updateSearchParams(QueryNames.CUR_PAGE, page.toString());
+  function handlePerPageChange(newPerPage: string | number) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(QueryNames.PER_PAGE, newPerPage.toString());
+    newParams.set(QueryNames.CUR_PAGE, '1');
+    setSearchParams(newParams);
+  }
+
+  function handlePageChange(newPage: number) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(QueryNames.CUR_PAGE, String(newPage));
+    setSearchParams(newParams);
   }
 
   return (
@@ -135,29 +161,29 @@ export const CatalogPage = () => {
 
       {loading && <ModalLoader />}
 
-      <Columns>
+      <Columns className="mt-3">
         <Columns.Column size="one-quarter">
           <CatalogFilter
-            filterData={filters}
-            onChange={() => {}}
+            filterData={availableFilters}
+            onChange={handleFilterChange}
           />
         </Columns.Column>
 
         <Columns.Column>
-          <div className="mb-2">
+          <div className="mb-5">
             <CatalogViewSetter
-              onPerPage={val => updateSearchParams(QueryNames.PER_PAGE, val)}
-              onSearch={val => updateSearchParams(QueryNames.QUERY, val)}
-              onSort={val => updateSearchParams(QueryNames.SORTED, val)}
+              onPerPage={handlePerPageChange}
+              onSearch={handleQueryChange}
+              onSort={handleSortChange}
             />
           </div>
 
-          <CatalogList pets={pages[curPage]} />
+          <CatalogList pets={petsToShow} />
 
           <div className="my-2">
             <Pagination
               total={pages.length - 1}
-              current={curPage}
+              current={currentPage}
               delta={2}
               next=">"
               previous="<"

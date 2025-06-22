@@ -1,0 +1,13 @@
+@use 'bulma/sass/utilities/mixins';
+@import '../../styles/main.scss';
+
+.custom_hover {
+  @include hover;
+}
+
+.header_txt {
+  font-size: 1rem;
+  font-weight: 500;
+  padding-block: 0;
+  height: 100%;
+}

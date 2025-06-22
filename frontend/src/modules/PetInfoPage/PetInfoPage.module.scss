@@ -1,0 +1,67 @@
+.pageContainer {
+  padding: 2rem;
+}
+
+.galleryContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mainImageContainer {
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.thumbnailContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+}
+
+.thumbnail {
+  border: 2px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+
+  &:hover {
+    border-color: #cccccc;
+  }
+}
+
+.activeThumbnail {
+  border-color: #3273dc; // Bulma primary color
+  box-shadow: 0 0 8px rgba(50, 115, 220, 0.5);
+}
+
+.sexIndicator {
+  color: #7a7a7a;
+  font-weight: normal;
+}
+
+.detailsBox {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background-color: #fafafa;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+}
+
+.actionButtons {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  & > button {
+    width: 100%;
+  }
+}
