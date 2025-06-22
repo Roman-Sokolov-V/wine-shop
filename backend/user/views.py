@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.serializers import get_serializer
+
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -94,12 +94,12 @@ class LogoutView(generics.GenericAPIView):
 
 
 class MeView(generics.GenericAPIView):
+    """Show authenticated user data"""
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserSerializer
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        print(user)
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
@@ -115,8 +115,6 @@ class TemporaryTokenView(APIView):
     serializer_class = TempTokenSerializer
 
     def post(self, request, *args, **kwargs):
-        print("=== TEMPORARY TOKEN VIEW HIT ===")
-        #print("user:", request.user)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
