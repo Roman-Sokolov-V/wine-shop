@@ -1,5 +1,5 @@
 from django.urls import path
-from pet.views import PetViewSet, UploadImageView, AddToFavoriteView
+from pet.views import PetViewSet, UploadImageView, FavoriteView
 
 app_name = "pet"
 
@@ -8,9 +8,10 @@ pet_detail = PetViewSet.as_view(
     actions={"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
 )
 
+
 urlpatterns = [
     path("<int:pk>/", pet_detail, name="pet-detail"),
-    path("favorite/<int:pk>/", AddToFavoriteView.as_view(), name="add-to-favorite"),
+    path("favorite/<int:pk>/", FavoriteView.as_view(), name="favorite"),
     path("upload/", UploadImageView.as_view(), name="upload-image"),
     path("", pets_list_create, name="pets-list"),
 ]

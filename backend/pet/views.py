@@ -55,7 +55,6 @@ class PetViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         pet = self.perform_create(serializer)
-        print(pet.id)
         user = get_user_model().objects.first()
         notify_we_found_pet_for_you(pet=pet, user=user)
         headers = self.get_success_headers(serializer.data)
@@ -70,7 +69,7 @@ class UploadImageView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAdminUser]
 
 
-class AddToFavoriteView(generics.GenericAPIView):
+class FavoriteView(generics.GenericAPIView):
     """Add a pet to the authenticated user's favorites."""
     permission_classes = [permissions.IsAuthenticated]
     queryset = Pet.objects.all()
@@ -82,3 +81,10 @@ class AddToFavoriteView(generics.GenericAPIView):
         user.favorites.add(obj)
         user.save()
         return Response(status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        user = request.user
+        user.favorites.remove(obj)
+        user.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
