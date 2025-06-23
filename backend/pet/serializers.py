@@ -28,7 +28,7 @@ class PetSerializer(serializers.ModelSerializer):
             "is_sterilized",
             "description",
             "images",
-            # "owner"
+            "owner"
         )
 
     def validate_images_files(self, files):
@@ -110,6 +110,8 @@ class UploadImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ("pet", "file",)
+
+
 
 
 class FileSerializer(serializers.Serializer):

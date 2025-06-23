@@ -1,6 +1,6 @@
-from django.contrib.auth import get_user_model
 from rest_framework import viewsets, generics, permissions, status
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -16,7 +16,6 @@ from pet.serializers import (
 
 
 class PetViewSet(viewsets.ModelViewSet):
-    serializer_class = PetSerializer
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = PetFilter
@@ -48,6 +47,12 @@ class PetViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
         return [permissions.IsAdminUser()]
 
+    def get_serializer_class(self):
+        if self.action == "upload_image":
+            return UploadImageSerializer
+        return PetSerializer
+
+
     def perform_create(self, serializer):
         return serializer.save()
 
@@ -55,18 +60,29 @@ class PetViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         pet = self.perform_create(serializer)
-        user = get_user_model().objects.first()
-        notify_we_found_pet_for_you(pet=pet, user=user)
+        # user = get_user_model().objects.first()
+        # notify_we_found_pet_for_you(pet=pet, user=user)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
-
-
-
-class UploadImageView(generics.ListCreateAPIView):
-    queryset = Image.objects.all()
-    serializer_class = UploadImageSerializer
-    permission_classes = [permissions.IsAdminUser]
+    @action(
+        methods=["post"],
+        detail=True,
+        permission_classes=[permissions.IsAdminUser],
+        url_path="upload",
+    )
+    def upload_image(self, request, pk=None):
+        pet = self.get_object()
+        data = {
+            "file": request.data["file"],
+            "pet": pet.pk,
+        }
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid():
+            image = serializer.save()
+            pet.images.add(image)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FavoriteView(generics.GenericAPIView):
