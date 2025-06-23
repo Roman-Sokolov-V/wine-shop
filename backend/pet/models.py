@@ -16,7 +16,7 @@ class Pet(models.Model):
     pet_type = models.CharField(max_length=100)
     age = models.PositiveIntegerField(null=True, blank=True)
     breed = models.CharField(max_length=100, null=True, blank=True)
-    sex = models.CharField(max_length=10, choices=SEX_CHOICES)
+    sex = models.CharField(max_length=10, choices=SEX_CHOICES, default="U")
     coloration = models.CharField(max_length=50, null=True, blank=True)
     weight = models.FloatField(
         null=True, blank=True, validators=[MinValueValidator(0.01)]
