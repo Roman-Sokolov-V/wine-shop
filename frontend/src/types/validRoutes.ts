@@ -3,6 +3,7 @@ export enum VALID_ROUTES {
   CATALOG = 'catalog',
   FAVORITES = 'favorites',
   LOGIN = 'login',
+  PASSWORD_RESET = 'password-reset',
   REGISTER = 'register',
   ACCOUNT = 'account',
   CONTACT_US = 'contact-us',

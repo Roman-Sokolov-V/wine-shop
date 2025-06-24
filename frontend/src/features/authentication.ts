@@ -1,11 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { accessLocalStorage } from '../utils/accessLocalStorage';
 import { LocalAccessKeys } from '../types/LocalAccessKeys';
+import { userLogout } from '../api/auth';
 
 const initialValue = {
   loggedIn: accessLocalStorage.get(LocalAccessKeys.LOGGEDIN),
   user: undefined,
 };
+
+const logout = createAsyncThunk('auth/logout', async () => {
+  const response = await userLogout();
+
+  return response;
+});
 
 const AuthSlice = createSlice({
   name: 'auth',
@@ -21,13 +28,21 @@ const AuthSlice = createSlice({
         accessLocalStorage.set(LocalAccessKeys.LOGGEDIN, action.payload);
       }
     },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(logout.fulfilled, state => {
+        state.loggedIn = undefined;
+        state.user = undefined;
+        accessLocalStorage.clearKey(LocalAccessKeys.LOGGEDIN);
+      })
 
-    logout: state => {
-      state.loggedIn = undefined;
-      accessLocalStorage.clearKey(LocalAccessKeys.LOGGEDIN);
-    },
+      .addCase(logout.rejected, (state, action) => {
+        console.error(action.error.message || 'Failed to logout.');
+      });
   },
 });
 
 export default AuthSlice.reducer;
 export const { actions } = AuthSlice;
+export { logout };

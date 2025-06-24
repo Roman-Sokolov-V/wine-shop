@@ -42,18 +42,7 @@ function App() {
 
     setLoading(true);
 
-    getUserMe()
-      .then(res => {
-        if (res?.data?.favorites) {
-          dispatch(FavActions.init(res?.data?.favorites.map(parseInt)));
-        } else {
-          dispatch(FavActions.init([]));
-        }
-      })
-      .catch(e => {
-        setError(e?.message ? e.message : 'Error Occured');
-      })
-      .finally(() => setLoading(false));
+    dispatch(FavActions.init());
   }, []);
 
   if (error) {

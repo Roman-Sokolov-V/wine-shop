@@ -13,11 +13,11 @@ export const getPetsFilter = (): Promise<Pet[]> => {
 };
 
 export const getPetById = (id: string): Promise<AxiosResponse> => {
-  return api.get(`api/v1/pets/${id}`);
+  return api.get(`api/v1/pets/${id}/`);
 };
 
 export const setPetFavorite = (petId: number) => {
-  return api.post(`/api/v1/pets/favorite/${petId}/`, {
+  return api.post(`/api/v1/pets/favorite/${petId}/`, null, {
     headers: {
       Authorization: `Token ${accessLocalStorage.get(LocalAccessKeys.LOGGEDIN)?.token}`,
     },
@@ -25,8 +25,7 @@ export const setPetFavorite = (petId: number) => {
 };
 
 export const deletPetFavorite = (petId: number) => {
-  //TODO: repalce api then readys
-  return api.post(`/api/v1/pets/favorite/${petId}/xxx`, {
+  return api.delete(`/api/v1/pets/favorite/${petId}/`, {
     headers: {
       Authorization: `Token ${accessLocalStorage.get(LocalAccessKeys.LOGGEDIN)?.token}`,
     },

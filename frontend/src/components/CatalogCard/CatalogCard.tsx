@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 interface Props {
   petData: Pet;
 }
+
 export const CatalogCard: React.FC<Props> = ({ petData }) => {
   const { favorites } = useAppSelector(state => state.favorite);
   const dispatch = useAppDispatch();

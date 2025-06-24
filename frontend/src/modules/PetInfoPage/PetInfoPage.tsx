@@ -27,9 +27,7 @@ import { AppointmentModal } from '../../components/AppointmentModal';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import classNames from 'classnames';
-import FavoriteAction, {
-  toggle as toggleFavote,
-} from '../../features/favorites';
+import { toggle as toggleFavote } from '../../features/favorites';
 
 interface AppointmentFormData {
   name: string;

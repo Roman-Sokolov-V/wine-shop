@@ -1,40 +1,44 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { accessLocalStorage } from '../utils/accessLocalStorage';
 import { LocalAccessKeys } from '../types/LocalAccessKeys';
-import { ApiPet, Pet } from '../types/Pet';
-import { Filters } from '../types/Filters';
-import { searchPets } from '../utils/helperPet';
-import api from '../api/api';
 import { deletPetFavorite, setPetFavorite } from '../api/pets';
 
 type Initial = {
   favorites: number[];
+  loading: boolean;
+  error: string;
 };
 
 const initialValue: Initial = {
   favorites: [],
+  loading: false,
+  error: '',
 };
 
-const toggle = createAsyncThunk(
-  'favorite/toggle',
-  async (petId: number, { getState }) => {
-    // We can get the current state to see if the pet is already a favorite.
-    const state = getState() as { favorites: Initial };
-    const currentFavorites = state.favorites.favorites;
+const toggle = createAsyncThunk<
+  // This thunk doesn't need to return anything on success
+  void,
+  number,
+  {
+    state: { favorite: Initial };
+    rejectValue: string;
+  }
+>('favorite/toggle', async (petId, { getState, rejectWithValue }) => {
+  try {
+    const state = getState();
+    const { favorites: currentFavorites } = state.favorite;
     const isFavorite = currentFavorites.includes(petId);
 
-    let updatedFavoritesResponse;
+    currentFavorites.forEach(async id => {
+      await setPetFavorite(id);
+    });
 
-    if (isFavorite) {
-      updatedFavoritesResponse = await setPetFavorite(petId);
-    } else {
-      updatedFavoritesResponse = await deletPetFavorite(petId);
-    }
-
-    // Ensure you return the data property, which should be the number[]
-    return updatedFavoritesResponse.data;
-  },
-);
+    await (!isFavorite ? deletPetFavorite(petId) : setPetFavorite(petId));
+  } catch (err: unknown) {
+    const errorMessage = 'API to toggle favorites call failed.';
+    return rejectWithValue(errorMessage);
+  }
+});
 
 const clear = createAsyncThunk('favorite/clear', async (_, { getState }) => {
   const state = getState() as { favorites: Initial };
@@ -47,36 +51,55 @@ const FavoritesSlice = createSlice({
   name: 'favorite',
   initialState: initialValue,
   reducers: {
-    init: (state, action: { payload: number[] }) => {
-      state.favorites = action.payload;
-      accessLocalStorage.set(
-        LocalAccessKeys.FAVORITES,
-        JSON.stringify(action.payload),
-      );
+    init: state => {
+      const localFavs = accessLocalStorage.get(LocalAccessKeys.FAVORITES);
+      console.log('ppp', Array.isArray(localFavs));
+      if (localFavs && Array.isArray(localFavs)) {
+        state.favorites = localFavs;
+      } else {
+        accessLocalStorage.set(LocalAccessKeys.FAVORITES, []);
+        state.favorites = [];
+      }
     },
   },
 
   extraReducers: builder => {
     builder
-      .addCase(toggle.fulfilled, (state, action: { payload: number[] }) => {
-        state.favorites = action.payload;
-        accessLocalStorage.set(
-          LocalAccessKeys.FAVORITES,
-          JSON.stringify(action.payload),
-        );
-      })
-      .addCase(toggle.rejected, (state, action) => {
-        console.error(action.error.message || 'Failed to toggle favorite.');
-      });
+      .addCase(toggle.pending, (state, action) => {
+        state.loading = true;
+        const petId = action.meta.arg;
+        const isFavorite = state.favorites.includes(petId);
 
+        if (isFavorite) {
+          // Remove from favorites
+          state.favorites = state.favorites.filter(id => id !== petId);
+        } else {
+          // Add to favorites
+          state.favorites.push(petId);
+        }
+        accessLocalStorage.set(LocalAccessKeys.FAVORITES, state.favorites);
+      })
+      .addCase(toggle.fulfilled, state => {
+        state.loading = false;
+      })
+      .addCase(toggle.rejected, state => {
+        state.loading = false;
+      });
     builder
-      .addCase(clear.fulfilled, (state, action: { payload: number[] }) => {
-        console.log('sssssssssss');
-        state.favorites = action.payload;
+      // Handle the `clear` thunk states
+      .addCase(clear.pending, state => {
+        state.loading = true;
+      })
+      .addCase(clear.fulfilled, state => {
+        state.loading = false;
+        state.favorites = [];
         accessLocalStorage.clearKey(LocalAccessKeys.FAVORITES);
       })
       .addCase(clear.rejected, (state, action) => {
-        console.error(action.error.message || 'Failed to clear favorite.');
+        state.loading = false;
+        if (action.payload) {
+          state.error = action.payload;
+        }
       });
   },
 });
