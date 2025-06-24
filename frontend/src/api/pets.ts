@@ -3,6 +3,7 @@ import { Pet } from '../types/Pet';
 import api from './api';
 import { accessLocalStorage } from '../utils/accessLocalStorage';
 import { LocalAccessKeys } from '../types/LocalAccessKeys';
+import { getUserMe } from './users';
 
 export const getPetsData = (): Promise<AxiosResponse> => {
   return api.get(`api/v1/pets/`);
@@ -29,5 +30,40 @@ export const deletPetFavorite = (petId: number) => {
     headers: {
       Authorization: `Token ${accessLocalStorage.get(LocalAccessKeys.LOGGEDIN)?.token}`,
     },
+  });
+};
+
+export const clearPetFavorites = async () => {
+  try {
+    const res = await getUserMe();
+    const userFavs = res?.data?.favorites as number[];
+
+    if (userFavs) {
+      userFavs.forEach(async itm => {
+        try {
+          console.log('clearing --', itm);
+          await deletPetFavorite(itm);
+        } catch {
+          console.error('Error deleting user favorite');
+        }
+      });
+    }
+  } catch {
+    console.error('Error geting user information');
+  }
+};
+
+export const updatePetsApi = async (ids: number[]) => {
+  await clearPetFavorites();
+  console.log('============');
+  const x = await getUserMe();
+  console.log(x?.data.favorites);
+  ids.forEach(async itm => {
+    try {
+      console.log('ppp', itm);
+      await setPetFavorite(itm);
+    } catch (e) {
+      console.error('Error adding user favorite');
+    }
   });
 };

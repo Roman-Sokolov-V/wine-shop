@@ -28,6 +28,9 @@ import { AppointmentModal } from '../../components/AppointmentModal';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import classNames from 'classnames';
 import { toggle as toggleFavote } from '../../features/favorites';
+import * as FavoriteAction from '../../features/favorites';
+import { useNavigate } from 'react-router-dom';
+import { updatePetsApi } from '../../api/pets';
 
 interface AppointmentFormData {
   name: string;
@@ -39,6 +42,8 @@ interface AppointmentFormData {
 
 export const PetInfoPage = () => {
   const { favorites } = useAppSelector(state => state.favorite);
+  const { loggedIn } = useAppSelector(state => state.auth);
+
   const dispatch = useAppDispatch();
   const location = useLocation();
   const [pet, setPet] = useState<Pet | null>(null);
@@ -156,7 +161,13 @@ export const PetInfoPage = () => {
               <Button
                 rounded
                 onClick={() => {
-                  dispatch(toggleFavote(pet.id));
+                  dispatch(FavoriteAction.toggle(pet.id));
+
+                  if (loggedIn) {
+                    updatePetsApi(favorites).catch(() =>
+                      console.error('Error toggling favorites'),
+                    );
+                  }
                 }}
               >
                 <FontAwesomeIcon

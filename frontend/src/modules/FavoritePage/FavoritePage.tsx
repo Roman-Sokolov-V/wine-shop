@@ -4,11 +4,11 @@ import { Button } from 'react-bulma-components';
 import style from './Favorite.module.scss';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import FavoriteAction, {
-  clear as clearFavorite,
-} from '../../features/favorites';
+import * as FavoriteAction from '../../features/favorites';
+import { clearPetFavorites } from '../../api/pets';
 
 export const FavoritePage = () => {
+  const { loggedIn } = useAppSelector(state => state.auth);
   const { favorites } = useAppSelector(state => state.favorite);
   const dispatch = useAppDispatch();
   const { pets } = useAppSelector(state => state.pet);
@@ -30,7 +30,15 @@ export const FavoritePage = () => {
             color="danger"
             colorVariant="light"
             className="is-flex-grow-1 m-5"
-            onClick={() => dispatch(clearFavorite())}
+            onClick={() => {
+              dispatch(FavoriteAction.clear());
+
+              if (loggedIn) {
+                clearPetFavorites().catch(e =>
+                  console.error('Error clearing puser pets favorites'),
+                );
+              }
+            }}
           >
             Clear Favorites
           </Button>

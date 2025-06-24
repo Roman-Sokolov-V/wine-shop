@@ -16,7 +16,6 @@ import { ModalError } from '../../components/ModalError';
 import * as PetActions from '../../features/pets';
 import * as FavActions from '../../features/favorites';
 import { AIAgent } from '../../components/AIAgent/AIAgent';
-import { getUserMe } from '../../api/users';
 
 function App() {
   const [loading, setLoading] = useState(false);
