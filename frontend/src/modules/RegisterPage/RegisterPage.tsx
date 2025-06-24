@@ -89,7 +89,7 @@ export const RegisterPage = () => {
 
             <form
               onSubmit={handleSubmit}
-              id="login-form"
+              id="register-form"
             >
               <div className="field">
                 <label className="label">First Name</label>

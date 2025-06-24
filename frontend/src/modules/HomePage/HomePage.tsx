@@ -4,7 +4,6 @@ import { Container, Section } from 'react-bulma-components';
 import { SubscribeNews } from '../../components/SubscribeNews';
 import { OneShotNotification } from '../../components/OneShotNotification';
 import classNames from 'classnames';
-import style from './HomePage.module.scss';
 import { HomeBanner1 } from '../../components/HomeBanner1';
 import { CatalogSlider } from '../../components/CatalogSlider';
 import { useAppSelector } from '../../app/hooks';
@@ -31,7 +30,10 @@ export const HomePage = () => {
   }, [pets]);
 
   return (
-    <Container className={classNames('', style.container)}>
+    <Container
+      className="is-flex is-flex-direction-column mb-5"
+      style={{ gap: '1.5rem' }}
+    >
       <OneShotNotification />
 
       <Section className="p-2">

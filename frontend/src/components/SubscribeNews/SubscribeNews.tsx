@@ -1,88 +1,101 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
-import { Block, Box, Button, Container, Heading } from 'react-bulma-components';
-// import { submitNewSubscriber } from '../../api/newsSubscriber';
 import { ModalError } from '../ModalError';
 import { ModalSuccess } from '../ModalSuccess';
+import { subscribeApi } from '../../api/subscribe';
+import { ModalLoader } from '../ModalLoader';
 
 export function SubscribeNews() {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
-    // try {
-    //   const response = await submitNewSubscriber(email);
-    //   if (response.data.status !== 'mail_sent') {
-    //     setShowError(true);
-    //   } else {
-    //     setShowSuccess(true);
-    //   }
-    // } catch (error) {
-    //   setShowError(true);
-    // }
-    setEmail('');
+    try {
+      await subscribeApi(email);
+      setShowSuccess(true);
+    } catch (error) {
+      setShowError(true);
+    } finally {
+      setLoading(false);
+      setEmail('');
+    }
   };
+
+  if (loading) {
+    return <ModalLoader />;
+  }
 
   return (
     <>
       <ModalError
-        title="Виникла помилка!"
-        body="Перевірте email і спробуйте знову, якщо помилка повторюється звяжіться з адміністратором"
+        title="Subscription Failed!"
+        body="We couldn't add your email to our subscription list. Please check the address and try again."
         isActive={showError}
+        onClose={() => setShowError(false)}
       />
 
       <ModalSuccess
-        title="Успішно додано Ваш email."
-        body="Дякую ми уснішно додали Ваш email до підписки на новини сайту."
+        title="Subscription Successful!"
+        body="Thank you! Your email has been added. Get ready for heartwarming stories and updates from our shelter."
         isActive={showSuccess}
+        onClose={() => setShowSuccess(false)}
       />
 
-      <Container>
-        <Box className="has-background-primary p-2">
-          <Heading
-            size={4}
-            className="has-text-link has-text-centered mt-2 mb-2"
-          >
-            Subscribe to wine news
-          </Heading>
+      <div className="container">
+        <div className="box has-background-primary p-2">
+          <h2 className="title is-4 has-text-link has-text-centered mt-2 mb-2">
+            Join Our Community
+          </h2>
 
-          <Block className={classNames('p-0')}>
+          <div className="block p-0">
             <p className="has-text-link has-text-centered m-0">
-              Be the first one to find out about new promos and exclusive wines
-              !!!
+              Get the latest news, stories, and smiles delivered straight to
+              you. Subscribe for your weekly dose of cute and see how you can
+              make a difference.
             </p>
 
             <div className="columns is-justify-content-center py-4">
               <div className="column is-9-tablet is-6-desktop is-7-widescreen is-6-fullh">
                 <form
-                  method="POST"
                   className="is-flex p-2"
-                  onSubmit={e => handleSubmit(e)}
+                  onSubmit={handleSubmit}
                 >
-                  <input
-                    required
-                    type="email"
-                    className="input"
-                    placeholder="joe.bloggs@example.com"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                  />
-
-                  <Button
-                    type="submit"
-                    className="button px-3 ml-5"
+                  <div
+                    className="field"
+                    style={{ flexGrow: 1 }}
                   >
-                    Subscribe
-                  </Button>
+                    <div className="control">
+                      <input
+                        type="email"
+                        className="input"
+                        placeholder="your.email@example.com"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="field">
+                    <div className="control">
+                      <button
+                        type="submit"
+                        className="button is-link px-3 ml-5"
+                      >
+                        Subscribe
+                      </button>
+                    </div>
+                  </div>
                 </form>
               </div>
             </div>
-          </Block>
-        </Box>
-      </Container>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
