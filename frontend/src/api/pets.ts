@@ -41,7 +41,6 @@ export const clearPetFavorites = async () => {
     if (userFavs) {
       userFavs.forEach(async itm => {
         try {
-          console.log('clearing --', itm);
           await deletPetFavorite(itm);
         } catch {
           console.error('Error deleting user favorite');
@@ -55,12 +54,10 @@ export const clearPetFavorites = async () => {
 
 export const updatePetsApi = async (ids: number[]) => {
   await clearPetFavorites();
-  console.log('============');
   const x = await getUserMe();
-  console.log(x?.data.favorites);
+
   ids.forEach(async itm => {
     try {
-      console.log('ppp', itm);
       await setPetFavorite(itm);
     } catch (e) {
       console.error('Error adding user favorite');

@@ -12,10 +12,16 @@ import { AxiosError } from 'axios';
 import { ModalError } from '../../components/ModalError';
 import { ModalLoader } from '../../components/ModalLoader';
 import { User } from '../../types/User';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { logout } from '../../features/authentication';
 
 export const AccountPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
 
   const [user, setUser] = useState<
     Omit<User, 'id' | 'is_superuser' | 'favorites' | 'is_active'> | undefined
@@ -37,7 +43,14 @@ export const AccountPage = () => {
           });
         }
       })
-      .catch((e: AxiosError) => setError(e.message))
+      .catch((e: AxiosError) => {
+        if (e.status === 401) {
+          dispatch(logout());
+          navigate('/login');
+        } else {
+          setError(e.message);
+        }
+      })
       .finally(() => {
         setLoading(false);
       });
