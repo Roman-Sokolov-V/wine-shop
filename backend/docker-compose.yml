@@ -57,6 +57,21 @@ services:
 #      - MINIO_ROOT_PASSWORD=${S3_SECRET_KEY}
     volumes:
       - minio_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    hostname: rabbitmq
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # для Dramatiq
+      - "15672:15672" # веб-інтерфейс
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
 volumes:
   minio_data:
   postgres_data:
+  rabbitmq-data:
