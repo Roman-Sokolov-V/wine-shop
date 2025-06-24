@@ -22,7 +22,9 @@ dependencies = [
     "django-cors-headers (>=4.7.0,<5.0.0)",
     "psycopg (>=3.2.9,<4.0.0)",
     "psycopg-binary (>=3.2.9,<4.0.0)",
-    "pytest (>=8.4.1,<9.0.0)"
+    "pytest (>=8.4.1,<9.0.0)",
+    "django-dramatiq (>=0.13.0,<0.14.0)",
+    "dramatiq[rabbitmq] (>=1.18.0,<2.0.0)"
 ]
 
 [tool.poetry]
