@@ -132,7 +132,6 @@ class TemporaryTokenView(APIView):
         user = validated_data["user"]
         TempToken.objects.filter(user=user).delete()
         token = TempToken.objects.create(user=user)
-        # send_email_restore_password_token(token=token.key, user=user)
         send_restore_token.send(token=token.key, user_email=user.email)
         return Response(status=status.HTTP_201_CREATED)
 
