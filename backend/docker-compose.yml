@@ -7,13 +7,28 @@ services:
       - .env
     ports:
       - "8000:8000"
-    command: ["sh", "-c", "python manage.py makemigrations && python manage.py migrate &&python manage.py runserver 0.0.0.0:8000"]
+    command: ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
     depends_on:
       db:
         condition: service_healthy
       minio:
         condition: service_healthy
 
+    volumes:
+      - ./:/app
+
+  dramatiq_worker:
+    container_name: dramatiq
+    build:
+      context: .
+    env_file:
+      - .env
+    command: [ "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py rundramatiq"]
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     volumes:
       - ./:/app
 
@@ -33,16 +48,10 @@ services:
     volumes:
       - postgres_data:$PGDATA
 
-
   minio:
     image: minio/minio
     entrypoint: sh
     command: ["-c", "mkdir -p /data/test-bucket && /usr/bin/minio server /data"]
-#    command: >
-#      -c 'mkdir -p /data/test-bucket && minio server /data'
-#    ports:
-#      - 9000:9000
-#      - 9001:9001
     env_file:
       - .env
     restart: always
@@ -65,9 +74,13 @@ services:
     ports:
       - "5672:5672"   # для Dramatiq
       - "15672:15672" # веб-інтерфейс
-    environment:
-      RABBITMQ_DEFAULT_USER: "guest"
-      RABBITMQ_DEFAULT_PASS: "guest"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
