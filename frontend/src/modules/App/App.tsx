@@ -78,7 +78,7 @@ function App() {
         </Container>
       )}
 
-      {!mobileMenuVisible && <FooterElem />}
+      <div className="mt-3">{!mobileMenuVisible && <FooterElem />}</div>
 
       <ScrollToTop />
       <AIAgent />

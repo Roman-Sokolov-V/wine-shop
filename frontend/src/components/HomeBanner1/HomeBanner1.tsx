@@ -17,10 +17,10 @@ export const HomeBanner1 = () => {
         <Heading
           co
           className={classNames(
-            'is-size-1 has-text-weight-extrabold has-text-secondary',
+            'is-size-1 has-text-weight-extrabold has-text-light',
           )}
         >
-          Your New Family Member is Waiting. Adopt.
+          Find your new best friend. Give a pet a forever home.
         </Heading>
 
         <div className="is-flex is-justify-content-space-between">
