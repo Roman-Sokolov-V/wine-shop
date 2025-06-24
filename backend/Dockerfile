@@ -21,6 +21,9 @@ RUN set -x && pip install --no-cache-dir poetry
 RUN set -x && poetry config virtualenvs.create false
 RUN set -x && poetry install --no-root --without dev
 RUN set -x && poetry cache clear . --all --no-interaction && pip cache purge
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . .
 #

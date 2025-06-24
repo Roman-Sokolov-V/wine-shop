@@ -1,5 +1,6 @@
-from rest_framework import viewsets, generics, permissions, status
 from django_filters.rest_framework import DjangoFilterBackend
+from django.contrib.auth import get_user_model
+from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -60,11 +61,12 @@ class PetViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         pet = self.perform_create(serializer)
-        # user = get_user_model().objects.first()
-        # notify_we_found_pet_for_you(pet=pet, user=user)
+        user = get_user_model().objects.first()
+        notify_we_found_pet_for_you(pet=pet, user=user)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
+
     @action(
         methods=["post"],
         detail=True,
