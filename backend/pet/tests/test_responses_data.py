@@ -5,6 +5,7 @@ from rest_framework.reverse import reverse
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 
+import pet
 from pet.models import Pet
 
 User = get_user_model()
@@ -86,3 +87,19 @@ class StaffUserTestCase(TestCase):
         data = self.pet_data.copy()
         data["name"] = new_name
         check_response(self, pet, data)
+
+    def test_add_to_favorites(self):
+        url = reverse("pet:favorite", kwargs={"pk": self.pet.pk})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(self.pet, self.db_user.favorites.all())
+
+    def test_add_to_favorites_twice(self):
+        url = reverse("pet:favorite", kwargs={"pk": self.pet.pk})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(self.pet, self.db_user.favorites.all())
+        url = reverse("pet:favorite", kwargs={"pk": self.pet.pk})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(self.pet, self.db_user.favorites.all())

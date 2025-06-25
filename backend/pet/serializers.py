@@ -28,7 +28,7 @@ class PetSerializer(serializers.ModelSerializer):
             "is_sterilized",
             "description",
             "images",
-            "owner"
+            "owner",
         )
 
     def validate_images_files(self, files):
@@ -41,11 +41,16 @@ class PetSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Images має бути списком файлів")
 
         # Перевіряємо що кожен елемент - зображення
-        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif',
-                         'image/webp']
+        allowed_types = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+        ]
 
         for file in files:
-            if not hasattr(file, 'content_type'):
+            if not hasattr(file, "content_type"):
                 raise serializers.ValidationError("Невалідний файл")
 
             if file.content_type not in allowed_types:
@@ -57,8 +62,8 @@ class PetSerializer(serializers.ModelSerializer):
         return files
 
     def create(self, validated_data):
-        request = self.context.get('request')
-        files = request.FILES.getlist('images') if request else []
+        request = self.context.get("request")
+        files = request.FILES.getlist("images") if request else []
 
         # Валідуємо файли
         validated_files = self.validate_images_files(files)
@@ -70,8 +75,6 @@ class PetSerializer(serializers.ModelSerializer):
             Image.objects.bulk_create(images)
 
         return pet
-
-
 
     def validate(self, data):
         if self.instance is None:
@@ -109,9 +112,10 @@ class PetSerializer(serializers.ModelSerializer):
 class UploadImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ("pet", "file",)
-
-
+        fields = (
+            "pet",
+            "file",
+        )
 
 
 class FileSerializer(serializers.Serializer):
@@ -125,3 +129,33 @@ class UploadImagesSerializer(serializers.Serializer):
 
 class EmptySerializer(serializers.Serializer):
     pass
+
+
+# class BreedSerializer(serializers.Serializer):
+#     breed = serializers.ListField(child=serializers.CharField())
+#
+#
+# class PetTypeSerializer(serializers.Serializer):
+#     breed = BreedSerializer(many=True)
+
+
+class FiltersReportSerializer(serializers.Serializer):
+    pet_type = serializers.ListField(child=serializers.CharField())
+    breed = serializers.ListField(child=serializers.CharField())
+    # pet_type = serializers.ListField(
+    #     child=serializers.DictField(
+    #         child=serializers.DictField(
+    #             child=serializers.ListField(child=serializers.CharField())
+    #         )
+    #     )
+    # )
+    coloration = serializers.ListField(child=serializers.CharField())
+    is_sterilized = serializers.ListField(
+        child=serializers.BooleanField(allow_null=True)
+    )
+    age_max = serializers.IntegerField(min_value=0, max_value=500)
+    age_min = serializers.IntegerField(min_value=0, max_value=500)
+
+    sex = serializers.ListField(child=serializers.CharField())
+    weight_max = serializers.FloatField()
+    weight_min = serializers.FloatField()

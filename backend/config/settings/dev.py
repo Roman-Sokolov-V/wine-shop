@@ -168,6 +168,7 @@ STORAGES = {
     },
 }
 
+DEFAULT_FILE_STORAGE = "pet.storages.PublicS3Storage"
 AUTH_USER_MODEL = "user.User"
 
 REST_FRAMEWORK = {
