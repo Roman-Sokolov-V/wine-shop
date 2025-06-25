@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "pet",
-    "storages",
+    "minio_storage",
     "django_filters",
     "user",
     "drf_spectacular",
@@ -84,15 +84,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -146,29 +138,32 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# django-storages settings
+# django-minio-storage settings
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        "OPTIONS": {
-            "access_key": os.getenv("S3_ACCESS_KEY"),
-            "secret_key": os.getenv("S3_SECRET_KEY"),
-            "bucket_name": os.getenv("S3_BUCKET_NAME"),
-            "endpoint_url": os.getenv("S3_ENDPOINT_URL"),
-            "default_acl": None,
-            "querystring_auth": True,
-            "file_overwrite": False,
-            "region_name": "us-east-1",
-            "signature_version": "s3v4",
-        },
+        "BACKEND": "minio_storage.storage.MinioMediaStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "minio_storage.storage.MinioStaticStorage",
     },
 }
 
-DEFAULT_FILE_STORAGE = "pet.storages.PublicS3Storage"
+MINIO_STORAGE_ENDPOINT = "minio:9000"
+MINIO_STORAGE_ACCESS_KEY = "USERNAME"
+MINIO_STORAGE_SECRET_KEY = "PASSWORD"
+MINIO_STORAGE_MEDIA_BUCKET_NAME = "shelter-bucket"
+MINIO_STORAGE_MEDIA_URL = "http://localhost:9000/shelter-bucket"  # Для генерації URL
+MINIO_STORAGE_USE_HTTPS = False  # Це ми додавали для вирішення першої SSL помилки
+
+# Інші MinIO налаштування, якщо є
+MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
+# Дозволити бібліотеці створювати бакет
+MINIO_STORAGE_AUTO_CREATE_STATIC_BUCKET = True
+# Дозволити бібліотеці створювати бакет для статики
+AWS_S3_SECURE_URLS = False
+
+
 AUTH_USER_MODEL = "user.User"
 
 REST_FRAMEWORK = {
