@@ -73,7 +73,7 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
           rounded
           color="primary"
           onClick={() => {
-            naviagate(`/pet/${petData.id}`);
+            naviagate(`/pets/${petData.id}`);
           }}
         >
           More Details

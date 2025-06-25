@@ -16,6 +16,7 @@ import { ModalError } from '../../components/ModalError';
 import * as PetActions from '../../features/pets';
 import * as FavActions from '../../features/favorites';
 import { AIAgent } from '../../components/AIAgent/AIAgent';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -68,9 +69,9 @@ function App() {
         },
       )}
     >
-      <div>
-        <Header />
-      </div>
+      <Header />
+
+      <Breadcrumbs />
 
       {!mobileMenuVisible && (
         <Container className={'is-flex'}>

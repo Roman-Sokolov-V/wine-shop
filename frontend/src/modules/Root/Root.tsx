@@ -69,8 +69,13 @@ export const Root = () => {
             />
 
             <Route
-              path="/pet/:id"
+              path="/pets/:id"
               element={<PetInfoPage />}
+            />
+
+            <Route
+              path="/pets/"
+              element={<CatalogPage />}
             />
 
             <Route element={<ProtectedRoute />}>
