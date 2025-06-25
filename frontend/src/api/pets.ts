@@ -54,7 +54,6 @@ export const clearPetFavorites = async () => {
 
 export const updatePetsApi = async (ids: number[]) => {
   await clearPetFavorites();
-  const x = await getUserMe();
 
   ids.forEach(async itm => {
     try {

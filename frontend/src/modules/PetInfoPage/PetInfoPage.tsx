@@ -5,14 +5,7 @@ import { Pet } from '../../types/Pet';
 import { ModalError } from '../../components/ModalError';
 import { ModalLoader } from '../../components/ModalLoader';
 import { AxiosError } from 'axios';
-import {
-  Box,
-  Button,
-  Columns,
-  Content,
-  Heading,
-  Image,
-} from 'react-bulma-components';
+import { Box, Button, Columns, Content, Heading } from 'react-bulma-components';
 import style from './PetInfoPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -27,12 +20,9 @@ import { AppointmentModal } from '../../components/AppointmentModal';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import classNames from 'classnames';
-import { toggle as toggleFavote } from '../../features/favorites';
 import * as FavoriteAction from '../../features/favorites';
-import { useNavigate } from 'react-router-dom';
 import { updatePetsApi } from '../../api/pets';
 import { PetInfoSwiper } from '../../components/PetInfoSwiper';
-import { randomImageGenerator } from '../../utils/helperPet';
 import { ModalSuccess } from '../../components/ModalSuccess';
 
 interface AppointmentFormData {

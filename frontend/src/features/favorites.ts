@@ -1,12 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { accessLocalStorage } from '../utils/accessLocalStorage';
 import { LocalAccessKeys } from '../types/LocalAccessKeys';
-import {
-  clearPetFavorites,
-  deletPetFavorite,
-  setPetFavorite,
-  updatePetsApi,
-} from '../api/pets';
 
 type Initial = {
   favorites: number[];

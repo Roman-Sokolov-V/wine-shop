@@ -34,7 +34,7 @@ export const FavoritePage = () => {
               dispatch(FavoriteAction.clear());
 
               if (loggedIn) {
-                clearPetFavorites().catch(e =>
+                clearPetFavorites().catch(() =>
                   console.error('Error clearing puser pets favorites'),
                 );
               }

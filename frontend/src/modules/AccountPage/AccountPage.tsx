@@ -13,7 +13,7 @@ import { ModalError } from '../../components/ModalError';
 import { ModalLoader } from '../../components/ModalLoader';
 import { User } from '../../types/User';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/authentication';
 
 export const AccountPage = () => {

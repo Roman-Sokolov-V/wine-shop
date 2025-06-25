@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import style from './PetInfoSwiper.module.scss';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 import { Thumbs, Pagination } from 'swiper/modules';
