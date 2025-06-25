@@ -48,24 +48,61 @@ services:
     volumes:
       - postgres_data:$PGDATA
 
+#  minio:
+#    image: minio/minio
+#    entrypoint: sh
+#    command: ["-c", "mkdir -p /data/test-bucket && /usr/bin/minio server /data"]
+##    command: >
+##      -c 'mkdir -p /data/test-bucket && minio server /data'
+#    ports:
+#      - 9000:9000
+#      - 9001:9001
+#    env_file:
+#      - .env
+#    restart: always
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl -f http://localhost${MINIO_ADDRESS}/minio/health/live || exit 1" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 30s
+#    environment:
+#      MINIO_ROOT_USER: "USERNAME"
+#      MINIO_ROOT_PASSWORD: "PASSWORD"
+#      MINIO_ADDRESS: ":9000"
+#      MINIO_CONSOLE_ADDRESS: ":9001"
+#    volumes:
+#      - minio_data:/data
   minio:
-    image: minio/minio
-    entrypoint: sh
-    command: ["-c", "mkdir -p /data/test-bucket && /usr/bin/minio server /data"]
+    image: minio/minio:latest
+    container_name: minio
+    command: server --console-address ":9001" /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     env_file:
       - .env
-    restart: always
+    volumes:
+      - minio_data:/data
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost${MINIO_ADDRESS}/minio/health/live || exit 1" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s
-#    environment:
-#      - MINIO_ROOT_USER=${S3_ACCESS_KEY}
-#      - MINIO_ROOT_PASSWORD=${S3_SECRET_KEY}
-    volumes:
-      - minio_data:/data
+
+
+  minio_mc:
+    build:
+      context: .
+      dockerfile: docker/minio_mc/Dockerfile
+    container_name: minio_mc
+    command: ["/bin/sh", "-c", "/commands/setup_minio.sh"]
+    depends_on:
+      minio:
+        condition: service_healthy
+    env_file:
+      - .env
+
 
   rabbitmq:
     image: rabbitmq:3.13-management-alpine

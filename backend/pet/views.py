@@ -1,14 +1,22 @@
+from django.db.models import Max, Min
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, generics, permissions, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from pet.filters import PetFilter
-from pet.models import Pet, Image
-from pet.serializers import PetSerializer, UploadImageSerializer, EmptySerializer
+from pet.models import Pet
+from pet.serializers import (
+    PetSerializer,
+    UploadImageSerializer,
+    EmptySerializer,
+    FiltersReportSerializer,
+)
 
 
 class PetViewSet(viewsets.ModelViewSet):
@@ -90,10 +98,10 @@ class FavoriteView(generics.GenericAPIView):
     serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
-        obj = self.get_object()
+        pet = self.get_object()
         user = request.user
-        user.favorites.add(obj)
-        user.save()
+        if not user.favorites.filter(pk=pet.pk).exists():
+            user.favorites.add(pet)
         return Response(status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
@@ -102,3 +110,46 @@ class FavoriteView(generics.GenericAPIView):
         user.favorites.remove(obj)
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(
+    responses=FiltersReportSerializer,
+    description="Отримати всі доступні фільтри для тварин",
+)
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def filter_report(request):
+    """Get filters"""
+    breed = Pet.objects.values_list("breed", flat=True).distinct()
+    coloration = Pet.objects.values_list("coloration", flat=True).distinct()
+    is_sterilized = [True, False, None]
+    pet_type = Pet.objects.values_list("pet_type", flat=True).distinct()
+    sex = ["M", "F", "U"]
+
+    weight_age = Pet.objects.aggregate(
+        Max("weight"), Min("weight"), Max("age"), Min("age")
+    )
+    # pet_type_list = []
+    # for type_ in pet_type:
+    #     breeds = (
+    #         Pet.objects.filter(pet_type=type_)
+    #         .values_list("breed", flat=True)
+    #         .distinct()
+    #     )
+    #     pet_type_list.append({type_: {"breed": list(breeds)}})
+
+    data = {
+        "breed": list(breed),
+        # "pet_type": pet_type_list,
+        "pet_type": pet_type,
+        "coloration": list(coloration),
+        "is_sterilized": list(is_sterilized),
+        "sex": list(sex),
+        "weight_max": weight_age["weight__max"],
+        "weight_min": weight_age["weight__min"],
+        "age_max": weight_age["age__max"],
+        "age_min": weight_age["age__min"],
+    }
+
+    serializer = FiltersReportSerializer(instance=data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
