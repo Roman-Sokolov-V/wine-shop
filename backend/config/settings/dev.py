@@ -9,10 +9,10 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_dramatiq",
     "rest_framework",
     "rest_framework.authtoken",
     "pet",
@@ -102,8 +103,6 @@ DATABASES = {
         "PORT": os.environ.get("POSTGRES_PORT"),
     }
 }
-
-
 
 
 # Password validation
@@ -172,20 +171,20 @@ STORAGES = {
 AUTH_USER_MODEL = "user.User"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Pet shelter',
-    'DESCRIPTION': 'backend',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "Pet shelter",
+    "DESCRIPTION": "backend",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_SETTINGS": {
         "deeplink": True,
         "defaultModelRendering": "model",
@@ -206,7 +205,6 @@ EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = "Pet Shelter <noreply@petshelter.com>"
 
 
-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Разрешаем доступ фронтенду с порта 3000
 ]  ###################################################################### for prod  CORS_ALLOWED_ORIGINS need change with actual value
@@ -214,3 +212,26 @@ CORS_ALLOWED_ORIGINS = [
 # Front
 FRONT_HOST = os.getenv("FRONT_HOST")
 RESTORE_FORM_URL = os.getenv("RESTORE_FORM_URL")
+
+# DRAMATIQ
+DRAMATIQ_BROKER_USER = os.getenv("RABBITMQ_DEFAULT_USER")
+DRAMATIQ_BROKER_PASS = os.getenv("RABBITMQ_DEFAULT_PASS")
+DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.rabbitmq.RabbitmqBroker",
+    "OPTIONS": {
+        "url": f"amqp://{DRAMATIQ_BROKER_USER}:{DRAMATIQ_BROKER_PASS}@rabbitmq:5672/",  # scheme://username:password@hostname:port/
+    },
+    "MIDDLEWARE": [
+        "dramatiq.middleware.Prometheus",
+        "dramatiq.middleware.AgeLimit",
+        "dramatiq.middleware.TimeLimit",
+        "dramatiq.middleware.Callbacks",
+        "dramatiq.middleware.Retries",
+        "django_dramatiq.middleware.DbConnectionsMiddleware",
+        "django_dramatiq.middleware.AdminMiddleware",
+    ],
+}
+
+# Defines which database should be used to persist Task objects when the
+# AdminMiddleware is enabled.  The default value is "default".
+DRAMATIQ_TASKS_DATABASE = "default"

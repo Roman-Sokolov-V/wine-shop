@@ -6,14 +6,9 @@ from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 
-from notification.notification import notify_we_found_pet_for_you
 from pet.filters import PetFilter
 from pet.models import Pet, Image
-from pet.serializers import (
-    PetSerializer,
-    UploadImageSerializer,
-    EmptySerializer
-)
+from pet.serializers import PetSerializer, UploadImageSerializer, EmptySerializer
 
 
 class PetViewSet(viewsets.ModelViewSet):
@@ -32,7 +27,7 @@ class PetViewSet(viewsets.ModelViewSet):
         "weight",
         "is_sterilized",
         "owner",
-        ]
+    ]
 
     def get_queryset(self):
         queryset = Pet.objects.all()
@@ -53,7 +48,6 @@ class PetViewSet(viewsets.ModelViewSet):
             return UploadImageSerializer
         return PetSerializer
 
-
     def perform_create(self, serializer):
         return serializer.save()
 
@@ -62,10 +56,11 @@ class PetViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         pet = self.perform_create(serializer)
         user = get_user_model().objects.first()
-        notify_we_found_pet_for_you(pet=pet, user=user)
+        # notify_we_found_pet_for_you(pet=pet, user=user)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED,
-                        headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     @action(
         methods=["post"],
@@ -89,6 +84,7 @@ class PetViewSet(viewsets.ModelViewSet):
 
 class FavoriteView(generics.GenericAPIView):
     """Add a pet to the authenticated user's favorites."""
+
     permission_classes = [permissions.IsAuthenticated]
     queryset = Pet.objects.all()
     serializer_class = EmptySerializer
