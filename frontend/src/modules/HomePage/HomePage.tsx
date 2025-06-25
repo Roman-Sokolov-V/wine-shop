@@ -3,12 +3,12 @@ import 'react-calendar/dist/Calendar.css';
 import { Container, Section } from 'react-bulma-components';
 import { SubscribeNews } from '../../components/SubscribeNews';
 import { OneShotNotification } from '../../components/OneShotNotification';
-import classNames from 'classnames';
 import { HomeBanner1 } from '../../components/HomeBanner1';
 import { CatalogSlider } from '../../components/CatalogSlider';
 import { useAppSelector } from '../../app/hooks';
 import { Pet } from '../../types/Pet';
 import { filterPetBy, getRandomSampleFromArray } from '../../utils/helperPet';
+import { HomeBanner2 } from '../../components/HomeBanner2';
 
 export const HomePage = () => {
   const { pets } = useAppSelector(state => state.pet);
@@ -52,6 +52,10 @@ export const HomePage = () => {
           title="Our Cats"
           pets={cats}
         />
+      </Section>
+
+      <Section>
+        <HomeBanner2 />
       </Section>
 
       <Section className="p-2">

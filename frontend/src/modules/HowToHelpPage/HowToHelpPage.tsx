@@ -16,7 +16,7 @@ export const HowToHelpPage = () => {
           <Box>
             <figure className="image is-2by1 mb-5">
               <img
-                src="https://placehold.co/1200x600/A8D5E2/4F646F?text=Be+Their+Hero"
+                src="\assets\how-to-help-banner.png"
                 alt="A banner showing happy pets"
                 style={{ borderRadius: '8px' }}
               />
@@ -33,7 +33,6 @@ export const HowToHelpPage = () => {
             <hr />
 
             <Columns>
-              {/* Why Adopt? Section */}
               <Columns.Column>
                 <Heading size={4}>Why Adopt, Not Shop?</Heading>
                 <Content>
@@ -64,7 +63,6 @@ export const HowToHelpPage = () => {
                 </Content>
               </Columns.Column>
 
-              {/* Donate Section */}
               <Columns.Column>
                 <Heading size={4}>Donate</Heading>
                 <Content>
@@ -73,13 +71,15 @@ export const HowToHelpPage = () => {
                     food, medical care, shelter, and spay/neuter services for
                     our animals. Every dollar counts!
                   </p>
-                  <Button
-                    color="primary"
-                    size="large"
-                    fullwidth
-                  >
-                    Donate Now
-                  </Button>
+
+                  <div className="is-flex is-justify-content-center">
+                    <figure className="image is-128x128  mb-5">
+                      <img
+                        src="\assets\donation-qr-code.png"
+                        alt="A banner showing happy pets"
+                      />
+                    </figure>
+                  </div>
                   <p className="is-size-7 has-text-centered mt-2">
                     We are a registered 501(c)(3) non-profit organization.
                   </p>
@@ -88,7 +88,6 @@ export const HowToHelpPage = () => {
             </Columns>
             <hr />
 
-            {/* External Agencies Section */}
             <div className="has-text-centered">
               <Heading size={4}>Support Our Partners</Heading>
               <Content>
