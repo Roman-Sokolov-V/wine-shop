@@ -31,6 +31,9 @@ import { toggle as toggleFavote } from '../../features/favorites';
 import * as FavoriteAction from '../../features/favorites';
 import { useNavigate } from 'react-router-dom';
 import { updatePetsApi } from '../../api/pets';
+import { PetInfoSwiper } from '../../components/PetInfoSwiper';
+import { randomImageGenerator } from '../../utils/helperPet';
+import { ModalSuccess } from '../../components/ModalSuccess';
 
 interface AppointmentFormData {
   name: string;
@@ -49,7 +52,7 @@ export const PetInfoPage = () => {
   const [pet, setPet] = useState<Pet | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [activeImage, setActiveImage] = useState('');
+  const [success, setSuccess] = useState('');
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
 
   const inFav = useMemo(
@@ -68,19 +71,6 @@ export const PetInfoPage = () => {
       .then(res => {
         const petData = res?.data as Pet;
         setPet(petData);
-        // Set the first image as active, or a placeholder if none exist
-        setActiveImage(() => {
-          if (petData.images && petData.images.length > 0) {
-            return petData.images[0];
-          }
-          if (petData.pet_type === 'dog') {
-            return '/assets/dog-img-placeholder.png';
-          } else if (petData.pet_type === 'cat') {
-            return '/assets/cat-img-placeholder.png';
-          } else {
-            return 'https://placehold.co/400x600?text=Comming+Soon';
-          }
-        });
       })
       .catch((e: AxiosError) => {
         setError(`Failed to fetch pet details: ${e.message}`);
@@ -91,8 +81,12 @@ export const PetInfoPage = () => {
   }, [id]);
 
   const handleAppointmentSubmit = (formData: AppointmentFormData): void => {
+    //Todo: Add API call when BE ready
     // eslint-disable-next-line no-console
     console.log('Appointment request submitted:', formData);
+    setSuccess(
+      'Appointment request submitted, someone will contact you to confirm appoitment.',
+    );
   };
 
   if (loading) {
@@ -109,6 +103,17 @@ export const PetInfoPage = () => {
     );
   }
 
+  if (success) {
+    return (
+      <ModalSuccess
+        isActive
+        title="Succsess"
+        body={success}
+        onClose={() => setSuccess('')}
+      />
+    );
+  }
+
   if (!pet) {
     return <p>Pet not found.</p>;
   }
@@ -117,28 +122,13 @@ export const PetInfoPage = () => {
     <div className={style.pageContainer}>
       <Columns>
         <Columns.Column size="half">
-          <div className={style.galleryContainer}>
-            <div className={style.mainImageContainer}>
-              <Image
-                src={activeImage}
-                alt={`${pet.name}'s main picture`}
-              />
-            </div>
-            <div className={style.thumbnailContainer}>
-              {pet.images &&
-                pet.images.map((img, index) => (
-                  <div
-                    key={index}
-                    className={`${style.thumbnail} ${img === activeImage ? style.activeThumbnail : ''}`}
-                    onClick={() => setActiveImage(img)}
-                  >
-                    <Image
-                      src={img}
-                      alt={`${pet.name}'s thumbnail ${index + 1}`}
-                    />
-                  </div>
-                ))}
-            </div>
+          <div>
+            <PetInfoSwiper
+              images={pet?.images}
+              //TODO: delete for production
+              // images={randomImageGenerator(20)}
+              petType={pet.pet_type}
+            />
           </div>
         </Columns.Column>
 

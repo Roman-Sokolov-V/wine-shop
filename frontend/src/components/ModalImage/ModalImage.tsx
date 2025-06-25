@@ -24,10 +24,8 @@ export const ModalImage: React.FC<Props> = ({ imageUrl, visible, onClose }) => {
     }
 
     document.addEventListener('click', handleClickOutside);
-    // document.body.style.overflow = 'hidden'; // Disable scrolling
     return () => {
       document.removeEventListener('click', handleClickOutside);
-      // document.body.style.overflow = 'unset'; // Reset on unmount or visibility change
     };
   }, []);
 
@@ -42,7 +40,7 @@ export const ModalImage: React.FC<Props> = ({ imageUrl, visible, onClose }) => {
           <img
             className={style.image}
             src={imageUrl}
-            alt=""
+            alt="pet image"
             ref={targetRef}
           />
         </div>

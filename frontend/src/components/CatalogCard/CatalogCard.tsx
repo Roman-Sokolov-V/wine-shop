@@ -39,9 +39,11 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
       setPicture(petData.images[0]);
     }
   }, [petData]);
+
   if (!petData) {
     return <></>;
   }
+
   return (
     <div className={style.container}>
       <div className={style.cardImageContainer}>
