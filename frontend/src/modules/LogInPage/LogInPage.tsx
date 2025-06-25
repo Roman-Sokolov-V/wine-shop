@@ -7,7 +7,7 @@ import {
   Heading,
 } from 'react-bulma-components';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../api/auth';
+import { userLogin } from '../../api/auth';
 import { AxiosError, AxiosResponse } from 'axios';
 import { ModalLoader } from '../../components/ModalLoader';
 import { ModalError } from '../../components/ModalError';
@@ -32,7 +32,7 @@ export const LogInPage = () => {
 
     setLoading(true);
     setError('');
-    login(email, password)
+    userLogin(email, password)
       .then((res: AxiosResponse) => {
         const token = res.data;
         if (res.status === 200 && token) {

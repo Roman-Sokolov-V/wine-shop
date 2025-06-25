@@ -1,7 +1,16 @@
+import { getLocalToken } from '../utils/heplerApi';
 import api from './api';
 
-export const login = (email: string, password: string) => {
+export const userLogin = (email: string, password: string) => {
   return api.post(`api/v1/users/login/`, { email, password });
+};
+
+export const userLogout = () => {
+  return api.post(`api/v1/users/logout/`, null, {
+    headers: {
+      Authorization: getLocalToken(),
+    },
+  });
 };
 
 export const register = (

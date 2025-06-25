@@ -7,7 +7,7 @@ import { CatalogViewSetter } from '../../components/CatalogViewSetter';
 import { CatalogFilter } from '../../components/CatalogFilter';
 import { Columns, Pagination } from 'react-bulma-components';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { QueryNames, SortOrder } from '../../types/ViewControlle';
 import * as PetsAction from '../../features/pets';
 import { getAvaliableFilters } from '../../utils/helperPet';
@@ -56,10 +56,9 @@ export const CatalogPage = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [error, setError] = useState('');
 
-  // Get current values from URL or set defaults. This makes the URL the source of truth.
   const currentPage = parseInt(
     searchParams.get(QueryNames.CUR_PAGE) || '1',
     10,

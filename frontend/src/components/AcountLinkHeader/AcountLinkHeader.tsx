@@ -3,22 +3,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import { Button, Navbar } from 'react-bulma-components';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import style from './AcountLinkHeader.module.scss';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { useDispatch } from 'react-redux';
-import { actions as AuthAction } from '../../features/authentication';
+import { logout } from '../../features/authentication';
 
 export const AcountLinkHeader = () => {
   const naviagate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { visible: mobileMenuVisible } = useAppSelector(
     state => state.menuVisible,
   );
   const { loggedIn } = useAppSelector(state => state.auth);
 
   function handleLogout() {
-    dispatch(AuthAction.logout());
+    dispatch(logout());
     naviagate('/');
   }
 

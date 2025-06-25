@@ -16,6 +16,7 @@ import { ModalError } from '../../components/ModalError';
 import * as PetActions from '../../features/pets';
 import * as FavActions from '../../features/favorites';
 import { AIAgent } from '../../components/AIAgent/AIAgent';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -39,7 +40,9 @@ function App() {
       })
       .finally(() => setLoading(false));
 
-    dispatch(FavActions.actions.init());
+    setLoading(true);
+
+    dispatch(FavActions.init());
   }, []);
 
   if (error) {
@@ -66,9 +69,9 @@ function App() {
         },
       )}
     >
-      <div>
-        <Header />
-      </div>
+      <Header />
+
+      <Breadcrumbs />
 
       {!mobileMenuVisible && (
         <Container className={'is-flex'}>
@@ -76,7 +79,7 @@ function App() {
         </Container>
       )}
 
-      {!mobileMenuVisible && <FooterElem />}
+      <div className="mt-3">{!mobileMenuVisible && <FooterElem />}</div>
 
       <ScrollToTop />
       <AIAgent />

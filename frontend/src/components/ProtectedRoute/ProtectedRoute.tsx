@@ -11,7 +11,6 @@ export const ProtectedRoute: React.FC<Props> = ({ redirectPath = 'login' }) => {
   const { loggedIn, user } = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
   const location = useLocation();
-
   useEffect(() => {
     if (loggedIn === undefined || !user) {
       dispatch(authActions.init());

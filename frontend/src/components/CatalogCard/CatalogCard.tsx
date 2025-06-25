@@ -8,11 +8,14 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import * as FavoriteAction from '../../features/favorites';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
+import { updatePetsApi } from '../../api/pets';
 
 interface Props {
   petData: Pet;
 }
+
 export const CatalogCard: React.FC<Props> = ({ petData }) => {
+  const { loggedIn } = useAppSelector(state => state.auth);
   const { favorites } = useAppSelector(state => state.favorite);
   const dispatch = useAppDispatch();
   const naviagate = useNavigate();
@@ -36,9 +39,11 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
       setPicture(petData.images[0]);
     }
   }, [petData]);
+
   if (!petData) {
     return <></>;
   }
+
   return (
     <div className={style.container}>
       <div className={style.cardImageContainer}>
@@ -70,7 +75,7 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
           rounded
           color="primary"
           onClick={() => {
-            naviagate(`/pet/${petData.id}`);
+            naviagate(`/pets/${petData.id}`);
           }}
         >
           More Details
@@ -79,7 +84,13 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
         <Button
           rounded
           onClick={() => {
-            dispatch(FavoriteAction.actions.toggle(petData.id));
+            dispatch(FavoriteAction.toggle(petData.id));
+
+            if (loggedIn) {
+              updatePetsApi(favorites).catch(() =>
+                console.error('Error toggling favorites'),
+              );
+            }
           }}
         >
           <FontAwesomeIcon
