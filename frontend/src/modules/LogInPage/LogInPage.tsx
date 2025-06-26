@@ -35,6 +35,7 @@ export const LogInPage = () => {
     userLogin(email, password)
       .then((res: AxiosResponse) => {
         const token = res.data;
+
         if (res.status === 200 && token) {
           dispatch(AuthAction.login(token));
           navigate('/account');
