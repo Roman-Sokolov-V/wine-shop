@@ -46,6 +46,7 @@ jobs:
 
     - name: Make and run migrations
       run: |
+        cd backend/
         poetry run python manage.py makemigrations
         poetry run python manage.py migrate
 
