@@ -49,9 +49,9 @@ jobs:
         ls -la
         ls -la backend
         
-#
-#    - name: Run Tests
-#      run: |
-#        cd backend/
-#        poetry run python manage.py test
+
+    - name: Run Tests
+      run: |
+        cd backend/
+        python manage.py test
 
