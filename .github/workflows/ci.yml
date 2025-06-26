@@ -48,7 +48,7 @@ jobs:
       run: |
         cd backend/
         poetry run python manage.py makemigrations
-        poetry run python manage.py migrate
+
 
     - name: Show env and pwd
       run: |
