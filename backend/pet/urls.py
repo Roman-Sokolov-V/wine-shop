@@ -1,5 +1,5 @@
 from django.urls import path
-from pet.views import PetViewSet, FavoriteView
+from pet.views import PetViewSet, FavoriteView, filter_report
 
 app_name = "pet"
 
@@ -11,7 +11,10 @@ pet_upload_image = PetViewSet.as_view(actions={"post": "upload_image"})
 
 urlpatterns = [
     path("favorite/<int:pk>/", FavoriteView.as_view(), name="favorite"),
-    path("<int:pk>/upload/", pet_upload_image, name="pet-upload-image"),  # Доданий маршрут для upload
+    path("filters/", filter_report, name="filters"),
+    path(
+        "<int:pk>/upload/", pet_upload_image, name="pet-upload-image"
+    ),  # Доданий маршрут для upload
     path("<int:pk>/", pet_detail, name="pet-detail"),
     path("", pets_list_create, name="pets-list"),
 ]

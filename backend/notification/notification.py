@@ -3,18 +3,18 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 from pet.models import Pet
-from user.models import TempToken
 
 from django.conf import settings
 
 User = get_user_model()
 restore_form_url = settings.FRONT_HOST + settings.RESTORE_FORM_URL
 
+
 def notify_we_found_pet_for_you(pet: Pet, user: User):
 
     text_content = render_to_string(
         "emails/found_pet_that_you_looking_for.txt",
-        context={"pet": pet, "site_url": "https://example.com"}, # Вказати сайт фронта
+        context={"pet": pet, "site_url": "https://example.com"},  # Вказати сайт фронта
     )
 
     html_content = render_to_string(
@@ -33,7 +33,8 @@ def notify_we_found_pet_for_you(pet: Pet, user: User):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
-def send_email_restore_password_token(token: TempToken.key, user: User):
+
+def send_email_restore_password_token(token: str, user_email: str):
 
     text_content = render_to_string(
         "emails/restore_password.txt",
@@ -49,7 +50,7 @@ def send_email_restore_password_token(token: TempToken.key, user: User):
         "Password Restore",
         text_content,
         settings.DEFAULT_FROM_EMAIL,
-        [user.email],
+        [user_email],
         headers={"List-Unsubscribe": "<mailto:unsub@example.com>"},
     )
 
