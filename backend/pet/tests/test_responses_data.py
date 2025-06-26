@@ -1,4 +1,3 @@
-# from django.db.models.aggregates import Max
 from django.db.models import Max, Min
 from django.test import TestCase
 from rest_framework import status
@@ -108,7 +107,7 @@ class StaffUserTestCase(TestCase):
         self.assertIn(self.pet, self.db_user.favorites.all())
 
 
-class StaffUserTestCase(TestCase):
+class FilterTestCase(TestCase):
     fixtures = ["test_data.json"]
 
     def setUp(self):
