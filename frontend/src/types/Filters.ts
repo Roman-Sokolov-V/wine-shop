@@ -9,3 +9,15 @@ export interface Filters {
   weightMax?: number | null;
   isSterilized?: string[];
 }
+
+export interface FilterAPIResponce {
+  pet_type: string[];
+  breed: string[];
+  coloration: string[];
+  is_sterilized: string[];
+  age_max: number;
+  age_min: number;
+  sex: string[];
+  weight_max: number;
+  weight_min: number;
+}

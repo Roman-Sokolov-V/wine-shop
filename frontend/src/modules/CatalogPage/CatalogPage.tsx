@@ -10,8 +10,9 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useSearchParams } from 'react-router-dom';
 import { QueryNames, SortOrder } from '../../types/ViewControlle';
 import * as PetsAction from '../../features/pets';
-import { getAvaliableFilters } from '../../utils/helperPet';
 import { Filters } from '../../types/Filters';
+import { getPetsAvailableFilters } from '../../api/pets';
+import { Axios, AxiosError, AxiosResponse } from 'axios';
 
 const filterKeys: (keyof Filters)[] = [
   'pet_type',
@@ -51,12 +52,12 @@ function genPages(items: Pet[], perPage: string) {
 }
 
 export const CatalogPage = () => {
-  const { pets, filteredPets } = useAppSelector(state => state.pet);
+  const { filteredPets } = useAppSelector(state => state.pet);
   const dispatch = useAppDispatch();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const currentPage = parseInt(
@@ -65,7 +66,50 @@ export const CatalogPage = () => {
   );
   const itemsPerPage = searchParams.get(QueryNames.PER_PAGE) || '10';
 
-  const availableFilters = useMemo(() => getAvaliableFilters(pets), [pets]);
+  const [availableFilters, setAvailableFilters] = useState<Filters>({
+    pet_type: [],
+    minAge: 0,
+    maxAge: 99,
+    breed: [],
+    sex: ['Male', 'Female', 'Unknown'],
+    coloration: [],
+    weightMin: 0,
+    weightMax: 999,
+    isSterilized: ['Yes', 'No', 'Unknown'],
+  });
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      setLoading(true);
+      try {
+        const res = await getPetsAvailableFilters();
+        const data = res?.data;
+        if (data) {
+          setAvailableFilters({
+            pet_type: data.pet_type,
+            minAge: data.age_min,
+            maxAge: data.age_max,
+            breed: data.breed,
+            sex: data.sex,
+            coloration: data.coloration,
+            weightMin: data.weight_min,
+            weightMax: data.weight_max,
+            isSterilized: data.is_sterilized,
+          });
+        }
+      } catch (error: unknown) {
+        if (error && typeof error === 'object' && 'message' in error) {
+          setError((error as { message?: string }).message || 'Unknown error');
+        } else {
+          setError('Unknown error');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFilters();
+  }, []);
 
   const pages = useMemo(() => {
     return genPages(filteredPets, itemsPerPage);
@@ -95,7 +139,7 @@ export const CatalogPage = () => {
         }
       }
     }
-
+    console.log('000000', currentFilters);
     dispatch(PetsAction.actions.search(query));
     dispatch(PetsAction.actions.sortFiltered(sortOrder));
     dispatch(PetsAction.actions.applyFilter(currentFilters as Filters));

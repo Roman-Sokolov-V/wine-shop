@@ -22,6 +22,7 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
   const [selectedFilters, setSelectedFilters] = useState<Filters>(
     initialSelectedFilters,
   );
+  console.log('========', filterData);
 
   const handleCheckboxChange = (field: keyof Filters, value: string) => {
     const currentValues = selectedFilters[field] as string[];

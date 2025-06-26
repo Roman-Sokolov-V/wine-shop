@@ -9,8 +9,8 @@ export const getPetsData = (): Promise<AxiosResponse> => {
   return api.get(`api/v1/pets/`);
 };
 
-export const getPetsFilter = (): Promise<Pet[]> => {
-  return api.get(`api/v1/pets/`);
+export const getPetsAvailableFilters = (): Promise<AxiosResponse> => {
+  return api.get(`api/v1/pets/filters/`);
 };
 
 export const getPetById = (id: string): Promise<AxiosResponse> => {
