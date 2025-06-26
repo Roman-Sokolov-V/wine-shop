@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: .../backend
     strategy:
       max-parallel: 4
       matrix:
@@ -38,7 +38,7 @@ jobs:
         echo "Working directory: $(pwd)"
         echo "PYTHONPATH: $PYTHONPATH"
         ls -la
-        ls -la backend
+        ls -la user
         
 
     - name: Run Tests
