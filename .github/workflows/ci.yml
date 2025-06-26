@@ -51,8 +51,6 @@ jobs:
         
 
     - name: Run Tests
-      run: |
-
-        export DJANGO_SETTINGS_MODULE=config.settings.test_settings
+      run: |        
         poetry run python manage.py test
-      working-directory: backend
+
