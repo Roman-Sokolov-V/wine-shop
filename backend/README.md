@@ -88,3 +88,8 @@ Open Settings by backend/config/settings/dev.py
 Find Section # Mail conf  
 Edit EMAIL_HOST_USER and EMAIL_HOST_PASSWORD values provided by Mailtrap service when registering
 
+### Save data from db to file
+docker exec shelter python manage.py dumpdata > file_name.json
+
+### Load db with data from file
+docker exec shelter python manage.py loaddata file_name.json

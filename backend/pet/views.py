@@ -122,7 +122,7 @@ def filter_report(request):
     """Get filters"""
     breed = Pet.objects.values_list("breed", flat=True).distinct()
     coloration = Pet.objects.values_list("coloration", flat=True).distinct()
-    is_sterilized = [True, False, None]
+    is_sterilized = Pet.objects.values_list("is_sterilized", flat=True).distinct()
     pet_type = Pet.objects.values_list("pet_type", flat=True).distinct()
     sex = ["M", "F", "U"]
 
