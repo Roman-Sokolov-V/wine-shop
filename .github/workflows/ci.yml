@@ -44,6 +44,11 @@ jobs:
         pip install poetry
         poetry install
 
+    - name: Make and run migrations
+      run: |
+        poetry run python manage.py makemigrations
+        poetry run python manage.py migrate
+
     - name: Show env and pwd
       run: |
         echo "Working directory: $(pwd)"
