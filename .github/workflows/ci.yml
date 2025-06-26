@@ -30,11 +30,11 @@ jobs:
         echo "Working directory: $(pwd)"
         echo "PYTHONPATH: $PYTHONPATH"
         ls -la
-        ls -la user
+        ls -la  backend
 
     - name: Load .env file
       run: |
-        cp .env.sample .env
+        cp backend/.env.sample backend/.env
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
@@ -46,7 +46,7 @@ jobs:
         echo "Working directory: $(pwd)"
         echo "PYTHONPATH: $PYTHONPATH"
         ls -la
-        ls -la user
+        ls -la backend
         
 
     - name: Run Tests
