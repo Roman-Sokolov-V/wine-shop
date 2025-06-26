@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useActionState, useState } from 'react';
 import {
   Box,
   Button,
@@ -13,10 +13,16 @@ import { ModalLoader } from '../../components/ModalLoader';
 import { ModalError } from '../../components/ModalError';
 import { useDispatch } from 'react-redux';
 import { actions as AuthAction } from '../../features/authentication';
+import * as FavotiteAcion from '../../features/favorites';
+import { updatePetsApi } from '../../api/pets';
+import { useAppSelector } from '../../app/hooks';
+import { getUserMe } from '../../api/users';
 
 export const LogInPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { loggedIn } = useAppSelector(state => state.auth);
+  const { favorites } = useAppSelector(state => state.favorite);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -33,11 +39,25 @@ export const LogInPage = () => {
     setLoading(true);
     setError('');
     userLogin(email, password)
-      .then((res: AxiosResponse) => {
-        const token = res.data;
+      .then(async (res: AxiosResponse) => {
+        const userData = res.data;
 
-        if (res.status === 200 && token) {
-          dispatch(AuthAction.login(token));
+        if (res.status === 200 && userData) {
+          dispatch(AuthAction.login(userData));
+          const me = await getUserMe();
+
+          if (me?.data?.favorites.length > 0) {
+            const combFavs = Array.from(
+              new Set([...favorites, ...(me?.data?.favorites || [])]),
+            );
+
+            updatePetsApi(combFavs).catch(() =>
+              console.error('Error updating favorites'),
+            );
+
+            dispatch(FavotiteAcion.set(combFavs));
+          }
+
           navigate('/account');
         } else {
           throw Error('Errow with login');

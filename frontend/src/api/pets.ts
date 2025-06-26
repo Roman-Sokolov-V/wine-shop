@@ -53,8 +53,6 @@ export const clearPetFavorites = async () => {
 };
 
 export const updatePetsApi = async (ids: number[]) => {
-  await clearPetFavorites();
-
   ids.forEach(async itm => {
     try {
       await setPetFavorite(itm);
