@@ -52,5 +52,6 @@ jobs:
 
     - name: Run Tests
       run: |        
+        cd backend/
         poetry run python manage.py test
 
