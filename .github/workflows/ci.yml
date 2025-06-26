@@ -34,5 +34,7 @@ jobs:
         poetry install
     - name: Run Tests
       run: |
+        export PYTHONPATH=$(pwd)
+        export DJANGO_SETTINGS_MODULE=config.settings.test_settings
         poetry run python manage.py test
       working-directory: backend
