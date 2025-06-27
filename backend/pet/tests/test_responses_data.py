@@ -14,7 +14,12 @@ User = get_user_model()
 
 def check_response(instance, pet, data):
     for key, value in data.items():
-        instance.assertEqual(pet[key], value), f"pet.{key} should by equal {value}"
+        if key in ("name", "pet_type", "breed", "coloration"):
+            instance.assertEqual(
+                pet[key], value.lower()
+            ), f"pet.{key} should by equal {value.lower()}"
+        else:
+            instance.assertEqual(pet[key], value), f"pet.{key} should by equal {value}"
     instance.assertIsNotNone(pet["id"])
     instance.assertEqual(pet["images"], [])
     instance.assertEqual(pet["owner"], None)
@@ -27,8 +32,9 @@ class StaffUserTestCase(TestCase):
         self.db_user = User.objects.create_user(
             email="test@test.com", password="<PASSWORD>", is_staff=True
         )
-        self.pet_data = {
-            "name": "Nora",
+
+        self.pet_data = {  # fo not change to Uppercase
+            "name": "nora",
             "pet_type": "cat",
             "age": 2,
             "breed": "siam",
@@ -55,16 +61,17 @@ class StaffUserTestCase(TestCase):
         )
         self.assertEqual(status.HTTP_200_OK, response.status_code), "for all users"
         pet = response.json()
+        print(response.json())
         check_response(self, pet, self.pet_data)
 
     def test_create_pet(self):
         data = {
             "name": "Kesha",
-            "pet_type": "dog",
+            "pet_type": "Dog",
             "age": 2,
-            "breed": "pudel",
+            "breed": "Pudel",
             "sex": "M",
-            "coloration": "black",
+            "coloration": "Black",
             "weight": 4,
             "is_sterilized": False,
             "description": "it is a good boy",
@@ -74,6 +81,7 @@ class StaffUserTestCase(TestCase):
             status.HTTP_201_CREATED, response.status_code
         ), "for staff only"
         pet = response.json()
+        print(response.json())
         check_response(self, pet, data)
 
     def test_patch_pet(self):
