@@ -25,7 +25,6 @@ class PetViewSet(viewsets.ModelViewSet):
     filterset_class = PetFilter
 
     search_fields = [
-        "id",
         "name",
         "pet_type",
         "age",
@@ -34,7 +33,6 @@ class PetViewSet(viewsets.ModelViewSet):
         "coloration",
         "weight",
         "is_sterilized",
-        "owner",
     ]
 
     def get_queryset(self):
@@ -140,7 +138,6 @@ def filter_report(request):
 
     data = {
         "breed": list(breed),
-        # "pet_type": pet_type_list,
         "pet_type": pet_type,
         "coloration": list(coloration),
         "is_sterilized": list(is_sterilized),
