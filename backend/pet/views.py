@@ -23,6 +23,7 @@ class PetViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = PetFilter
+    queryset = Pet.objects.all()
 
     search_fields = [
         "name",
@@ -33,6 +34,7 @@ class PetViewSet(viewsets.ModelViewSet):
         "coloration",
         "weight",
         "is_sterilized",
+        "description",
     ]
 
     def get_queryset(self):
@@ -127,14 +129,6 @@ def filter_report(request):
     weight_age = Pet.objects.aggregate(
         Max("weight"), Min("weight"), Max("age"), Min("age")
     )
-    # pet_type_list = []
-    # for type_ in pet_type:
-    #     breeds = (
-    #         Pet.objects.filter(pet_type=type_)
-    #         .values_list("breed", flat=True)
-    #         .distinct()
-    #     )
-    #     pet_type_list.append({type_: {"breed": list(breeds)}})
 
     data = {
         "breed": list(breed),

@@ -58,7 +58,6 @@ class PetSerializer(serializers.ModelSerializer):
                     f"Файл {file.name} не є зображенням. "
                     f"Дозволені типи: JPEG, PNG, GIF, WebP"
                 )
-
         return files
 
     def create(self, validated_data):
@@ -73,10 +72,12 @@ class PetSerializer(serializers.ModelSerializer):
         if validated_files:
             images = [Image(pet=pet, file=file) for file in validated_files]
             Image.objects.bulk_create(images)
-
         return pet
 
     def validate(self, data):
+        for field in ("name", "pet_type", "breed", "coloration"):
+            if data.get(field):
+                data[field] = data[field].lower()
         if self.instance is None:
             name = data.get("name")
             pet_type = data.get("pet_type")
@@ -106,6 +107,7 @@ class PetSerializer(serializers.ModelSerializer):
                     "Make sure you not try to add the same pet by mistake. "
                     "If not just change any field"
                 )
+
         return data
 
 
@@ -131,24 +133,10 @@ class EmptySerializer(serializers.Serializer):
     pass
 
 
-# class BreedSerializer(serializers.Serializer):
-#     breed = serializers.ListField(child=serializers.CharField())
-#
-#
-# class PetTypeSerializer(serializers.Serializer):
-#     breed = BreedSerializer(many=True)
-
-
 class FiltersReportSerializer(serializers.Serializer):
     pet_type = serializers.ListField(child=serializers.CharField())
     breed = serializers.ListField(child=serializers.CharField())
-    # pet_type = serializers.ListField(
-    #     child=serializers.DictField(
-    #         child=serializers.DictField(
-    #             child=serializers.ListField(child=serializers.CharField())
-    #         )
-    #     )
-    # )
+
     coloration = serializers.ListField(child=serializers.CharField())
     is_sterilized = serializers.ListField(
         child=serializers.BooleanField(allow_null=True)
