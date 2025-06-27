@@ -5,7 +5,6 @@ import { userLogout } from '../api/auth';
 
 const initialValue = {
   loggedIn: accessLocalStorage.get(LocalAccessKeys.LOGGEDIN),
-  user: undefined,
 };
 
 const logout = createAsyncThunk('auth/logout', async () => {
@@ -33,7 +32,6 @@ const AuthSlice = createSlice({
     builder
       .addCase(logout.fulfilled, state => {
         state.loggedIn = undefined;
-        state.user = undefined;
         accessLocalStorage.clearKey(LocalAccessKeys.LOGGEDIN);
       })
 
