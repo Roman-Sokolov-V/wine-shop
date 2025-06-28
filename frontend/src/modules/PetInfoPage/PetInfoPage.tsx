@@ -5,7 +5,14 @@ import { Pet } from '../../types/Pet';
 import { ModalError } from '../../components/ModalError';
 import { ModalLoader } from '../../components/ModalLoader';
 import { AxiosError } from 'axios';
-import { Box, Button, Columns, Content, Heading } from 'react-bulma-components';
+import {
+  Box,
+  Button,
+  Columns,
+  Container,
+  Content,
+  Heading,
+} from 'react-bulma-components';
 import style from './PetInfoPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -15,6 +22,10 @@ import {
   faCheckCircle,
   faTimesCircle,
   faHeart,
+  faMars,
+  faVenus,
+  faQuestion,
+  faCircleQuestion,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentModal } from '../../components/AppointmentModal';
 
@@ -28,6 +39,7 @@ import { PetAdoptionFormModal } from '../../components/PetAdoptionFormModal';
 import { AdoptionFormData } from '../../types/AdoptionFormData';
 import { submitAdotptionForm, submitAppointmentForm } from '../../api/users';
 import { AppointmentFormData } from '../../types/AppointmentFormData';
+import { textBeautifier } from '../../utils/helperFormater';
 
 export const PetInfoPage = () => {
   const { favorites } = useAppSelector(state => state.favorite);
@@ -117,7 +129,7 @@ export const PetInfoPage = () => {
   }
 
   return (
-    <div>
+    <Container>
       {loading && <ModalLoader />}
 
       <ModalError
@@ -161,38 +173,76 @@ export const PetInfoPage = () => {
 
           <Columns.Column size="half">
             <Content>
-              <div className="is-flex is-justify-content-space-between">
+              <div className="is-flex is-justify-content-space-between is-align-items-center">
                 <div>
-                  <Heading size={1}>{pet.name}</Heading>
+                  <Heading size={1}>
+                    {pet.name.charAt(0).toUpperCase() + pet.name.slice(1)}
+                  </Heading>
+
                   <Heading
                     subtitle
                     size={4}
+                    className="is-flex is-flex-direction-column"
                   >
-                    {pet.breed}
+                    <span className="pb-3">{textBeautifier(pet.breed)}</span>
+
                     <span className={style.sexIndicator}>
-                      {pet.sex === 'M' ? ' (Male)' : ' (Female)'}
+                      <p className="p-0 m-0 pr-3">Sex: </p>
+
+                      {pet.sex === 'M' && (
+                        <>
+                          <span>Male</span>
+                          <FontAwesomeIcon
+                            icon={faMars}
+                            className="ml-2"
+                          />
+                        </>
+                      )}
+
+                      {pet.sex === 'F' && (
+                        <>
+                          <span>Female</span>
+                          <FontAwesomeIcon
+                            icon={faVenus}
+                            className="ml-2"
+                          />
+                        </>
+                      )}
+
+                      {pet.sex === 'U' && (
+                        <>
+                          <span>Uknown</span>
+                          <FontAwesomeIcon
+                            icon={faCircleQuestion}
+                            className="ml-2"
+                          />
+                        </>
+                      )}
                     </span>
                   </Heading>
                 </div>
 
-                <Button
-                  rounded
-                  onClick={() => {
-                    dispatch(FavoriteAction.toggle(pet.id));
+                <div>
+                  <Button
+                    rounded
+                    className="p-5"
+                    onClick={() => {
+                      dispatch(FavoriteAction.toggle(pet.id));
 
-                    if (loggedIn) {
-                      updatePetsApi(favorites).catch(() =>
-                        console.error('Error toggling favorites'),
-                      );
-                    }
-                  }}
-                >
-                  <FontAwesomeIcon
-                    className={classNames({ 'has-text-danger': inFav })}
-                    icon={faHeart}
-                    size="2x"
-                  />
-                </Button>
+                      if (loggedIn) {
+                        updatePetsApi(favorites).catch(() =>
+                          console.error('Error toggling favorites'),
+                        );
+                      }
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      className={classNames({ 'has-text-danger': inFav })}
+                      icon={faHeart}
+                      size="2x"
+                    />
+                  </Button>
+                </div>
               </div>
               <hr />
 
@@ -264,6 +314,6 @@ export const PetInfoPage = () => {
           </Columns.Column>
         </Columns>
       </div>
-    </div>
+    </Container>
   );
 };
