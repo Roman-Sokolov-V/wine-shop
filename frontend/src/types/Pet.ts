@@ -10,7 +10,7 @@ export interface Pet {
   is_sterilized: string;
   description: string;
   date_created: Date;
-  images: string[];
+  images: Image[];
 }
 
 export interface ApiPet {
@@ -25,5 +25,9 @@ export interface ApiPet {
   is_sterilized: boolean;
   description: string;
   date_created: Date;
-  images: string[];
+  images: Image[];
 }
+
+type Image = {
+  file: string;
+};

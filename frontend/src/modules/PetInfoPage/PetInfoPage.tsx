@@ -153,9 +153,7 @@ export const PetInfoPage = () => {
           <Columns.Column size="half">
             <div>
               <PetInfoSwiper
-                images={pet?.images}
-                //TODO: delete for production
-                // images={randomImageGenerator(20)}
+                images={pet?.images?.map(img => img.file)}
                 petType={pet.pet_type}
               />
             </div>
