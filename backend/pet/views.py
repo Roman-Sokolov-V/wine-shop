@@ -23,9 +23,9 @@ class PetViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = PetFilter
+    queryset = Pet.objects.all()
 
     search_fields = [
-        "id",
         "name",
         "pet_type",
         "age",
@@ -34,7 +34,7 @@ class PetViewSet(viewsets.ModelViewSet):
         "coloration",
         "weight",
         "is_sterilized",
-        "owner",
+        "description",
     ]
 
     def get_queryset(self):
@@ -63,7 +63,7 @@ class PetViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         pet = self.perform_create(serializer)
-        user = get_user_model().objects.first()
+        # user = get_user_model().objects.first()
         # notify_we_found_pet_for_you(pet=pet, user=user)
         headers = self.get_success_headers(serializer.data)
         return Response(
@@ -122,25 +122,16 @@ def filter_report(request):
     """Get filters"""
     breed = Pet.objects.values_list("breed", flat=True).distinct()
     coloration = Pet.objects.values_list("coloration", flat=True).distinct()
-    is_sterilized = [True, False, None]
+    is_sterilized = Pet.objects.values_list("is_sterilized", flat=True).distinct()
     pet_type = Pet.objects.values_list("pet_type", flat=True).distinct()
     sex = ["M", "F", "U"]
 
     weight_age = Pet.objects.aggregate(
         Max("weight"), Min("weight"), Max("age"), Min("age")
     )
-    # pet_type_list = []
-    # for type_ in pet_type:
-    #     breeds = (
-    #         Pet.objects.filter(pet_type=type_)
-    #         .values_list("breed", flat=True)
-    #         .distinct()
-    #     )
-    #     pet_type_list.append({type_: {"breed": list(breeds)}})
 
     data = {
         "breed": list(breed),
-        # "pet_type": pet_type_list,
         "pet_type": pet_type,
         "coloration": list(coloration),
         "is_sterilized": list(is_sterilized),
