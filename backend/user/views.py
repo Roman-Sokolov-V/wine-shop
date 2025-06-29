@@ -17,7 +17,7 @@ from user.serializers import (
     UpdatePasswordSerializer,
 )
 from user.permissions import IsOwner
-from user.tasks import send_restore_token
+from user.tasks import send_restore_token, create_subscriptions
 
 User = get_user_model()
 
@@ -47,6 +47,10 @@ class UserViewSet(viewsets.ModelViewSet):
         elif self.action in ["update", "partial_update", "retrieve"]:
             return [permissions.OR(permissions.IsAdminUser(), IsOwner())]
         return [permissions.IsAdminUser()]
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        create_subscriptions.send(email=user.email, user_id=user.id)
 
 
 class LoginView(ObtainAuthToken):

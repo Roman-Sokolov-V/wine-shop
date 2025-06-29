@@ -48,9 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """create User instance"""
-        user = User.objects.create_user(**validated_data)
-        create_subscriptions.send(email=user.email, user_id=user.id)
-        return user
+        return User.objects.create_user(**validated_data)
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
