@@ -14,7 +14,7 @@ import { ModalError } from '../../components/ModalError';
 import { useDispatch } from 'react-redux';
 import { actions as AuthAction } from '../../features/authentication';
 import * as FavotiteAcion from '../../features/favorites';
-import { updatePetsApi } from '../../api/pets';
+import { updateFavotitesPetsApi } from '../../api/pets';
 import { useAppSelector } from '../../app/hooks';
 import { getUserMe } from '../../api/users';
 
@@ -51,7 +51,7 @@ export const LogInPage = () => {
               new Set([...favorites, ...(me?.data?.favorites || [])]),
             );
 
-            updatePetsApi(combFavs).catch(() =>
+            updateFavotitesPetsApi(combFavs).catch(() =>
               console.error('Error updating favorites'),
             );
 

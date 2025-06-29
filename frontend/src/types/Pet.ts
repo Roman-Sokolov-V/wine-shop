@@ -26,6 +26,7 @@ export interface ApiPet {
   description: string;
   date_created: Date;
   images: Image[];
+  owner: number[] | null;
 }
 
 type Image = {

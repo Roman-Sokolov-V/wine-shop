@@ -1,41 +1,55 @@
 import React, { useState } from 'react';
-import { Filters } from '../../types/Filters';
+import { Filters, SelectedFilters } from '../../types/Filters';
+import { Button } from 'react-bulma-components';
+import classNames from 'classnames';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type Props = {
-  filterData: Filters;
-  onChange: (selectedFilters: Filters) => void;
+  filterData: Filters | undefined;
+  onChange: (selectedFilters: SelectedFilters) => void;
 };
 
-const initialSelectedFilters: Filters = {
+const initialSelectedFilters: SelectedFilters = {
   pet_type: [],
-  minAge: null,
-  maxAge: null,
+  minAge: 0,
+  maxAge: 99,
   breed: [],
-  sex: [],
+  sex: undefined,
   coloration: [],
-  weightMin: null,
-  weightMax: null,
-  isSterilized: [],
+  weightMin: 0,
+  weightMax: 999,
+  isSterilized: undefined,
 };
 
 export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
-  const [selectedFilters, setSelectedFilters] = useState<Filters>(
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>(
     initialSelectedFilters,
   );
-  console.log('========', filterData);
 
   const handleCheckboxChange = (field: keyof Filters, value: string) => {
-    const currentValues = selectedFilters[field] as string[];
-    const newValues = currentValues.includes(value)
-      ? currentValues.filter(item => item !== value)
-      : [...currentValues, value];
+    const oldValues = Array.isArray(selectedFilters[field])
+      ? (selectedFilters[field] as string[])
+      : [];
+    const newValue = oldValues.includes(value)
+      ? oldValues.filter(v => v !== value)
+      : [...oldValues, value];
 
-    setSelectedFilters({ ...selectedFilters, [field]: newValues });
+    setSelectedFilters({ ...selectedFilters, [field]: newValue });
   };
 
   const handleNumberChange = (field: keyof Filters, value: string) => {
     const numericValue = value === '' ? null : parseInt(value, 10);
     setSelectedFilters({ ...selectedFilters, [field]: numericValue });
+  };
+
+  const handleSingleSelectionChange = (field: keyof Filters, value: string) => {
+    const oldValues = selectedFilters[field];
+    if (oldValues === value) {
+      setSelectedFilters({ ...selectedFilters, [field]: undefined });
+    } else {
+      setSelectedFilters({ ...selectedFilters, [field]: value });
+    }
   };
 
   const handleMultiSelectChange = (
@@ -52,6 +66,10 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onChange(selectedFilters);
+  };
+
+  const handleFieldReset = (field: keyof Filters, defaultVal = []) => {
+    setSelectedFilters({ ...selectedFilters, [field]: defaultVal });
   };
 
   const handleReset = () => {
@@ -104,6 +122,7 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
                 />
               </p>
             </div>
+
             <div className="field">
               <p className="control">
                 <input
@@ -119,7 +138,23 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
         </div>
 
         <div className="field">
-          <label className="label">Breed</label>
+          <div className="is-flex is-justify-content-space-between p-1">
+            <label className="label m-0 p-0">Breed</label>
+            <Button
+              outlined
+              rounded
+              className="m-0 p-1"
+              onClick={() => {
+                handleFieldReset('breed');
+              }}
+            >
+              <FontAwesomeIcon
+                className={classNames('has-text-danger')}
+                icon={faXmark}
+              />
+            </Button>
+          </div>
+
           <div className="control">
             <div className="select is-multiple is-fullwidth">
               <select
@@ -142,7 +177,22 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
         </div>
 
         <div className="field">
-          <label className="label">Coloration</label>
+          <div className="is-flex is-justify-content-space-between p-1">
+            <label className="label m-0 p-0">Coloration</label>
+            <Button
+              outlined
+              rounded
+              className="m-0 p-1"
+              onClick={() => {
+                handleFieldReset('coloration');
+              }}
+            >
+              <FontAwesomeIcon
+                className={classNames('has-text-danger')}
+                icon={faXmark}
+              />
+            </Button>
+          </div>
           <div className="control">
             <div className="select is-multiple is-fullwidth">
               <select
@@ -167,46 +217,94 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
         <div className="field">
           <label className="label">Sex</label>
           <div className="control">
-            {(filterData.sex || []).map(sexOption => (
-              <label
-                className="checkbox mr-4"
-                key={sexOption}
-              >
-                <input
-                  type="checkbox"
-                  checked={
-                    selectedFilters.sex
-                      ? selectedFilters.sex.includes(sexOption)
-                      : false
-                  }
-                  onChange={() => handleCheckboxChange('sex', sexOption)}
-                />
-                {` ${sexOption}`}
-              </label>
-            ))}
+            <label className="radio mr-4">
+              <input
+                className="mr-1"
+                type="checkbox"
+                name="sexMale"
+                value="M"
+                checked={
+                  selectedFilters.sex
+                    ? selectedFilters.sex.includes('Male')
+                    : false
+                }
+                onChange={() => handleSingleSelectionChange('sex', 'Male')}
+              />
+              {'Male'}
+            </label>
+
+            <label className="radio mr-4">
+              <input
+                className="mr-1"
+                type="checkbox"
+                name="sexFemale"
+                value="F"
+                checked={
+                  selectedFilters.sex
+                    ? selectedFilters.sex.includes('Female')
+                    : false
+                }
+                onChange={() => handleSingleSelectionChange('sex', 'Female')}
+              />
+              {'Female'}
+            </label>
+
+            <label className="radio mr-4">
+              <input
+                className="mr-1"
+                type="checkbox"
+                name="sexUnknown"
+                value="U"
+                checked={
+                  selectedFilters.sex
+                    ? selectedFilters.sex.includes('Unknown')
+                    : false
+                }
+                onChange={() => handleSingleSelectionChange('sex', 'Unknown')}
+              />
+              {'Unknown'}
+            </label>
           </div>
         </div>
 
         <div className="field">
           <label className="label">Sterilized</label>
           <div className="control">
-            {(filterData.isSterilized || []).map(option => (
-              <label
-                className="checkbox mr-4"
-                key={option}
-              >
-                <input
-                  type="checkbox"
-                  checked={
-                    selectedFilters.isSterilized
-                      ? selectedFilters.isSterilized.includes(option)
-                      : false
-                  }
-                  onChange={() => handleCheckboxChange('isSterilized', option)}
-                />
-                {` ${option}`}
-              </label>
-            ))}
+            <label className="checkbox mr-4">
+              <input
+                className="mr-1"
+                type="checkbox"
+                name="sterilizedYes"
+                value="Yes"
+                checked={
+                  selectedFilters.isSterilized
+                    ? selectedFilters.isSterilized.includes('Yes')
+                    : false
+                }
+                onChange={() =>
+                  handleSingleSelectionChange('isSterilized', 'Yes')
+                }
+              />
+              Yes
+            </label>
+
+            <label className="checkbox mr-4">
+              <input
+                className="mr-1"
+                type="checkbox"
+                name="sterilizedNo"
+                value="No"
+                checked={
+                  selectedFilters.isSterilized
+                    ? selectedFilters.isSterilized.includes('No')
+                    : false
+                }
+                onChange={() =>
+                  handleSingleSelectionChange('isSterilized', 'No')
+                }
+              />
+              No
+            </label>
           </div>
         </div>
 
@@ -241,14 +339,13 @@ export const CatalogFilter: React.FC<Props> = ({ filterData, onChange }) => {
             </div>
           </div>
         </div>
-
         <div className="field is-grouped mt-5">
           <div className="control is-expanded">
             <button
               className="button is-primary is-fullwidth"
               type="submit"
             >
-              Apply Filters
+              Apply
             </button>
           </div>
           <div className="control is-expanded">

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Pet } from '../../types/Pet';
 import { CatalogCard } from '../CatalogCard';
+import { Heading } from 'react-bulma-components';
 
 interface Props {
   pets: Pet[];
 }
 export const CatalogList: React.FC<Props> = ({ pets }) => {
-  if (!pets) {
-    return <></>;
+  if (pets.length === 0) {
+    return <Heading>No pets found</Heading>;
   }
 
   return (

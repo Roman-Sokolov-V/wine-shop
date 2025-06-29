@@ -24,7 +24,6 @@ import {
   faHeart,
   faMars,
   faVenus,
-  faQuestion,
   faCircleQuestion,
 } from '@fortawesome/free-solid-svg-icons';
 import { AppointmentModal } from '../../components/AppointmentModal';
@@ -32,7 +31,7 @@ import { AppointmentModal } from '../../components/AppointmentModal';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import classNames from 'classnames';
 import * as FavoriteAction from '../../features/favorites';
-import { updatePetsApi } from '../../api/pets';
+import { updateFavotitesPetsApi } from '../../api/pets';
 import { PetInfoSwiper } from '../../components/PetInfoSwiper';
 import { ModalSuccess } from '../../components/ModalSuccess';
 import { PetAdoptionFormModal } from '../../components/PetAdoptionFormModal';
@@ -230,7 +229,7 @@ export const PetInfoPage = () => {
                       dispatch(FavoriteAction.toggle(pet.id));
 
                       if (loggedIn) {
-                        updatePetsApi(favorites).catch(() =>
+                        updateFavotitesPetsApi(favorites).catch(() =>
                           console.error('Error toggling favorites'),
                         );
                       }
