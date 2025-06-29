@@ -48,9 +48,10 @@ class UserViewSet(viewsets.ModelViewSet):
             return [permissions.OR(permissions.IsAdminUser(), IsOwner())]
         return [permissions.IsAdminUser()]
 
-    def perform_create(self, serializer):
-        user = serializer.save()
-        create_subscriptions.send(email=user.email, user_id=user.id)
+    #
+    # def perform_create(self, serializer):
+    #     user = serializer.save()
+    #     create_subscriptions.send(email=user.email, user_id=user.id)
 
 
 class LoginView(ObtainAuthToken):
