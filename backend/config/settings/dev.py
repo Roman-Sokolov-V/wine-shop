@@ -144,7 +144,7 @@ STORAGES = {
         "BACKEND": "minio_storage.storage.MinioMediaStorage",
     },
     "staticfiles": {
-        "BACKEND": "minio_storage.storage.MinioStaticStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
