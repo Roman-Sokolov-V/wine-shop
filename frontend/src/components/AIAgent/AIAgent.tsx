@@ -2,7 +2,6 @@ import { faCommentDots, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useRef, useEffect } from 'react';
 import './AIAgent.scss';
-import { Container } from 'react-bulma-components';
 
 type Message = {
   id: number;
@@ -18,7 +17,7 @@ export const AIAgent: React.FC = () => {
       id: 1,
       role: 'model',
       content:
-        "Hi! I'm an AI assistant in training. Soon, I'll be able to help you find the perfect pet.",
+        "Hi! I'm an AI assistant. How can I help you find the perfect pet today?",
     },
   ]);
   const [userInput, setUserInput] = useState('');
@@ -29,7 +28,6 @@ export const AIAgent: React.FC = () => {
   };
 
   useEffect(() => {
-    // Scroll to bottom whenever a new message is added
     if (isOpen) {
       setTimeout(scrollToBottom, 100);
     }
@@ -48,24 +46,55 @@ export const AIAgent: React.FC = () => {
     setMessages(prev => [...prev, newUserMessage]);
     setUserInput('');
 
-    // Add a placeholder for the AI's response with a loading indicator
     const loadingMessageId = Date.now() + 1;
     setMessages(prev => [
       ...prev,
       { id: loadingMessageId, role: 'model', content: '', isLoading: true },
     ]);
 
-    // Simulate an API call delay
-    setTimeout(() => {
-      const devMessage = 'Sorry, this feature is still in development.';
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: trimmedInput }),
+      });
+
+      // If the response is not OK, parse the error message from the server
+      if (!response.ok) {
+        // Try to get the error message from the server's JSON response
+        const errorData = await response.json().catch(() => {
+          // If the server sends back a non-JSON error (like plain text)
+          return { error: `Server responded with status: ${response.status}` };
+        });
+        // Throw an error that includes the server's message
+        throw new Error(
+          errorData.error || 'Failed to get a response from the server.',
+        );
+      }
+
+      const data = await response.json();
       setMessages(prev =>
         prev.map(msg =>
           msg.id === loadingMessageId
-            ? { ...msg, content: devMessage, isLoading: false }
+            ? { ...msg, content: data.message, isLoading: false }
             : msg,
         ),
       );
-    }, 1500); // 1.5-second delay to simulate a response
+    } catch (error) {
+      console.error('Chat error:', error);
+      // Display the specific error message in the chat
+      let errorMessage = 'Sorry, something went wrong.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === loadingMessageId
+            ? { ...msg, content: errorMessage, isLoading: false }
+            : msg,
+        ),
+      );
+    }
   };
 
   return (
@@ -82,7 +111,7 @@ export const AIAgent: React.FC = () => {
         </button>
       )}
 
-      <Container className={`pet-chatbot-window ${isOpen ? 'is-open' : ''}`}>
+      <div className={`pet-chatbot-window ${isOpen ? 'is-open' : ''}`}>
         <header className="chat-header">
           <div className="ai-avatar">AI</div>
           <p className="header-title">Pet Finder Assistant</p>
@@ -136,7 +165,7 @@ export const AIAgent: React.FC = () => {
             </button>
           </form>
         </footer>
-      </Container>
+      </div>
     </>
   );
 };
