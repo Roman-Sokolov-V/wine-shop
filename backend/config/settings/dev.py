@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_dramatiq",
+    # "django_dramatiq",
     "rest_framework",
     "rest_framework.authtoken",
     "pet",
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "notification",
     "corsheaders",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -144,7 +145,7 @@ STORAGES = {
         "BACKEND": "minio_storage.storage.MinioMediaStorage",
     },
     "staticfiles": {
-        "BACKEND": "minio_storage.storage.MinioStaticStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
@@ -200,33 +201,26 @@ EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = "Pet Shelter <noreply@petshelter.com>"
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Разрешаем доступ фронтенду с порта 3000
-]  ###################################################################### for prod  CORS_ALLOWED_ORIGINS need change with actual value
-
 # Front
 FRONT_HOST = os.getenv("FRONT_HOST")
 RESTORE_FORM_URL = os.getenv("RESTORE_FORM_URL")
+UNSUBSCRIBE_URL = os.getenv("UNSUBSCRIBE_URL")
 
-# DRAMATIQ
-DRAMATIQ_BROKER_USER = os.getenv("RABBITMQ_DEFAULT_USER")
-DRAMATIQ_BROKER_PASS = os.getenv("RABBITMQ_DEFAULT_PASS")
-DRAMATIQ_BROKER = {
-    "BROKER": "dramatiq.brokers.rabbitmq.RabbitmqBroker",
-    "OPTIONS": {
-        "url": f"amqp://{DRAMATIQ_BROKER_USER}:{DRAMATIQ_BROKER_PASS}@rabbitmq:5672/",  # scheme://username:password@hostname:port/
-    },
-    "MIDDLEWARE": [
-        "dramatiq.middleware.Prometheus",
-        "dramatiq.middleware.AgeLimit",
-        "dramatiq.middleware.TimeLimit",
-        "dramatiq.middleware.Callbacks",
-        "dramatiq.middleware.Retries",
-        "django_dramatiq.middleware.DbConnectionsMiddleware",
-        "django_dramatiq.middleware.AdminMiddleware",
-    ],
-}
 
-# Defines which database should be used to persist Task objects when the
-# AdminMiddleware is enabled.  The default value is "default".
-DRAMATIQ_TASKS_DATABASE = "default"
+CORS_ALLOWED_ORIGINS = []
+if FRONT_HOST:
+    CORS_ALLOWED_ORIGINS.append(FRONT_HOST)
+
+
+# Rabbitmq
+RABBIT_USER = os.getenv("RABBITMQ_DEFAULT_USER")
+RABBIT_PASS = os.getenv("RABBITMQ_DEFAULT_PASS")
+
+
+# Celery
+CELERY_BROKER_URL = f"amqp://{RABBIT_USER}:{RABBIT_PASS}@rabbitmq:5672/"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_TIMEZONE = "Europe/Kyiv"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60

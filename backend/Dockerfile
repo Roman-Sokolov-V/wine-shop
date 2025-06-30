@@ -2,15 +2,6 @@ FROM python:3.12-slim
 LABEL authors="gnonasis@gmail.com"
 
 ENV PYTHONUNBUFFERED=1
-#RUN apt-get update && apt-get install -y --no-install-recommends \
-#    build-essential \
-#    git \
-#    libpq-dev \
-#    libjpeg-dev \
-#    zlib1g-dev \
-#    # Додайте інші залежності, якщо ваш проект їх потребує.
-#    # Наприклад, libssl-dev для деяких мережевих пакетів, якщо вони використовуються.
-#    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -25,6 +16,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+RUN update-ca-certificates
+
 COPY . .
-#
-#CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

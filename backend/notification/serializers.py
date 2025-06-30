@@ -1,37 +1,31 @@
-# from rest_framework import serializers, status
-# from rest_framework.exceptions import ValidationError
-# from rest_framework.validators import UniqueTogetherValidator
-#
-# from notification.models import Subscription, Mailing
-#
-#
-# class SubscriptionSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Subscription
-#         fields = ("mailing", "email")
-#         validators = [
-#             UniqueTogetherValidator(
-#                 queryset=Subscription.objects.all(),
-#                 fields=("mailing", "email"),
-#                 message="This subscription already exists.",
-#             )
-#         ]
-#
-#     def create(self, validated_data):
-#         user = self.context["request"].user
-#         if (
-#             user.is_authenticated and not user.is_staff
-#         ) and user.email != validated_data.get("email"):
-#
-#             raise ValidationError(
-#                 detail="You can subscribe only on registered email.",
-#                 code=status.HTTP_400_BAD_REQUEST,
-#             )
-#         else:
-#             return super().create(validated_data)
-#
-#
-# class MailingSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Mailing
-#         fields = ("title", "content")
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueTogetherValidator
+
+from notification.models import Subscription, Mailing
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for subscription model
+    """
+
+    user = serializers.PrimaryKeyRelatedField(read_only=True, many=False)
+
+    class Meta:
+        model = Subscription
+        fields = ("mailing", "email", "token", "user")
+        extra_kwargs = {"token": {"read_only": True}}
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=("mailing", "email"),
+                message="This subscription already exists.",
+            )
+        ]
+
+
+class MailingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mailing
+        fields = ("id", "title", "content", "run_at")

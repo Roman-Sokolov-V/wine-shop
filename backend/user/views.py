@@ -8,7 +8,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
-from notification.notification import send_email_restore_password_token
 from user.models import TempToken
 from user.serializers import (
     UserSerializer,
@@ -132,7 +131,9 @@ class TemporaryTokenView(APIView):
         user = validated_data["user"]
         TempToken.objects.filter(user=user).delete()
         token = TempToken.objects.create(user=user)
-        send_restore_token.send(token=token.key, user_email=user.email)
+        send_restore_token.delay_on_commit(
+            token=token.key, user_email=user.email
+        )  # celery task
         return Response(status=status.HTTP_201_CREATED)
 
 

@@ -186,7 +186,7 @@ class LoginTestCase(TestCase):
     def test_register_user(self):
         data = {
             "email": "test2@test.com",
-            "password": "<PASSWORD>",
+            "password": "<strongPASSWORD1#>",
             "first_name": "name",
             "last_name": "last_name",
             "is_staff": True,
@@ -195,6 +195,7 @@ class LoginTestCase(TestCase):
             "date_joined": str(timezone.now() - timedelta(days=1)),
         }
         response = self.client.post(reverse("user:register"), data=data)
+
         self.assertIsNotNone(response.json()["id"])
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(response.json()["email"], data["email"])
