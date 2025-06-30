@@ -26,3 +26,9 @@ export const register = (
     last_name,
   });
 };
+
+export const sendRestoreToken = (email: string) => {
+  return api.post(`/api/v1/users/restore_token/`, {
+    email,
+  });
+};
