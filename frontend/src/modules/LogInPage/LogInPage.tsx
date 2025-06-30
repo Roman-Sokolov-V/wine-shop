@@ -7,20 +7,29 @@ import {
   Heading,
 } from 'react-bulma-components';
 import { useNavigate } from 'react-router-dom';
-import { userLogin } from '../../api/auth';
+import { sendRestoreToken, userLogin } from '../../api/auth';
 import { AxiosError, AxiosResponse } from 'axios';
 import { ModalLoader } from '../../components/ModalLoader';
 import { ModalError } from '../../components/ModalError';
 import { useDispatch } from 'react-redux';
 import { actions as AuthAction } from '../../features/authentication';
+import * as FavotiteAcion from '../../features/favorites';
+import { updateFavotitesPetsApi } from '../../api/pets';
+import { useAppSelector } from '../../app/hooks';
+import { getUserMe } from '../../api/users';
+import { ModalResetPassword } from '../../components/ModalResetPassword';
+import { ModalSuccess } from '../../components/ModalSuccess';
 
 export const LogInPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { favorites } = useAppSelector(state => state.favorite);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordResetShow, setPasswordResetShow] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,15 +38,28 @@ export const LogInPage = () => {
       setError('Email and Passord are mandatory fields');
       return;
     }
-
     setLoading(true);
     setError('');
     userLogin(email, password)
-      .then((res: AxiosResponse) => {
-        const token = res.data;
+      .then(async (res: AxiosResponse) => {
+        const userData = res.data;
 
-        if (res.status === 200 && token) {
-          dispatch(AuthAction.login(token));
+        if (res.status === 200 && userData) {
+          dispatch(AuthAction.login(userData));
+          const me = await getUserMe();
+
+          if (me?.data?.favorites.length > 0) {
+            const combFavs = Array.from(
+              new Set([...favorites, ...(me?.data?.favorites || [])]),
+            );
+
+            updateFavotitesPetsApi(combFavs).catch(() =>
+              console.error('Error updating favorites'),
+            );
+
+            dispatch(FavotiteAcion.set(combFavs));
+          }
+
           navigate('/account');
         } else {
           throw Error('Errow with login');
@@ -58,22 +80,54 @@ export const LogInPage = () => {
       .finally(() => setLoading(false));
   };
 
-  if (loading) {
-    return <ModalLoader />;
-  }
-
-  if (error) {
-    return (
-      <ModalError
-        title="Error"
-        body={error}
-        onClose={() => setError('')}
-      />
-    );
-  }
+  const handleResetToken = (email: string) => {
+    setLoading(true);
+    setError('');
+    sendRestoreToken(email)
+      .then(res => {
+        if (res.status === 200) {
+          setSuccess(`Please check you email for reset link`);
+        } else {
+          throw Error('Error sending restore token');
+        }
+      })
+      .catch((e: AxiosError) => {
+        setError(
+          `Error sending restore token to ${email}. Try again later. Error: ${e.message}`,
+        );
+      })
+      .finally(() => setLoading(false));
+  };
 
   return (
     <Container className="mt-6">
+      {loading && <ModalLoader />}
+
+      <ModalError
+        title="Error"
+        isActive={error.length > 0}
+        body={error}
+        onClose={() => setError('')}
+      />
+
+      <ModalResetPassword
+        isActive={passwordResetShow}
+        onClose={() => {
+          setPasswordResetShow(false);
+        }}
+        onSubmit={email => {
+          handleResetToken(email);
+          setPasswordResetShow(false);
+        }}
+      />
+
+      <ModalSuccess
+        isActive={!!success}
+        title="Succsess"
+        body={success}
+        onClose={() => setSuccess('')}
+      />
+
       <Columns centered>
         <Columns.Column size="one-third">
           <Box>
@@ -134,7 +188,13 @@ export const LogInPage = () => {
                 Log In
               </Button>
 
-              <a>Reset the password</a>
+              <a
+                onClick={() => {
+                  setPasswordResetShow(true);
+                }}
+              >
+                Reset the password
+              </a>
             </form>
           </Box>
         </Columns.Column>

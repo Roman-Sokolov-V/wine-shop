@@ -27,6 +27,7 @@ export const CatalogSlider: React.FC<Props> = ({ title, pets }) => {
         navigation
         pagination={{ clickable: true }}
         scrollbar={{ draggable: true }}
+        grabCursor
       >
         {pets.map(pet => {
           return (

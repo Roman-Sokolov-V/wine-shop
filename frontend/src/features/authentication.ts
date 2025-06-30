@@ -30,6 +30,12 @@ const AuthSlice = createSlice({
   },
   extraReducers: builder => {
     builder
+
+      .addCase(logout.pending, state => {
+        state.loggedIn = undefined;
+        accessLocalStorage.clearKey(LocalAccessKeys.LOGGEDIN);
+      })
+
       .addCase(logout.fulfilled, state => {
         state.loggedIn = undefined;
         accessLocalStorage.clearKey(LocalAccessKeys.LOGGEDIN);

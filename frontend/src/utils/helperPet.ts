@@ -84,38 +84,38 @@ export function searchPets(pets: Pet[], query: string) {
   return filted;
 }
 
-export function getAvaliableFilters(data: Pet[]): Filters {
-  if (!data.length) {
-    return {
-      pet_type: [],
-      minAge: 0,
-      maxAge: 99,
-      breed: [],
-      sex: ['Male', 'Female', 'Unknown'],
-      coloration: [],
-      weightMin: 0,
-      weightMax: 999,
-      isSterilized: ['Yes', 'No', 'Unknown'],
-    };
-  }
-  return {
-    pet_type: Array.from(
-      new Set(data.map(itm => capitalizeFirstLetter(itm.pet_type))),
-    ),
-    minAge: Math.min(...data.map(itm => itm.age)),
-    maxAge: Math.max(...data.map(itm => itm.age)),
-    breed: Array.from(
-      new Set(data.map(itm => capitalizeFirstLetter(itm.breed))),
-    ),
-    sex: ['Male', 'Female', 'Unknown'],
-    coloration: Array.from(
-      new Set(data.map(itm => capitalizeFirstLetter(itm.coloration))),
-    ),
-    weightMin: Math.min(...data.map(itm => itm.weight)),
-    weightMax: Math.max(...data.map(itm => itm.weight)),
-    isSterilized: ['Yes', 'No', 'Unknown'],
-  };
-}
+// export function getAvaliableFilters(data: Pet[]): Filters {
+//   if (!data.length) {
+//     return {
+//       pet_type: [],
+//       minAge: 0,
+//       maxAge: 99,
+//       breed: [],
+//       sex: ['Male', 'Female', 'Unknown'],
+//       coloration: [],
+//       weightMin: 0,
+//       weightMax: 999,
+//       isSterilized: ['Yes', 'No', 'Unknown'],
+//     };
+//   }
+//   return {
+//     pet_type: Array.from(
+//       new Set(data.map(itm => capitalizeFirstLetter(itm.pet_type))),
+//     ),
+//     minAge: Math.min(...data.map(itm => itm.age)),
+//     maxAge: Math.max(...data.map(itm => itm.age)),
+//     breed: Array.from(
+//       new Set(data.map(itm => capitalizeFirstLetter(itm.breed))),
+//     ),
+//     sex: ['Male', 'Female', 'Unknown'],
+//     coloration: Array.from(
+//       new Set(data.map(itm => capitalizeFirstLetter(itm.coloration))),
+//     ),
+//     weightMin: Math.min(...data.map(itm => itm.weight)),
+//     weightMax: Math.max(...data.map(itm => itm.weight)),
+//     isSterilized: ['Yes', 'No', 'Unknown'],
+//   };
+// }
 
 export function getRandomSampleFromArray<T>(inputArray: T[], quantity: number) {
   if (inputArray.length <= quantity) {

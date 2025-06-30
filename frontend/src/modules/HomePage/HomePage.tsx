@@ -5,29 +5,43 @@ import { SubscribeNews } from '../../components/SubscribeNews';
 import { OneShotNotification } from '../../components/OneShotNotification';
 import { HomeBanner1 } from '../../components/HomeBanner1';
 import { CatalogSlider } from '../../components/CatalogSlider';
-import { useAppSelector } from '../../app/hooks';
 import { Pet } from '../../types/Pet';
 import { filterPetBy, getRandomSampleFromArray } from '../../utils/helperPet';
 import { HomeBanner2 } from '../../components/HomeBanner2';
+import { getFilterPets } from '../../api/pets';
+import { AxiosError } from 'axios';
 
 export const HomePage = () => {
-  const { pets } = useAppSelector(state => state.pet);
   const [dogs, setDogs] = useState<Pet[]>([]);
   const [cats, setCats] = useState<Pet[]>([]);
+
   useEffect(() => {
-    setDogs(
-      getRandomSampleFromArray(
-        filterPetBy(pets, 'pet_type' as keyof Pet, 'dog'),
-        10,
-      ),
-    );
-    setCats(
-      getRandomSampleFromArray(
-        filterPetBy(pets, 'pet_type' as keyof Pet, 'cat'),
-        10,
-      ),
-    );
-  }, [pets]);
+    getFilterPets('pet_type=dog')
+      .then(res => {
+        setDogs(
+          getRandomSampleFromArray(
+            filterPetBy(res.data, 'pet_type' as keyof Pet, 'dog'),
+            10,
+          ),
+        );
+      })
+      .catch((e: AxiosError) => {
+        console.error(e);
+      });
+
+    getFilterPets('pet_type=cat')
+      .then(res => {
+        setCats(
+          getRandomSampleFromArray(
+            filterPetBy(res.data, 'pet_type' as keyof Pet, 'cat'),
+            10,
+          ),
+        );
+      })
+      .catch((e: AxiosError) => {
+        console.error(e);
+      });
+  }, []);
 
   return (
     <Container
