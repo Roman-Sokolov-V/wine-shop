@@ -10,6 +10,7 @@ User = get_user_model()
 class Mailing(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
+    run_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.title
