@@ -28,4 +28,4 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class MailingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mailing
-        fields = ("id", "title", "content")
+        fields = ("id", "title", "content", "run_at")
