@@ -10,4 +10,4 @@ User = get_user_model()
 @receiver(post_save, sender=User)
 def trigger_create_subscriptions(sender, instance, created, **kwargs):
     if created:
-        create_subscriptions.send(instance.email, instance.id)
+        create_subscriptions(instance.email, instance.id)  # celery task
