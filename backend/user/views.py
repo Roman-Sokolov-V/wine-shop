@@ -8,7 +8,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
-from notification.notification import send_email_restore_password_token
 from user.models import TempToken
 from user.serializers import (
     UserSerializer,
@@ -17,7 +16,7 @@ from user.serializers import (
     UpdatePasswordSerializer,
 )
 from user.permissions import IsOwner
-from user.tasks import send_restore_token, create_subscriptions
+from user.tasks import send_restore_token
 
 User = get_user_model()
 
@@ -47,11 +46,6 @@ class UserViewSet(viewsets.ModelViewSet):
         elif self.action in ["update", "partial_update", "retrieve"]:
             return [permissions.OR(permissions.IsAdminUser(), IsOwner())]
         return [permissions.IsAdminUser()]
-
-    #
-    # def perform_create(self, serializer):
-    #     user = serializer.save()
-    #     create_subscriptions.send(email=user.email, user_id=user.id)
 
 
 class LoginView(ObtainAuthToken):
@@ -137,7 +131,9 @@ class TemporaryTokenView(APIView):
         user = validated_data["user"]
         TempToken.objects.filter(user=user).delete()
         token = TempToken.objects.create(user=user)
-        send_restore_token.send(token=token.key, user_email=user.email)
+        send_restore_token.delay_on_commit(
+            token=token.key, user_email=user.email
+        )  # celery task
         return Response(status=status.HTTP_201_CREATED)
 
 
