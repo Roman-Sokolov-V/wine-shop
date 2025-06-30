@@ -13,14 +13,14 @@ export const CatalogList: React.FC<Props> = ({ pets }) => {
 
   return (
     <div
-      className="grid is-col-min-9 is-gap-2"
+      className="grid is-col-min-11 is-gap-2 my-auto"
       style={{ width: '100%' }}
     >
       {pets.map((itm, indx) => {
         return (
           <div
             key={indx}
-            className="cell"
+            className="cell is-flex is-justify-content-center"
           >
             <CatalogCard petData={itm} />
           </div>
