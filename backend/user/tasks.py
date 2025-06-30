@@ -1,5 +1,7 @@
 import dramatiq
 import logging
+
+from celery import shared_task
 from django.contrib.auth import get_user_model
 
 import user
@@ -11,17 +13,42 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-@dramatiq.actor
+# @dramatiq.actor
+# def send_restore_token(token: str, user_email: str):
+#     """send email with token for update forgotten password"""
+#     try:
+#         send_email_restore_password_token(token=token, user_email=user_email)
+#     except Exception as e:
+#         logger.error(f"Failed to send email to {user_email}: {str(e)}")
+#         raise
+#
+#
+# @dramatiq.actor
+# def create_subscriptions(email: str, user_id: int) -> None:
+#     """create subscriptions with all mailing"""
+#     mailings_ids = Mailing.objects.all().values_list("id", flat=True)
+#     if mailings_ids:
+#         Subscription.objects.bulk_create(
+#             (
+#                 Subscription(email=email, mailing_id=mailing_id, user_id=user_id)
+#                 for mailing_id in mailings_ids
+#             )
+#         )
+
+
+@shared_task
 def send_restore_token(token: str, user_email: str):
     """send email with token for update forgotten password"""
     try:
-        send_email_restore_password_token(token=token, user_email=user_email)
+        send_email_restore_password_token(
+            token=token, user_email=user_email
+        )  # celery task
     except Exception as e:
         logger.error(f"Failed to send email to {user_email}: {str(e)}")
         raise
 
 
-@dramatiq.actor
+@shared_task
 def create_subscriptions(email: str, user_id: int) -> None:
     """create subscriptions with all mailing"""
     mailings_ids = Mailing.objects.all().values_list("id", flat=True)
