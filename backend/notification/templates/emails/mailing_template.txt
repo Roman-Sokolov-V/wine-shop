@@ -1,0 +1,2 @@
+{{ content }}
+To unscribe from this mailing, push {{ unscribe_url }}/?token={{ token }}/
