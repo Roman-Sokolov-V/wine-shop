@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # path es2
-PROJECT_DIR="${1:-/home/ubuntu/backend}"
+PROJECT_DIR="${1:-/home/ubuntu/src/backend}"
 
 # Exit the script immediately if any command exits with a non-zero status
 set -e
