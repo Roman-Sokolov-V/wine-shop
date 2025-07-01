@@ -146,7 +146,10 @@ export const Header = () => {
             className="pr-4"
             onClick={() => onLinkClick('/how-to-help')}
           >
-            <Navbar.Link className="p-0">
+            <Navbar.Link
+              arrowless
+              className="p-0"
+            >
               <Heading size={4}>How To Help</Heading>
             </Navbar.Link>
           </Navbar.Item>
