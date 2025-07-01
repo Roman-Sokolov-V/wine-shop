@@ -7,6 +7,7 @@ from django.conf import settings
 
 FULL_UNSUBSCRIBE_URL = settings.FRONT_HOST + settings.UNSUBSCRIBE_URL
 
+
 @shared_task
 def send_mailing_task(mailing_id: int):
 
@@ -24,5 +25,5 @@ def send_mailing_task(mailing_id: int):
             topic=subscription.mailing.title,
             content=subscription.mailing.content,
             token=subscription.token,
-            unsubscribe_url=FULL_UNSUBSCRIBE_URL
+            unsubscribe_url=FULL_UNSUBSCRIBE_URL,
         )
