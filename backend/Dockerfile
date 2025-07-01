@@ -19,3 +19,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN update-ca-certificates
 
 COPY . .
+RUN chmod +x ./commands/start.sh
