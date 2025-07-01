@@ -7,7 +7,6 @@ from pet.models import Pet
 from django.conf import settings
 
 User = get_user_model()
-restore_form_url = settings.FRONT_HOST + settings.RESTORE_FORM_URL
 
 
 def notify_we_found_pet_for_you(pet: Pet, user: User):
@@ -35,7 +34,7 @@ def notify_we_found_pet_for_you(pet: Pet, user: User):
 
 
 def send_email_restore_password_token(token: str, user_email: str):
-
+    restore_form_url = settings.FRONT_HOST + settings.RESTORE_FORM_URL
     text_content = render_to_string(
         "emails/restore_password.txt",
         context={"token": token, "site_url": restore_form_url},
@@ -59,17 +58,21 @@ def send_email_restore_password_token(token: str, user_email: str):
 
 
 def send_mailing(
-    user_email: str, topic: str, content: str, token: str, unscribe_url: str
+        user_email: str,
+        topic: str,
+        content: str,
+        token: str,
+        unsubscribe_url: str
 ):
 
     text_content = render_to_string(
         "emails/mailing_template.txt",
-        context={"content": content, "token": token, "unsubscribe_url": unscribe_url},
+        context={"content": content, "token": token, "unsubscribe_url": unsubscribe_url},
     )
 
     html_content = render_to_string(
         "emails/mailing_template.html",
-        context={"content": content, "token": token, "unsubscribe_url": unscribe_url},
+        context={"content": content, "token": token, "unsubscribe_url": unsubscribe_url},
     )
 
     msg = EmailMultiAlternatives(
