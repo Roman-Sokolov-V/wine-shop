@@ -5,11 +5,12 @@ from notification.notification import send_mailing
 
 from django.conf import settings
 
-UNSUBSCRIBE_URL = settings.FRONT_HOST + settings.UNSUBSCRIBE_URL
+FULL_UNSUBSCRIBE_URL = settings.FRONT_HOST + settings.UNSUBSCRIBE_URL
 
 
 @shared_task
 def send_mailing_task(mailing_id: int):
+
     subscriptions = Subscription.objects.filter(mailing_id=mailing_id).select_related(
         "user", "mailing"
     )
@@ -24,5 +25,5 @@ def send_mailing_task(mailing_id: int):
             topic=subscription.mailing.title,
             content=subscription.mailing.content,
             token=subscription.token,
-            unscribe_url=UNSUBSCRIBE_URL,  # TODO: реальний URL
+            unsubscribe_url=FULL_UNSUBSCRIBE_URL,
         )
