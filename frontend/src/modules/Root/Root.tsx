@@ -19,6 +19,7 @@ import { RegisterPage } from '../RegisterPage';
 import { AccountPage } from '../AccountPage';
 import { HowToHelpPage } from '../HowToHelpPage';
 import { ResetPasswordPage } from '../ResetPasswordPage';
+import { UnsubscribePage } from '../UnsubscribePage';
 
 export const Root = () => {
   return (
@@ -67,6 +68,11 @@ export const Root = () => {
             <Route
               path={VALID_ROUTES.PASSWORD_RESET}
               element={<ResetPasswordPage />}
+            />
+
+            <Route
+              path={VALID_ROUTES.UNSUBSCRIBE}
+              element={<UnsubscribePage />}
             />
 
             <Route
