@@ -58,21 +58,25 @@ def send_email_restore_password_token(token: str, user_email: str):
 
 
 def send_mailing(
-        user_email: str,
-        topic: str,
-        content: str,
-        token: str,
-        unsubscribe_url: str
+    user_email: str, topic: str, content: str, token: str, unsubscribe_url: str
 ):
 
     text_content = render_to_string(
         "emails/mailing_template.txt",
-        context={"content": content, "token": token, "unsubscribe_url": unsubscribe_url},
+        context={
+            "content": content,
+            "token": token,
+            "unsubscribe_url": unsubscribe_url,
+        },
     )
 
     html_content = render_to_string(
         "emails/mailing_template.html",
-        context={"content": content, "token": token, "unsubscribe_url": unsubscribe_url},
+        context={
+            "content": content,
+            "token": token,
+            "unsubscribe_url": unsubscribe_url,
+        },
     )
 
     msg = EmailMultiAlternatives(
