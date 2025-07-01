@@ -7,11 +7,12 @@ services:
       - .env
     ports:
       - "8000:8000"
-    command: [
-      "sh",
-      "-c",
-      "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-    ]
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "/commands/start.sh"
+      ]
     depends_on:
       db:
         condition: service_healthy
@@ -21,20 +22,6 @@ services:
     volumes:
       - ./:/app
 
-#  dramatiq_worker:
-#    container_name: dramatiq
-#    build:
-#      context: .
-#    env_file:
-#      - .env
-#    command: [ "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py rundramatiq"]
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#      rabbitmq:
-#        condition: service_healthy
-#    volumes:
-#      - ./:/app
 
   db:
     image: postgres:16-bullseye
@@ -51,7 +38,6 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:$PGDATA
-
 
   minio:
     image: minio/minio:latest
@@ -89,8 +75,8 @@ services:
     hostname: rabbitmq
     container_name: rabbitmq
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5672:5672"   # для Dramatiq
+      - "15672:15672" # веб-інтерфейс
     env_file:
       - .env
     healthcheck:
@@ -126,6 +112,15 @@ services:
       - rabbitmq
       - db
     restart: on-failure
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - shelter
 
 
 volumes:
