@@ -17,6 +17,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN update-ca-certificates
-
+RUN apt-get update && apt-get install -y dos2unix
 COPY . .
-RUN chmod +x ./commands/start.sh
+
+# Ensure Unix-style line endings for scripts
+RUN dos2unix ./commands/*.sh
+
+# Add execute bit to commands files
+RUN chmod +x ./commands/*.sh
