@@ -1,0 +1,119 @@
+services:
+  shelter:
+    container_name: shelter
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    command: [
+      "sh",
+      "-c",
+      "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ]
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+    volumes:
+      - ./:/app
+
+  db:
+    image: postgres:16-bullseye
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h ${POSTGRES_HOST}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:$PGDATA
+
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server --console-address ":9001" /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - .env
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  minio_mc:
+    build:
+      context: .
+      dockerfile: docker/minio_mc/Dockerfile
+    container_name: minio_mc
+    command: ["/bin/sh", "-c", "/commands/setup_minio.sh"]
+    depends_on:
+      minio:
+        condition: service_healthy
+    env_file:
+      - .env
+
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    hostname: rabbitmq
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  celery:
+    container_name: celery
+    build:
+      context: .
+    env_file:
+      - .env
+    command: ["sh", "-c", "celery -A config worker --loglevel=INFO"]
+    depends_on:
+      - shelter
+      - rabbitmq
+      - db
+    restart: on-failure
+
+  celery-beat:
+    container_name: celery-beat
+    build:
+      context: .
+    env_file:
+      - .env
+    command: ["sh", "-c", "celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"]
+    depends_on:
+      - shelter
+      - rabbitmq
+      - db
+    restart: on-failure
+
+
+volumes:
+  minio_data:
+  postgres_data:
+  rabbitmq-data:

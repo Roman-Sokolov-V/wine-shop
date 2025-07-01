@@ -1,0 +1,30 @@
+Ми знайшли питомця, якого ви шукали!
+
+Інформація про улюбленця:
+Ім'я: {{ pet.name }}
+Тип: {{ pet.pet_type }}
+{% if pet.breed %}
+Порода: {{ pet.breed }}
+{% endif %}
+{% if pet.age %}
+Вік: {{ pet.age }} років
+{% endif %}
+{% if pet.weight %}
+Вага: {{ pet.weight }} кг
+{% endif %}
+{% if pet.sex %}
+Стать: {{ pet.get_sex_display }}
+{% endif %}
+{% if pet.coloration %}
+Масть: {{ pet.coloration }}
+{% endif %}
+
+{% if pet.description %}
+Опис: {{ pet.description }}
+{% endif %}
+
+Дізнатись більше ви можете за посиланням:
+- Головна сторінка: {{ site_url }}
+- Сторінка улюбленця: {{ site_url }}/pets/{{ pet.id }}/  # Вказати правильний шлях
+
+Дякуємо, що ви з нами!

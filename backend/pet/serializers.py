@@ -2,11 +2,18 @@ from datetime import date
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from pet.models import Pet, Image
 
-from pet.models import Pet
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ("file",)
 
 
 class PetSerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True, required=False, read_only=True)
+
     class Meta:
         model = Pet
         fields = (
@@ -20,10 +27,57 @@ class PetSerializer(serializers.ModelSerializer):
             "weight",
             "is_sterilized",
             "description",
-            #"owner"
+            "images",
+            "owner",
         )
 
+    def validate_images_files(self, files):
+        """Базова валідація зображень"""
+        if not files:
+            return files
+
+        # Перевіряємо що це список
+        if not isinstance(files, list):
+            raise serializers.ValidationError("Images має бути списком файлів")
+
+        # Перевіряємо що кожен елемент - зображення
+        allowed_types = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+        ]
+
+        for file in files:
+            if not hasattr(file, "content_type"):
+                raise serializers.ValidationError("Невалідний файл")
+
+            if file.content_type not in allowed_types:
+                raise serializers.ValidationError(
+                    f"Файл {file.name} не є зображенням. "
+                    f"Дозволені типи: JPEG, PNG, GIF, WebP"
+                )
+        return files
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        files = request.FILES.getlist("images") if request else []
+
+        # Валідуємо файли
+        validated_files = self.validate_images_files(files)
+
+        pet = Pet.objects.create(**validated_data)
+
+        if validated_files:
+            images = [Image(pet=pet, file=file) for file in validated_files]
+            Image.objects.bulk_create(images)
+        return pet
+
     def validate(self, data):
+        for field in ("name", "pet_type", "breed", "coloration"):
+            if data.get(field):
+                data[field] = data[field].lower()
         if self.instance is None:
             name = data.get("name")
             pet_type = data.get("pet_type")
@@ -47,11 +101,49 @@ class PetSerializer(serializers.ModelSerializer):
                 is_sterilized=is_sterilized,
                 description=description,
                 date_created=date_added,
-
             ).exists():
                 raise ValidationError(
                     "Pet with the same parameters already added to db today. "
                     "Make sure you not try to add the same pet by mistake. "
                     "If not just change any field"
                 )
-                return data
+
+        return data
+
+
+class UploadImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = (
+            "pet",
+            "file",
+        )
+
+
+class FileSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+
+class UploadImagesSerializer(serializers.Serializer):
+    pet = serializers.IntegerField()
+    files = FileSerializer(many=True)
+
+
+class EmptySerializer(serializers.Serializer):
+    pass
+
+
+class FiltersReportSerializer(serializers.Serializer):
+    pet_type = serializers.ListField(child=serializers.CharField())
+    breed = serializers.ListField(child=serializers.CharField())
+
+    coloration = serializers.ListField(child=serializers.CharField())
+    is_sterilized = serializers.ListField(
+        child=serializers.BooleanField(allow_null=True)
+    )
+    age_max = serializers.IntegerField(min_value=0, max_value=500)
+    age_min = serializers.IntegerField(min_value=0, max_value=500)
+
+    sex = serializers.ListField(child=serializers.CharField())
+    weight_max = serializers.FloatField()
+    weight_min = serializers.FloatField()
