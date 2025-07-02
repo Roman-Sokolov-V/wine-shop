@@ -7,3 +7,9 @@ export const subscribeApi = (email: string): Promise<AxiosResponse> => {
     mailing: 1,
   });
 };
+
+export const unsubscribeApi = (token: string): Promise<AxiosResponse> => {
+  return api.post(`/api/v1/subscriptions/unsubscribe/`, {
+    token,
+  });
+};
