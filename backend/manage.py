@@ -11,9 +11,7 @@ def main():
             "DJANGO_SETTINGS_MODULE", "config.settings.test_settings"
         )
     elif "collectstatic" in sys.argv:
-        os.environ.setdefault(
-            "DJANGO_SETTINGS_MODULE", "config.settings.prod"
-        )
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.prod")
     else:
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
     try:
