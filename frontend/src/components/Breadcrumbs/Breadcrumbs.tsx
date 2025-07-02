@@ -31,13 +31,11 @@ export const Breadcrumbs = () => {
     .split('/')
     .filter(crumb => crumb !== '');
 
-  if (locationArr.length === 0) {
-    return <></>;
-  }
-
   return (
     <nav
-      className="breadcrumb has-succeeds-separator"
+      className={classNames('breadcrumb has-succeeds-separator p-0 m-0', {
+        'is-hidden': locationArr.length === 0,
+      })}
       aria-label="breadcrumbs"
     >
       <ul>

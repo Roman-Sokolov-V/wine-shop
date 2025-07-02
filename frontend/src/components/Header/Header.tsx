@@ -4,7 +4,7 @@ import style from './Header.module.scss';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Navbar } from 'react-bulma-components';
+import { Heading, Navbar } from 'react-bulma-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaw } from '@fortawesome/free-solid-svg-icons';
 
@@ -104,70 +104,54 @@ export const Header = () => {
           className="py-2"
         >
           <Navbar.Item onClick={() => onLinkClick('/')}>
-            <Button
-              rounded
-              className={style.header_txt}
+            <Navbar.Link
+              arrowless
+              className="p-0"
             >
-              Home
-            </Button>
+              <Heading size={4}>Home</Heading>
+            </Navbar.Link>
           </Navbar.Item>
 
           <Navbar.Item hoverable>
-            <Button
-              rounded
-              className={style.header_txt}
-            >
-              <Navbar.Link arrowless>Find All</Navbar.Link>
-            </Button>
+            <Navbar.Link onClick={() => onLinkClick('/catalog')}>
+              <Heading size={4}>Find Friend</Heading>
+            </Navbar.Link>
 
-            {!mobileMenuVisible && (
-              <>
-                <Navbar.Dropdown>
-                  <Navbar.Item
-                    onClick={() => onLinkClick('/catalog', 'pet_type', 'cat')}
-                  >
-                    <Navbar.Link
-                      arrowless
-                      style={{ width: '100%' }}
-                    >
-                      Cat
-                    </Navbar.Link>
-                  </Navbar.Item>
+            <Navbar.Dropdown>
+              <Navbar.Item
+                onClick={() => onLinkClick('/catalog', 'pet_type', 'cat')}
+              >
+                <Navbar.Link>
+                  <Heading size={5}>Cat</Heading>
+                </Navbar.Link>
+              </Navbar.Item>
 
-                  <Navbar.Item
-                    onClick={() => onLinkClick('/catalog', 'pet_type', 'dog')}
-                  >
-                    <Navbar.Link
-                      arrowless
-                      style={{ width: '100%' }}
-                    >
-                      Dogs
-                    </Navbar.Link>
-                  </Navbar.Item>
+              <Navbar.Item
+                onClick={() => onLinkClick('/catalog', 'pet_type', 'dog')}
+              >
+                <Navbar.Link>
+                  <Heading size={5}>Dog</Heading>
+                </Navbar.Link>
+              </Navbar.Item>
 
-                  <Navbar.Item onClick={() => onLinkClick('/catalog')}>
-                    <Navbar.Link
-                      arrowless
-                      style={{ width: '100%' }}
-                    >
-                      All animals
-                    </Navbar.Link>
-                  </Navbar.Item>
-                </Navbar.Dropdown>
-              </>
-            )}
+              <Navbar.Item onClick={() => onLinkClick('/catalog')}>
+                <Navbar.Link>
+                  <Heading size={5}>All Friends</Heading>
+                </Navbar.Link>
+              </Navbar.Item>
+            </Navbar.Dropdown>
           </Navbar.Item>
 
           <Navbar.Item
             className="pr-4"
             onClick={() => onLinkClick('/how-to-help')}
           >
-            <Button
-              rounded
-              className={style.header_txt}
+            <Navbar.Link
+              arrowless
+              className="p-0"
             >
-              How to help
-            </Button>
+              <Heading size={4}>How To Help</Heading>
+            </Navbar.Link>
           </Navbar.Item>
         </Navbar.Container>
 
@@ -183,10 +167,7 @@ export const Header = () => {
             onClick={() => onLinkClick('/favorites')}
           >
             {!mobileMenuVisible ? (
-              <Navbar.Link
-                arrowless
-                className="p-0"
-              >
+              <Navbar.Link className="p-0">
                 <span
                   className={classNames(
                     'icon-text has-text-link',
@@ -212,17 +193,14 @@ export const Header = () => {
                 )}
               </Navbar.Link>
             ) : (
-              <Button
-                rounded
-                className={style.header_txt}
-              >
-                Favoties
-              </Button>
+              <Navbar.Link className="pl-0">
+                <Heading size={4}>Favorite</Heading>
+              </Navbar.Link>
             )}
           </Navbar.Item>
 
           <Navbar.Item hoverable>
-            <AcountLinkHeader />
+            <AcountLinkHeader onLinkClick={onLinkClick} />
           </Navbar.Item>
         </Navbar.Container>
       </Navbar.Menu>

@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import * as FavoriteAction from '../../features/favorites';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import { updatePetsApi } from '../../api/pets';
+import { updateFavotitesPetsApi } from '../../api/pets';
 
 interface Props {
   petData: Pet;
@@ -28,15 +28,15 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
 
   useEffect(() => {
     if (petData.images.length < 1) {
-      if (petData.pet_type === 'dog') {
+      if (petData.pet_type.toLocaleLowerCase() === 'dog') {
         setPicture('/assets/dog-img-placeholder.png');
-      } else if (petData.pet_type === 'cat') {
+      } else if (petData.pet_type.toLocaleLowerCase() === 'cat') {
         setPicture('/assets/cat-img-placeholder.png');
       } else {
         setPicture('https://placehold.co/400x600?text=Comming+Soon');
       }
     } else {
-      setPicture(petData.images[0]);
+      setPicture(petData.images[0].file);
     }
   }, [petData]);
 
@@ -83,11 +83,12 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
 
         <Button
           rounded
+          className="p-3"
           onClick={() => {
             dispatch(FavoriteAction.toggle(petData.id));
 
             if (loggedIn) {
-              updatePetsApi(favorites).catch(() =>
+              updateFavotitesPetsApi(favorites).catch(() =>
                 console.error('Error toggling favorites'),
               );
             }
@@ -96,7 +97,7 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
           <FontAwesomeIcon
             className={classNames({ 'has-text-danger': inFav })}
             icon={faHeart}
-            size="lg"
+            size="2x"
           />
         </Button>
       </div>

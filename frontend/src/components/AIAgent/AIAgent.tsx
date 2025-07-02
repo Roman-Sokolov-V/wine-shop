@@ -1,4 +1,4 @@
-import { faMessage } from '@fortawesome/free-solid-svg-icons';
+import { faCommentDots, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useRef, useEffect } from 'react';
 import './AIAgent.scss';
@@ -17,7 +17,7 @@ export const AIAgent: React.FC = () => {
       id: 1,
       role: 'model',
       content:
-        "Hi! I'm an AI assistant in training. Soon, I'll be able to help you find the perfect pet.",
+        "Hi! I'm an AI assistant. How can I help you find the perfect pet today?",
     },
   ]);
   const [userInput, setUserInput] = useState('');
@@ -27,16 +27,21 @@ export const AIAgent: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(scrollToBottom, 100);
+    }
+  }, [messages, isOpen]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (userInput.trim() === '') return;
+    const trimmedInput = userInput.trim();
+    if (trimmedInput === '') return;
 
     const newUserMessage: Message = {
       id: Date.now(),
       role: 'user',
-      content: userInput,
+      content: trimmedInput,
     };
     setMessages(prev => [...prev, newUserMessage]);
     setUserInput('');
@@ -47,99 +52,120 @@ export const AIAgent: React.FC = () => {
       { id: loadingMessageId, role: 'model', content: '', isLoading: true },
     ]);
 
-    setTimeout(() => {
-      const devMessage = 'Sorry, this feature is still in development.';
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: trimmedInput }),
+      });
+
+      // If the response is not OK, parse the error message from the server
+      if (!response.ok) {
+        // Try to get the error message from the server's JSON response
+        const errorData = await response.json().catch(() => {
+          // If the server sends back a non-JSON error (like plain text)
+          return { error: `Server responded with status: ${response.status}` };
+        });
+        // Throw an error that includes the server's message
+        throw new Error(
+          errorData.error || 'Failed to get a response from the server.',
+        );
+      }
+
+      const data = await response.json();
       setMessages(prev =>
         prev.map(msg =>
           msg.id === loadingMessageId
-            ? { ...msg, content: devMessage, isLoading: false }
+            ? { ...msg, content: data.message, isLoading: false }
             : msg,
         ),
       );
-    }, 1200); // 1.2-second delay to simulate a response
+    } catch (error) {
+      console.error('Chat error:', error);
+      // Display the specific error message in the chat
+      let errorMessage = 'Sorry, something went wrong.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === loadingMessageId
+            ? { ...msg, content: errorMessage, isLoading: false }
+            : msg,
+        ),
+      );
+    }
   };
 
   return (
-    <div>
+    <>
       {!isOpen && (
         <button
-          className="button is-info is-large is-rounded pet-chatbot-bubble"
+          className="pet-chatbot-bubble"
           onClick={() => setIsOpen(true)}
+          aria-label="Open chat"
         >
           <span className="icon">
-            <FontAwesomeIcon
-              icon={faMessage}
-              className="has-text-white pl-1"
-            />
+            <FontAwesomeIcon icon={faCommentDots} />
           </span>
         </button>
       )}
 
       <div className={`pet-chatbot-window ${isOpen ? 'is-open' : ''}`}>
-        <div
-          className="box"
-          style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-        >
-          <header className="modal-card-head">
-            <p className="modal-card-title">Pet Finder Assistant</p>
-            <button
-              className="delete"
-              aria-label="close"
-              onClick={() => setIsOpen(false)}
-            ></button>
-          </header>
-
-          <section
-            className="modal-card-body is-flex-grow-1"
-            style={{ overflowY: 'auto' }}
+        <header className="chat-header">
+          <div className="ai-avatar">AI</div>
+          <p className="header-title">Pet Finder Assistant</p>
+          <button
+            className="close-button"
+            aria-label="close"
+            onClick={() => setIsOpen(false)}
           >
-            {messages.map(msg => (
-              <div
-                key={msg.id}
-                className={`mb-4 ${msg.role === 'user' ? 'has-text-right' : ''}`}
-              >
-                <div
-                  className={`box is-inline-block ${msg.role === 'model' ? 'has-background-white' : 'has-background-primary-light'}`}
-                >
-                  {msg.isLoading ? (
-                    <div className="dot-flashing"></div>
-                  ) : (
-                    msg.content
-                  )}
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </section>
+            &times;
+          </button>
+        </header>
 
-          <footer className="modal-card-foot">
-            <form
-              onSubmit={handleSendMessage}
-              style={{ flexGrow: 1 }}
+        <main className="chat-body">
+          {messages.map(msg => (
+            <div
+              key={msg.id}
+              className={`message-container ${msg.role === 'user' ? 'is-user' : 'is-model'}`}
             >
-              <div className="field has-addons">
-                <div className="control is-expanded">
-                  <input
-                    className="input"
-                    type="text"
-                    placeholder="Type a message..."
-                    value={userInput}
-                    onChange={e => setUserInput(e.target.value)}
-                  />
-                </div>
-                <div className="control">
-                  <button
-                    className="button is-primary"
-                    type="submit"
-                  >
-                    Send
-                  </button>
-                </div>
+              <div className="message-bubble">
+                {msg.isLoading ? (
+                  <div className="dot-flashing"></div>
+                ) : (
+                  msg.content
+                )}
               </div>
-            </form>
-          </footer>
-        </div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </main>
+
+        <footer className="chat-footer">
+          <form
+            onSubmit={handleSendMessage}
+            className="chat-input-form"
+          >
+            <input
+              className="chat-input"
+              type="text"
+              placeholder="Type a message..."
+              value={userInput}
+              onChange={e => setUserInput(e.target.value)}
+              aria-label="Chat input"
+            />
+            <button
+              className="send-button"
+              type="submit"
+              aria-label="Send message"
+              disabled={userInput.trim() === ''}
+            >
+              <FontAwesomeIcon icon={faPaperPlane} />
+            </button>
+          </form>
+        </footer>
       </div>
-    </div>
+    </>
   );
 };

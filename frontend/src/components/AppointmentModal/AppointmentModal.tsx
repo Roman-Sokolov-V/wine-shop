@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal } from 'react-bulma-components';
+
 type FormData = {
   name: string;
   email: string;
@@ -7,25 +8,29 @@ type FormData = {
   date: string;
   time: string;
 };
+
 type Props = {
   petName: string;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (val: FormData) => void;
 };
+
+const initialForm = {
+  name: '',
+  email: '',
+  phone: '',
+  date: '',
+  time: '',
+};
+
 export const AppointmentModal: React.FC<Props> = ({
   isOpen,
   onClose,
   petName,
   onSubmit,
 }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    date: '',
-    time: '',
-  });
+  const [formData, setFormData] = useState(initialForm);
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,6 +50,7 @@ export const AppointmentModal: React.FC<Props> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
+    setFormData(initialForm);
     onClose();
   };
 

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import { Button, Heading } from 'react-bulma-components';
+import { Button, Columns, Heading } from 'react-bulma-components';
 import { useNavigate } from 'react-router-dom';
 import style from './HomeBanner1.module.scss';
 
@@ -15,35 +15,38 @@ export const HomeBanner1 = () => {
         )}
       >
         <Heading
-          co
           className={classNames(
-            'is-size-1 has-text-weight-extrabold has-text-light',
+            'is-size-4-mobile is-size-1-desktop is-size-3-touch has-text-weight-extrabold ',
           )}
         >
           Find your new best friend. Give a pet a forever home.
         </Heading>
 
-        <div className="is-flex is-justify-content-space-between">
-          <Button
-            rounded
-            size="large"
-            onClick={() => {
-              navigate('/catalog');
-            }}
-          >
-            Adopt
-          </Button>
+        <Columns>
+          <Columns.Column>
+            <Button
+              rounded
+              size="large"
+              onClick={() => {
+                navigate('/catalog');
+              }}
+            >
+              Adopt
+            </Button>
+          </Columns.Column>
 
-          <Button
-            rounded
-            size="large"
-            onClick={() => {
-              navigate('/donate');
-            }}
-          >
-            Suport the cause
-          </Button>
-        </div>
+          <Columns.Column>
+            <Button
+              rounded
+              size="large"
+              onClick={() => {
+                navigate('/donate');
+              }}
+            >
+              Suport the cause
+            </Button>
+          </Columns.Column>
+        </Columns>
       </div>
     </div>
   );
