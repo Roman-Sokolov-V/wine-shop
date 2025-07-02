@@ -1,4 +1,3 @@
-FROM python:3.12-slim
 LABEL authors="gnonasis@gmail.com"
 
 ENV PYTHONUNBUFFERED=1
@@ -24,4 +23,5 @@ COPY . .
 RUN dos2unix ./commands/*.sh
 
 # Add execute bit to commands files
-RUN chmod +x ./commands/*.sh
+#RUN chmod +x ./commands/*.sh
+
