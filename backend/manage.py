@@ -5,15 +5,16 @@ import sys
 
 
 def main():
-    """Run administrative tasks."""  # TODO зробити для Prod
-    if "test" in sys.argv:
-        os.environ.setdefault(
-            "DJANGO_SETTINGS_MODULE", "config.settings.test_settings"
-        )
-    elif "collectstatic" in sys.argv:
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.prod")
-    else:
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
+    """Run administrative tasks."""
+    if not os.environ.get("DJANGO_SETTINGS_MODULE"):
+        if "test" in sys.argv:
+            os.environ.setdefault(
+                "DJANGO_SETTINGS_MODULE", "config.settings.test_settings"
+            )
+        else:
+            os.environ.setdefault(
+                "DJANGO_SETTINGS_MODULE", "config.settings.dev"
+            )
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
