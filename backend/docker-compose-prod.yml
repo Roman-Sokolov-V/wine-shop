@@ -19,8 +19,8 @@ services:
       minio:
         condition: service_healthy
 
-    volumes:
-      - ./:/app
+#    volumes:
+#      - ./:/app
 
 
   db:

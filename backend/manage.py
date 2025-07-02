@@ -5,10 +5,13 @@ import sys
 
 
 def main():
-    """Run administrative tasks."""
-    if 'test' in sys.argv:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-                              "config.settings.test_settings")
+    """Run administrative tasks."""  # TODO зробити для Prod
+    if "test" in sys.argv:
+        os.environ.setdefault(
+            "DJANGO_SETTINGS_MODULE", "config.settings.test_settings"
+        )
+    elif "collectstatic" in sys.argv:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.prod")
     else:
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
     try:
