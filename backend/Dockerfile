@@ -1,3 +1,4 @@
+FROM python:3.12-slim
 LABEL authors="gnonasis@gmail.com"
 
 ENV PYTHONUNBUFFERED=1
@@ -24,4 +25,9 @@ RUN dos2unix ./commands/*.sh
 
 # Add execute bit to commands files
 #RUN chmod +x ./commands/*.sh
+RUN echo '#!/bin/bash' > /start-wrapper.sh && \
+    echo 'cd /app && bash ./commands/start.sh' >> /start-wrapper.sh && \
+    chmod +x /start-wrapper.sh
+
+CMD ["/start-wrapper.sh"]
 
