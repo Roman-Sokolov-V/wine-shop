@@ -9,6 +9,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
         fields = "__all__"
         extra_kwargs = {
             "add_info": {"required": False},
+            "is_active": {"required": False, "read_only": True},
         }
 
     def validate(self, attrs):
