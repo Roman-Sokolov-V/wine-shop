@@ -3,8 +3,9 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
-
 from django.conf import settings
+
+from adoption.models import Appointment
 
 User = get_user_model()
 
@@ -51,3 +52,13 @@ def send_appointment_task(
 
         msg.attach_alternative(html_content, "text/html")
         msg.send()
+
+
+@shared_task
+def set_status_not_active(
+    appointment_id: int,
+):
+    appointment = Appointment.objects.filter(id=appointment_id).first()
+    if appointment:
+        appointment.is_active = False
+        appointment.save()
