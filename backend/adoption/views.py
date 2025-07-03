@@ -65,7 +65,7 @@ class AppointmentViewSet(
         if self.action == "create":
             permission_classes = [AllowAny()]
         else:
-            permission_classes = [AllowAny()]
+            permission_classes = [IsAdminUser()]
         return permission_classes
 
     def get_queryset(self):
