@@ -47,6 +47,7 @@ services:
       - "9001:9001"
     env_file:
       - .env
+    restart: always
     volumes:
       - minio_data:/data
     healthcheck:
