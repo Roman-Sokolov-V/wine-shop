@@ -23,6 +23,7 @@ services:
 
   db:
     image: postgres:16-bullseye
+    container_name: db
     env_file:
       - .env
     restart: always

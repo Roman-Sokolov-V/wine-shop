@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "notification",
     "corsheaders",
     "django_celery_beat",
+    "adoption",
 ]
 
 MIDDLEWARE = [
@@ -152,8 +153,12 @@ MINIO_STORAGE_ENDPOINT = "minio:9000"
 MINIO_STORAGE_ACCESS_KEY = "USERNAME"
 MINIO_STORAGE_SECRET_KEY = "PASSWORD"
 MINIO_STORAGE_MEDIA_BUCKET_NAME = "shelter-bucket"
-MINIO_STORAGE_MEDIA_URL = "http://localhost:9000/shelter-bucket"  # Для генерації URL
-MINIO_STORAGE_USE_HTTPS = False  # Це ми додавали для вирішення першої SSL помилки
+MINIO_STORAGE_MEDIA_URL = (
+    "http://localhost:9000/shelter-bucket"  # Для генерації URL
+)
+MINIO_STORAGE_USE_HTTPS = (
+    False  # Це ми додавали для вирішення першої SSL помилки
+)
 
 # Інші MinIO налаштування, якщо є
 MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
