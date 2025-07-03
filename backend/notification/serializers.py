@@ -29,3 +29,7 @@ class MailingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mailing
         fields = ("id", "title", "content", "run_at")
+
+
+class UnsubscribeSerializer(serializers.Serializer):
+    token = serializers.UUIDField()
