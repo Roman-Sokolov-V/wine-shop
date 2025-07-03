@@ -13,12 +13,18 @@ def notify_we_found_pet_for_you(pet: Pet, user: User):
 
     text_content = render_to_string(
         "emails/found_pet_that_you_looking_for.txt",
-        context={"pet": pet, "site_url": "https://example.com"},  # Вказати сайт фронта
+        context={
+            "pet": pet,
+            "site_url": "https://example.com",
+        },  # Вказати сайт фронта
     )
 
     html_content = render_to_string(
         "emails/found_pet_that_you_looking_for.html",
-        context={"pet": pet, "site_url": "https://example.com"},  # Вказати сайт фронта
+        context={
+            "pet": pet,
+            "site_url": "https://example.com",
+        },  # Вказати сайт фронта
     )
 
     msg = EmailMultiAlternatives(
