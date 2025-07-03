@@ -10,6 +10,7 @@ class Appointment(models.Model):
     date = models.DateField()
     time = models.TimeField()
     add_info = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True, blank=True)
 
     @staticmethod
     def validate_date_time(
