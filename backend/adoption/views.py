@@ -3,6 +3,9 @@ from datetime import datetime, timedelta
 from django.utils.timezone import get_current_timezone
 from django.utils.timezone import make_aware
 from django_celery_beat.models import ClockedSchedule, PeriodicTask
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.viewsets import GenericViewSet, mixins
 
@@ -15,10 +18,10 @@ class AppointmentViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     GenericViewSet,
 ):
-    queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
 
     def perform_create(self, serializer):
@@ -62,8 +65,14 @@ class AppointmentViewSet(
         if self.action == "create":
             permission_classes = [AllowAny()]
         else:
-            permission_classes = [IsAdminUser()]
+            permission_classes = [AllowAny()]
         return permission_classes
+
+    def get_queryset(self):
+        if self.action == "active":
+            return Appointment.objects.filter(is_active=True)
+        else:
+            return Appointment.objects.all()
 
     def create(self, request, *args, **kwargs):
         """Create an appointment"""
@@ -80,3 +89,10 @@ class AppointmentViewSet(
     def retrieve(self, request, *args, **kwargs):
         """Retrieve an appointment"""
         return super().retrieve(request, *args, **kwargs)
+
+    @action(detail=False, methods=["get"])
+    def active(self, request, *args, **kwargs):
+        """List an active appointment"""
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
