@@ -23,6 +23,7 @@ services:
 
   db:
     image: postgres:16-bullseye
+    container_name: db
     env_file:
       - .env
     restart: always
@@ -47,6 +48,7 @@ services:
       - "9001:9001"
     env_file:
       - .env
+    restart: always
     volumes:
       - minio_data:/data
     healthcheck:

@@ -93,3 +93,5 @@ docker exec shelter python manage.py dumpdata > file_name.json
 
 ### Load db with data from file
 docker exec shelter python manage.py loaddata file_name.json
+
+cp docker/nginx/.env.sample docker/nginx/.env
