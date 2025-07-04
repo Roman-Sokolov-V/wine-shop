@@ -1,0 +1,4 @@
+New Adoption Form
+{% for key, value in form.items %}
+  {{ key }}: {{ value }}
+{% endfor %}

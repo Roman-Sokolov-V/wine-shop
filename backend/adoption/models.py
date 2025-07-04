@@ -1,6 +1,12 @@
 import datetime
+
+from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from django.db import models
+
+from pet.models import Pet
+
+User = get_user_model()
 
 
 class Appointment(models.Model):
@@ -35,3 +41,32 @@ class Appointment(models.Model):
             self.time,
             ValueError,
         )
+
+
+STATUS_CHOICES = (
+    ("pending", "pending"),
+    ("approved", "approved"),
+    ("rejected", "rejected"),
+)
+
+
+class AdoptionForm(models.Model):
+    user_id = models.IntegerField(blank=True, null=True)
+    pet_id = models.IntegerField()
+    application_date = models.DateField(auto_now_add=True)
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    phone = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField()
+    occupation = models.CharField(max_length=100, blank=True, null=True)
+    employer_name = models.CharField(max_length=100, blank=True, null=True)
+    employer_phone = models.CharField(max_length=100, blank=True, null=True)
+    living_situation = models.TextField(blank=True, null=True)
+    household_setting = models.TextField(blank=True, null=True)
+    household_members = models.TextField(blank=True, null=True)
+    fenced_yard = models.CharField(max_length=255, blank=True, null=True)
+    hours_alone = models.IntegerField(blank=True, null=True)
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default="pending"
+    )

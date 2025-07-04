@@ -60,6 +60,7 @@ class PetViewSet(viewsets.ModelViewSet):
         return serializer.save()
 
     def create(self, request, *args, **kwargs):
+        """create pet"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         pet = self.perform_create(serializer)
@@ -70,6 +71,22 @@ class PetViewSet(viewsets.ModelViewSet):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
+    def list(self, request, *args, **kwargs):
+        """List pets"""
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Retrieve pet by id"""
+        return super().retrieve(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Partial update pet by id"""
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete pet by id"""
+        return super().destroy(request, *args, **kwargs)
+
     @action(
         methods=["post"],
         detail=True,
@@ -77,6 +94,7 @@ class PetViewSet(viewsets.ModelViewSet):
         url_path="upload",
     )
     def upload_image(self, request, pk=None):
+        """Upload pets image"""
         pet = self.get_object()
         data = {
             "file": request.data["file"],
@@ -98,6 +116,7 @@ class FavoriteView(generics.GenericAPIView):
     serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
+        """add pet to the authenticated user's favorites."""
         pet = self.get_object()
         user = request.user
         if not user.favorites.filter(pk=pet.pk).exists():
@@ -105,6 +124,7 @@ class FavoriteView(generics.GenericAPIView):
         return Response(status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
+        """remove pet from the authenticated user's favorites."""
         obj = self.get_object()
         user = request.user
         user.favorites.remove(obj)
@@ -122,7 +142,9 @@ def filter_report(request):
     """Get filters"""
     breed = Pet.objects.values_list("breed", flat=True).distinct()
     coloration = Pet.objects.values_list("coloration", flat=True).distinct()
-    is_sterilized = Pet.objects.values_list("is_sterilized", flat=True).distinct()
+    is_sterilized = Pet.objects.values_list(
+        "is_sterilized", flat=True
+    ).distinct()
     pet_type = Pet.objects.values_list("pet_type", flat=True).distinct()
     sex = ["M", "F", "U"]
 
