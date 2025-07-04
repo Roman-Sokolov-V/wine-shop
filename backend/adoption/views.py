@@ -6,7 +6,7 @@ from django_celery_beat.models import ClockedSchedule, PeriodicTask
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.viewsets import GenericViewSet, mixins, ModelViewSet
 
 from adoption.models import Appointment, AdoptionForm
@@ -104,6 +104,7 @@ class AppointmentViewSet(
 
 class AdoptionViewSet(ModelViewSet):
     model = AdoptionForm
+    queryset = AdoptionForm.objects.all()
 
     def get_permissions(self):
         if self.action == "create":
@@ -140,8 +141,8 @@ class AdoptionViewSet(ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         """Partially update an adoption form"""
-        return super().retrieve(request, *args, **kwargs)
+        return super().partial_update(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        """Not implemented"""
-        pass
+        """Partially update an adoption form"""
+        return super().update(request, *args, **kwargs)
