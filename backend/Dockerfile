@@ -17,5 +17,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN update-ca-certificates
-
+RUN apt-get update && apt-get install -y dos2unix
 COPY . .
+
+# Ensure Unix-style line endings for scripts
+RUN dos2unix ./commands/*.sh
+
+# Add execute bit to commands files
+#RUN chmod +x ./commands/*.sh
+RUN echo '#!/bin/bash' > /start-wrapper.sh && \
+    echo 'cd /app && bash ./commands/start.sh' >> /start-wrapper.sh && \
+    chmod +x /start-wrapper.sh
+
+CMD ["/start-wrapper.sh"]
+

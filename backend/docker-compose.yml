@@ -21,23 +21,9 @@ services:
     volumes:
       - ./:/app
 
-#  dramatiq_worker:
-#    container_name: dramatiq
-#    build:
-#      context: .
-#    env_file:
-#      - .env
-#    command: [ "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py rundramatiq"]
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#      rabbitmq:
-#        condition: service_healthy
-#    volumes:
-#      - ./:/app
-
   db:
     image: postgres:16-bullseye
+    container_name: db
     env_file:
       - .env
     restart: always
@@ -62,6 +48,7 @@ services:
       - "9001:9001"
     env_file:
       - .env
+    restart: always
     volumes:
       - minio_data:/data
     healthcheck:

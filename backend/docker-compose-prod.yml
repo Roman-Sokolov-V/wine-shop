@@ -5,22 +5,19 @@ services:
       context: .
     env_file:
       - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
     ports:
       - "8000:8000"
-    command:
-      [
-        "/bin/sh",
-        "-c",
-        "/commands/start.sh"
-      ]
     depends_on:
       db:
         condition: service_healthy
       minio:
         condition: service_healthy
-
     volumes:
       - ./:/app
+    networks:
+      - shelter_network
 
 
   db:
@@ -38,6 +35,8 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:$PGDATA
+    networks:
+      - shelter_network
 
   minio:
     image: minio/minio:latest
@@ -55,6 +54,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - shelter_network
 
 
   minio_mc:
@@ -68,6 +69,8 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    networks:
+      - shelter_network
 
 
   rabbitmq:
@@ -86,6 +89,8 @@ services:
       retries: 5
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - shelter_network
 
   celery:
     container_name: celery
@@ -99,6 +104,8 @@ services:
       - rabbitmq
       - db
     restart: on-failure
+    networks:
+      - shelter_network
 
   celery-beat:
     container_name: celery-beat
@@ -112,18 +119,29 @@ services:
       - rabbitmq
       - db
     restart: on-failure
+    networks:
+      - shelter_network
 
   nginx:
     image: nginx:alpine
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./staticfiles:/app/staticfiles
     depends_on:
       - shelter
+    restart: always
+    networks:
+      - shelter_network
 
 
 volumes:
   minio_data:
   postgres_data:
   rabbitmq-data:
+
+networks:
+  shelter_network:
+    driver: bridge
