@@ -1,15 +1,18 @@
-from dev import *
+from .dev import *
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]  # TODO змінити
+ALLOWED_HOSTS = ["sha-man.pp.ua"]
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
-
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_HTTPONLY = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -25,8 +28,3 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1",
     "http://3.120.102.6",
 ]
-# SECURE_SSL_REDIRECT = True
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SAMESITE = 'None'
-# CSRF_COOKIE_HTTPONLY = False
