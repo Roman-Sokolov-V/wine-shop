@@ -9,6 +9,7 @@ import * as FavoriteAction from '../../features/favorites';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
 import { updateFavotitesPetsApi } from '../../api/pets';
+import { textBeautifier } from '../../utils/helperFormater';
 
 interface Props {
   petData: Pet;
@@ -29,9 +30,9 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
   useEffect(() => {
     if (petData.images.length < 1) {
       if (petData.pet_type.toLocaleLowerCase() === 'dog') {
-        setPicture('/assets/dog-img-placeholder.png');
+        setPicture('assets/dog-img-placeholder.png');
       } else if (petData.pet_type.toLocaleLowerCase() === 'cat') {
-        setPicture('/assets/cat-img-placeholder.png');
+        setPicture('assets/cat-img-placeholder.png');
       } else {
         setPicture('https://placehold.co/400x600?text=Comming+Soon');
       }
@@ -61,11 +62,11 @@ export const CatalogCard: React.FC<Props> = ({ petData }) => {
           pt={3}
           mb={1}
         >
-          {petData.name}
+          {textBeautifier(petData.name)}
         </Heading>
 
         <div>
-          <p>Breed: {petData.breed}</p>
+          <p>Breed: {textBeautifier(petData.breed)}</p>
           <p>Age: {petData.age}</p>
         </div>
       </div>

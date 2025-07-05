@@ -7,11 +7,10 @@ export const HomeBanner2 = () => {
     <div>
       <Container>
         <Columns className="is-vcentered">
-          {/* Column 1: Image */}
           <Columns.Column size={6}>
             <figure className="image  mb-5">
               <img
-                src="\assets\how-to-help-banner-sqr.png"
+                src="assets\how-to-help-banner-sqr.png"
                 alt="A banner showing happy pets"
                 style={{
                   borderRadius: '38px',
@@ -22,7 +21,6 @@ export const HomeBanner2 = () => {
             </figure>
           </Columns.Column>
 
-          {/* Column 2: Text content */}
           <Columns.Column
             className="is-flex is-flex-direction-column is-justify-content-center"
             size={6}

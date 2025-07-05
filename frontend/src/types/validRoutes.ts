@@ -9,4 +9,5 @@ export enum VALID_ROUTES {
   CONTACT_US = 'contact-us',
   DONATE = 'donate',
   HOW_TO_HELP = 'how-to-help',
+  UNSUBSCRIBE = 'unsubscribe',
 }
