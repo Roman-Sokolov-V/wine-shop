@@ -34,6 +34,7 @@ class AdoptionFormSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdoptionForm
         fields = (
+            "id",
             "user",
             "pet",
             "application_date",
@@ -55,6 +56,7 @@ class AdoptionFormSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "application_date": {"read_only": True},
             "user": {"read_only": True},
+            "id": {"read_only": True},
         }
 
     def get_extra_kwargs(self, *args, **kwargs):
