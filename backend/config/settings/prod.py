@@ -6,6 +6,8 @@ ALLOWED_HOSTS = ["sha-man.pp.ua"]
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
@@ -15,16 +17,14 @@ CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_HTTPONLY = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://192.168.1.105",
-    "http://91.193.174.2",
+    "https://localhost:3000",
+    "https://91.193.174.2",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://3.120.102.6",
+    "https://localhost:3000",
+    "https://91.193.174.2",
 ]
