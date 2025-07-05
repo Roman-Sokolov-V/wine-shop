@@ -30,7 +30,7 @@ export const ResetPasswordPage = () => {
     }
 
     if (!searchParams.get('token')) {
-      setError('Invalid Token');
+      setError('Invalid Token, please check your email.');
       return;
     }
 
@@ -46,7 +46,9 @@ export const ResetPasswordPage = () => {
         }
       })
       .catch((e: AxiosError) => {
-        setError(`Error with updating password. Error: ${e.message}`);
+        const errorMessage = Object.values(e?.response?.data as object)[0][0];
+
+        setError(`Error with updating password. ${errorMessage}`);
       })
       .finally(() => setLoading(false));
   };

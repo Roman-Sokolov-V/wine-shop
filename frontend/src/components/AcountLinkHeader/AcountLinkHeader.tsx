@@ -55,17 +55,24 @@ export const AcountLinkHeader: React.FC<Props> = ({ onLinkClick }) => {
 
             <Navbar.Dropdown right>
               <Navbar.Item onClick={() => naviagate('/account')}>
-                <Navbar.Link arrowless>Account</Navbar.Link>
+                <Navbar.Link arrowless>
+                  <Heading size={5}>Account</Heading>
+                </Navbar.Link>
               </Navbar.Item>
 
               <Navbar.Item onClick={handleLogout}>
-                <Navbar.Link arrowless>Logout</Navbar.Link>
+                <Navbar.Link arrowless>
+                  <Heading size={5}>Logout</Heading>
+                </Navbar.Link>
               </Navbar.Item>
             </Navbar.Dropdown>
           </>
         ) : (
           <>
-            <Navbar.Link arrowless>
+            <Navbar.Link
+              className="pl-0"
+              arrowless
+            >
               <Heading
                 size={4}
                 onClick={() => onLinkClick('/account')}
@@ -74,14 +81,13 @@ export const AcountLinkHeader: React.FC<Props> = ({ onLinkClick }) => {
               </Heading>
             </Navbar.Link>
 
-            <Navbar.Item>
-              <Navbar.Link
-                onClick={handleLogout}
-                arrowless
-              >
-                Logout
-              </Navbar.Link>
-            </Navbar.Item>
+            <Navbar.Link
+              className="pl-0"
+              onClick={handleLogout}
+              arrowless
+            >
+              <Heading size={4}>Logout</Heading>
+            </Navbar.Link>
           </>
         )}
       </>

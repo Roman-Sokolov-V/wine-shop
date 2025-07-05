@@ -6,12 +6,16 @@ from django_celery_beat.models import ClockedSchedule, PeriodicTask
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-from rest_framework.viewsets import GenericViewSet, mixins
+from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.viewsets import GenericViewSet, mixins, ModelViewSet
 
-from adoption.models import Appointment
-from adoption.serializers import AppointmentSerializer
-from adoption.tasks import send_appointment_task
+from adoption.models import Appointment, AdoptionForm
+from adoption.serializers import (
+    AppointmentSerializer,
+    AdoptionFormSerializer,
+    AdoptionUpdateStatusSerializer,
+)
+from adoption.tasks import send_appointment_task, notification_adopt_form
 
 
 class AppointmentViewSet(
@@ -65,7 +69,7 @@ class AppointmentViewSet(
         if self.action == "create":
             permission_classes = [AllowAny()]
         else:
-            permission_classes = [AllowAny()]
+            permission_classes = [IsAdminUser()]
         return permission_classes
 
     def get_queryset(self):
@@ -96,3 +100,49 @@ class AppointmentViewSet(
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AdoptionViewSet(ModelViewSet):
+    model = AdoptionForm
+    queryset = AdoptionForm.objects.all()
+
+    def get_permissions(self):
+        if self.action == "create":
+            permission_classes = [AllowAny()]
+        else:
+            permission_classes = [IsAdminUser()]
+        return permission_classes
+
+    def perform_create(self, serializer):
+        form = serializer.save()
+        # send emails with form to staff
+        notification_adopt_form.delay_on_commit(form.id)
+
+    def get_serializer_class(self):
+        if self.action == "partial_update":
+            return AdoptionUpdateStatusSerializer
+        return AdoptionFormSerializer
+
+    def create(self, request, *args, **kwargs):
+        """Create an adoption form"""
+        return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        """Destroy an adoption form"""
+        return super().destroy(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        """List an adoption forms"""
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Retrieve an adoption form"""
+        return super().retrieve(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Partially update an adoption form"""
+        return super().partial_update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """Partially update an adoption form"""
+        return super().update(request, *args, **kwargs)

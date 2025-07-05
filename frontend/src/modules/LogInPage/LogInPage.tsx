@@ -85,15 +85,16 @@ export const LogInPage = () => {
     setError('');
     sendRestoreToken(email)
       .then(res => {
-        if (res.status === 200) {
+        if (res.status === 201) {
           setSuccess(`Please check you email for reset link`);
         } else {
           throw Error('Error sending restore token');
         }
       })
       .catch((e: AxiosError) => {
+        const message = Object.values((e?.response?.data as object) || {})[0];
         setError(
-          `Error sending restore token to ${email}. Try again later. Error: ${e.message}`,
+          `Error sending restore token to ${email}. Try again later. Error: ${message[0] || e.message}`,
         );
       })
       .finally(() => setLoading(false));
