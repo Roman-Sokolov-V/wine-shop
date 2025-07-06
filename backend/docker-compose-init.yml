@@ -5,7 +5,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/init_sert/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/init_cert/nginx.conf:/etc/nginx/nginx.conf:ro
       - www-html:/var/www/html
       - etc-letsencrypt:/etc/letsencrypt
     restart: always
@@ -20,7 +20,7 @@ services:
     volumes:
       - etc-letsencrypt:/etc/letsencrypt
       - www-html:/var/www/html
-    command: certonly --webroot --webroot-path=/var/www/html --email gnonasis@gmail.com --agree-tos --no-eff-email -d sha-man.pp.ua
+    command: certonly --webroot --webroot-path=/var/www/html --email gnonasis@gmail.com --agree-tos --no-eff-email --staging -d sha-man.pp.ua
     networks:
       - shelter_network
 
