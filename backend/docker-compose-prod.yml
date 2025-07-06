@@ -69,10 +69,6 @@ services:
     networks:
       - shelter_network
 
-  volumes:
-    redis-data:
-
-
 
   shelter:
     container_name: shelter
