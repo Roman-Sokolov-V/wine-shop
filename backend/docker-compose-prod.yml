@@ -1,33 +1,11 @@
 services:
-  shelter:
-    container_name: shelter
-    build:
-      context: .
-    env_file:
-      - .env
-    environment:
-      DJANGO_SETTINGS_MODULE: config.settings.prod
-    ports:
-      - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-    volumes:
-      - ./:/app
-    networks:
-      - shelter_network
-    restart: unless-stopped
-
-
   db:
     image: postgres:16-bullseye
     env_file:
       - .env
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h ${POSTGRES_HOST}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h ${POSTGRES_HOST}" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -35,7 +13,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres_data:$PGDATA
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - shelter_network
 
@@ -60,40 +38,71 @@ services:
       - shelter_network
 
 
-  minio_mc:
-    build:
-      context: .
-      dockerfile: docker/minio_mc/Dockerfile
-    container_name: minio_mc
-    command: ["/bin/sh", "-c", "/commands/setup_minio.sh"]
-    depends_on:
-      minio:
-        condition: service_healthy
-    env_file:
-      - .env
-    networks:
-      - shelter_network
-
-
-  rabbitmq:
-    image: rabbitmq:3.13-management-alpine
-    hostname: rabbitmq
-    container_name: rabbitmq
+#  rabbitmq:
+#    image: rabbitmq:management-alpine
+#    hostname: rabbitmq
+#    container_name: rabbitmq
+#    restart: unless-stopped
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672" # веб-інтерфейс
+#    env_file:
+#      - .env
+#    healthcheck:
+#      test: [ "CMD", "rabbitmqctl", "status" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    volumes:
+#      - rabbitmq-data:/var/lib/rabbitmq
+#    networks:
+#      - shelter_network
+#    mem_limit: 256m
+  redis:
+    image: redis:latest
+    container_name: redis
     restart: unless-stopped
     ports:
-      - "5672:5672"
-      - "15672:15672" # веб-інтерфейс
-    env_file:
-      - .env
-    healthcheck:
-      test: [ "CMD", "rabbitmqctl", "status" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "6379:6379"
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+      - redis-data:/data
     networks:
       - shelter_network
+
+  volumes:
+    redis-data:
+
+
+
+  shelter:
+    container_name: shelter
+    build:
+      context: .
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+      minio:
+        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./:/app
+    networks:
+      - shelter_network
+    deploy:
+      restart_policy:
+        condition: on-failure
+        window: 10s
+
 
   celery:
     container_name: celery
@@ -101,10 +110,12 @@ services:
       context: .
     env_file:
       - .env
-    command: ["sh", "-c", "celery -A config worker --loglevel=INFO"]
+    command: [ "sh", "-c", "celery -A config worker --loglevel=INFO" ]
     depends_on:
-      rabbitmq:
-        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+      redis:
+        condition: service_started
       shelter:
         condition: service_started
       db:
@@ -119,17 +130,33 @@ services:
       context: .
     env_file:
       - .env
-    command: ["sh", "-c", "celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"]
+    command: [ "sh", "-c", "celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler" ]
     depends_on:
       shelter:
         condition: service_started
       celery:
         condition: service_started
-      rabbitmq:
-        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+      redis:
+        condition: service_started
       db:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - shelter_network
+
+  minio_mc:
+    build:
+      context: .
+      dockerfile: docker/minio_mc/Dockerfile
+    container_name: minio_mc
+    command: ["/bin/sh", "-c", "/commands/setup_minio.sh"]
+    depends_on:
+      minio:
+        condition: service_healthy
+    env_file:
+      - .env
     networks:
       - shelter_network
 
@@ -151,14 +178,16 @@ services:
     networks:
       - shelter_network
 
-
 volumes:
   minio_data:
   postgres_data:
-  rabbitmq-data:
+  #rabbitmq-data:
+  redis-data:
   etc-letsencrypt:
   www-html:
 
 networks:
   shelter_network:
     driver: bridge
+
+# sudo rm -rf /var/lib/docker/volumes/postgres_data
