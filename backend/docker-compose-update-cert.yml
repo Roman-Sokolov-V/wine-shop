@@ -1,0 +1,20 @@
+services:
+  certbot-renew:
+    image: certbot/certbot
+    container_name: certbot-renew
+    volumes:
+      - etc-letsencrypt:/etc/letsencrypt
+      - www-html:/var/www/html
+    command: ["renew"]
+    networks:
+      - shelter_network
+
+volumes:
+  etc-letsencrypt:
+    external: true
+  www-html:
+    external: true
+
+networks:
+  shelter_network:
+    external: true
