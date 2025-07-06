@@ -18,13 +18,14 @@ services:
       - ./:/app
     networks:
       - shelter_network
+    restart: unless-stopped
 
 
   db:
     image: postgres:16-bullseye
     env_file:
       - .env
-    restart: always
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h ${POSTGRES_HOST}"]
       interval: 5s
@@ -42,6 +43,7 @@ services:
     image: minio/minio:latest
     container_name: minio
     command: server --console-address ":9001" /data
+    restart: unless-stopped
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -77,6 +79,7 @@ services:
     image: rabbitmq:3.13-management-alpine
     hostname: rabbitmq
     container_name: rabbitmq
+    restart: unless-stopped
     ports:
       - "5672:5672"
       - "15672:15672" # веб-інтерфейс
@@ -100,10 +103,13 @@ services:
       - .env
     command: ["sh", "-c", "celery -A config worker --loglevel=INFO"]
     depends_on:
-      - shelter
-      - rabbitmq
-      - db
-    restart: on-failure
+      rabbitmq:
+        condition: service_healthy
+      shelter:
+        condition: service_started
+      db:
+        condition: service_healthy
+    restart: unless-stopped
     networks:
       - shelter_network
 
@@ -115,10 +121,15 @@ services:
       - .env
     command: ["sh", "-c", "celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"]
     depends_on:
-      - shelter
-      - rabbitmq
-      - db
-    restart: on-failure
+      shelter:
+        condition: service_started
+      celery:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    restart: unless-stopped
     networks:
       - shelter_network
 
@@ -134,8 +145,9 @@ services:
       - www-html:/var/www/html
       - etc-letsencrypt:/etc/letsencrypt
     depends_on:
-      - shelter
-    restart: always
+      shelter:
+        condition: service_started
+    restart: unless-stopped
     networks:
       - shelter_network
 
