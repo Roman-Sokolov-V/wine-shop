@@ -2,7 +2,7 @@ from .dev import *
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["sha-man.pp.ua"]
+ALLOWED_HOSTS = ["sha-man.pp.ua", "3.120.102.6"]
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
