@@ -31,7 +31,7 @@ echo "rename .env.sample to .env ..."
 cp .env.sample .env
 
 echo "add permissions to run for cert_init.sh"
-chmod +x ./commands/cert_init.sh
+chmod +x ./commands/cert_renew.sh
 
 
 echo "📦 remove irrelevant containers and services"
