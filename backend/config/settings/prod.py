@@ -23,9 +23,10 @@ CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_HTTPONLY = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost:3000",
+    "http://localhost:3000",
     "https://91.193.174.2",
     "https://syavayki.github.io",
+    "http://syavayki.github.io",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -33,6 +34,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:3000",
+    "http://localhost:3000",
     "https://91.193.174.2",
     "https://syavayki.github.io",
+    "http://syavayki.github.io",
 ]
