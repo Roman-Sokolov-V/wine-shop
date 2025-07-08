@@ -31,11 +31,12 @@ echo "rename .env.sample to .env ..."
 cp .env.sample .env
 
 echo "add permissions to run for cert_init.sh"
-chmod +x /commands/cert_init.sh
+chmod +x ./commands/cert_renew.sh
+chmod +x ./commands/start.sh
 
 
-echo "📦 remove irrelevant containers and services"
-docker compose -f docker-compose-prod.yml down --remove-orphans || echo "⚠️ Warning: Down with Orphans not completed "
+#echo "📦 remove irrelevant containers and services"
+#docker compose -f docker-compose-prod.yml down --remove-orphans || echo "⚠️ Warning: Down with Orphans not completed "
 
 # Build and run Docker containers with Docker Compose v2
 docker compose -f docker-compose-prod.yml up -d --build || handle_error "Failed to build and run Docker containers using docker-compose-prod.yml."

@@ -10,13 +10,18 @@ services:
     command: [
       "sh",
       "-c",
-      "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+      "python manage.py makemigrations && python manage.py migrate && exec python manage.py runserver 0.0.0.0:8000"
     ]
     depends_on:
       db:
         condition: service_healthy
       minio:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "healthcheck.py"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
     volumes:
       - ./:/app
@@ -71,22 +76,15 @@ services:
       - .env
 
 
-  rabbitmq:
-    image: rabbitmq:3.13-management-alpine
-    hostname: rabbitmq
-    container_name: rabbitmq
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
     ports:
-      - "5672:5672"
-      - "15672:15672"
-    env_file:
-      - .env
-    healthcheck:
-      test: [ "CMD", "rabbitmqctl", "status" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "6379:6379"
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+      - redis-data:/data
+
 
   celery:
     container_name: celery
@@ -96,9 +94,12 @@ services:
       - .env
     command: ["sh", "-c", "celery -A config worker --loglevel=INFO"]
     depends_on:
-      - shelter
-      - rabbitmq
-      - db
+      shelter:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
     restart: on-failure
 
   celery-beat:
@@ -109,13 +110,18 @@ services:
       - .env
     command: ["sh", "-c", "celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"]
     depends_on:
-      - shelter
-      - rabbitmq
-      - db
+      shelter:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
     restart: on-failure
 
 
 volumes:
   minio_data:
   postgres_data:
-  rabbitmq-data:
+  redis-data:
+  etc-letsencrypt:
+  www-html:

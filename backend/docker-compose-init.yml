@@ -5,7 +5,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/init_sert/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/init_cert/nginx.conf:/etc/nginx/nginx.conf:ro
       - www-html:/var/www/html
       - etc-letsencrypt:/etc/letsencrypt
     restart: always
@@ -20,6 +20,7 @@ services:
     volumes:
       - etc-letsencrypt:/etc/letsencrypt
       - www-html:/var/www/html
+    #command: certonly --webroot --webroot-path=/var/www/html --email gnonasis@gmail.com --agree-tos --no-eff-email --staging -d sha-man.pp.ua
     command: certonly --webroot --webroot-path=/var/www/html --email gnonasis@gmail.com --agree-tos --no-eff-email -d sha-man.pp.ua
     networks:
       - shelter_network
@@ -36,6 +37,6 @@ networks:
 # when develop will be completed, to get real certificate
 # docker compose -f docker-compose-prod.yml down  зупинка контейнерів проекту
 # sudo docker compose -f docker-compose-init.yml run --rm certbot delete --cert-name sha-man.pp.ua видаляємо сертифікати
-# docker compose -f docker-compose-init.yml run    створюємо сертифікати На цей раз справжні
+# docker compose -f docker-compose-init.yml up    створюємо сертифікати На цей раз справжні
 # docker compose -f docker-compose-prod.yml up --build -d       запуск контейнерів проекту
 
