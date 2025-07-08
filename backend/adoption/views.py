@@ -6,10 +6,11 @@ from django_celery_beat.models import ClockedSchedule, PeriodicTask
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.viewsets import GenericViewSet, mixins, ModelViewSet
 
 from adoption.models import Appointment, AdoptionForm
+from adoption.permissions import IsOwnerOrAdmin
 from adoption.serializers import (
     AppointmentSerializer,
     AdoptionFormSerializer,
@@ -33,7 +34,7 @@ class AppointmentViewSet(
 
         # send notifications for staff
         send_appointment_task.delay_on_commit(
-            name=appointment.name,
+            name=appointment.first_name + " " + appointment.last_name,
             email=appointment.email,
             phone=appointment.phone,
             date=appointment.date,
@@ -67,9 +68,9 @@ class AppointmentViewSet(
 
     def get_permissions(self):
         if self.action == "create":
-            permission_classes = [AllowAny()]
+            permission_classes = [IsAuthenticated()]
         else:
-            permission_classes = [IsAdminUser()]
+            permission_classes = [IsOwnerOrAdmin()]
         return permission_classes
 
     def get_queryset(self):
@@ -110,7 +111,7 @@ class AdoptionViewSet(ModelViewSet):
         if self.action == "create":
             permission_classes = [AllowAny()]
         else:
-            permission_classes = [IsAdminUser()]
+            permission_classes = [IsOwnerOrAdmin()]
         return permission_classes
 
     def perform_create(self, serializer):
