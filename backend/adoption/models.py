@@ -7,15 +7,22 @@ from django.db import models
 from pet.models import Pet
 
 User = get_user_model()
-
+def get_first_user():
+    return User.objects.first()
+def get_first_user_email()
+    user = User.objects.first()
+    return user.email
 
 class Appointment(models.Model):
     # name = models.CharField(max_length=100, null=True, blank=True)
     first_name = models.CharField(max_length=255, default="default_name")
     last_name = models.CharField(max_length=255, default="default_name")
-    email = models.EmailField(default="some@email.com")
+    email = models.EmailField(default=get_first_user_email)
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="appointments", default=User.objects.first()
+        User,
+        on_delete=models.CASCADE,
+        related_name="appointments",
+        default=get_first_user,
     )
     phone = models.CharField(max_length=100)
     date = models.DateField()
