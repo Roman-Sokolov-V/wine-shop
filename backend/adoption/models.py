@@ -13,9 +13,9 @@ class Appointment(models.Model):
     # name = models.CharField(max_length=100, null=True, blank=True)
     first_name = models.CharField(max_length=255, default="default_name")
     last_name = models.CharField(max_length=255, default="default_name")
-    email = models.EmailField()
+    email = models.EmailField(default="some@email.com")
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="appointments"
+        User, on_delete=models.CASCADE, related_name="appointments", default=User.objects.first()
     )
     phone = models.CharField(max_length=100)
     date = models.DateField()
