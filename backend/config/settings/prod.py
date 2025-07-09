@@ -1,6 +1,6 @@
 from .dev import *
 
-DEBUG = True
+DEBUG = False
 
 MINIO_STORAGE_MEDIA_URL = (
     "https://sha-man.pp.ua/minio/shelter-bucket"  # Для генерації URL
@@ -8,7 +8,7 @@ MINIO_STORAGE_MEDIA_URL = (
 CELERY_BROKER_URL = "redis://redis:6379/0"
 
 
-ALLOWED_HOSTS = ["sha-man.pp.ua", "3.120.102.6"]
+ALLOWED_HOSTS = ["sha-man.pp.ua", "3.120.102.6", "shelter"]
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
