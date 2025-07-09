@@ -29,13 +29,17 @@ class UnauthenticatedUserTestCase(TestCase):
 
     def test_pets_list(self):
         response = self.client.get(reverse("pet:pets-list"))
-        self.assertEqual(status.HTTP_200_OK, response.status_code), "for all users"
+        self.assertEqual(
+            status.HTTP_200_OK, response.status_code
+        ), "for all users"
 
     def test_get_pet(self):
         response = self.client.get(
             reverse("pet:pet-detail", kwargs={"pk": self.pet.pk})
         )
-        self.assertEqual(status.HTTP_200_OK, response.status_code), "for all users"
+        self.assertEqual(
+            status.HTTP_200_OK, response.status_code
+        ), "for all users"
 
     def test_create_pet(self):
         response = self.client.post(
@@ -92,13 +96,17 @@ class AuthenticatedUserTestCase(TestCase):
 
     def test_pets_list(self):
         response = self.client.get(reverse("pet:pets-list"))
-        self.assertEqual(status.HTTP_200_OK, response.status_code), "for all users"
+        self.assertEqual(
+            status.HTTP_200_OK, response.status_code
+        ), "for all users"
 
     def test_get_pet(self):
         response = self.client.get(
             reverse("pet:pet-detail", kwargs={"pk": self.pet.pk})
         )
-        self.assertEqual(status.HTTP_200_OK, response.status_code), "for all users"
+        self.assertEqual(
+            status.HTTP_200_OK, response.status_code
+        ), "for all users"
 
     def test_create_pet(self):
         response = self.client.post(
@@ -157,13 +165,17 @@ class StaffUserTestCase(TestCase):
 
     def test_pets_list(self):
         response = self.client.get(reverse("pet:pets-list"))
-        self.assertEqual(status.HTTP_200_OK, response.status_code), "for all users"
+        self.assertEqual(
+            status.HTTP_200_OK, response.status_code
+        ), "for all users"
 
     def test_get_pet(self):
         response = self.client.get(
             reverse("pet:pet-detail", kwargs={"pk": self.pet.pk})
         )
-        self.assertEqual(status.HTTP_200_OK, response.status_code), "for all users"
+        self.assertEqual(
+            status.HTTP_200_OK, response.status_code
+        ), "for all users"
 
     def test_create_pet(self):
         response = self.client.post(
@@ -195,7 +207,9 @@ class StaffUserTestCase(TestCase):
             "test.jpg", b"file_content_here", content_type="image/jpeg"
         )
         url = reverse("pet:pet-upload-image", kwargs={"pk": self.pet.pk})
-        response = self.client.post(url, {"file": test_file}, format="multipart")
+        response = self.client.post(
+            url, {"file": test_file}, format="multipart"
+        )
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code),
         self.assertEqual(
             [
@@ -215,22 +229,3 @@ class StaffUserTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-    # @pytest.mark.container
-    # def test_upload_image_in_docker(self):
-    #     test_file = SimpleUploadedFile(
-    #         "test.jpg",
-    #         b"file_content_here",
-    #         content_type="image/jpeg"
-    #     )
-    #     url = reverse("pet:pet-upload-image", kwargs={"pk": self.pet.pk})
-    #     response = self.client.post(
-    #         url,
-    #         {"file": test_file},
-    #         format='multipart'
-    #     )
-    #     print(response.json())
-    #     self.assertEqual(
-    #         status.HTTP_201_CREATED,
-    #         response.status_code
-    #     )
