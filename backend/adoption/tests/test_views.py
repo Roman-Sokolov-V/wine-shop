@@ -30,6 +30,11 @@ class TestUnauthenticatedAccess(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_unauthenticated_user_cannot_access_active_action(self):
+        url = reverse("adoption:appointment-active")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class TestAuthenticatedUserAccess(TestCase):
     def setUp(self):
@@ -136,6 +141,30 @@ class TestAuthenticatedUserAccess(TestCase):
             Appointment.objects.filter(id=other_appointment.pk).exists()
         )
 
+    def test_user_can_see_only_own_active_appointments(self):
+        # Створити активний апоінтмент іншого користувача
+        other_user = create_user("other@example.com")
+        Appointment.objects.create(
+            user=other_user,
+            first_name="Other",
+            last_name="User",
+            email="other@example.com",
+            phone="+380111111111",
+            date=now().date(),
+            time=(now() + timedelta(hours=1)).time(),
+            add_info="Other info",
+            is_active=True,
+        )
+
+        url = reverse("adoption:appointment-active")
+        self.client.force_authenticate(self.user)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # тільки 1 запис — свій
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["email"], "john@example.com")
+
 
 class TestAdminAccess(TestCase):
     def setUp(self):
@@ -178,6 +207,32 @@ class TestAdminAccess(TestCase):
         )
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_admin_sees_all_active_appointments(self):
+        # Другий активний запис
+        another_user = create_user("another@example.com")
+        Appointment.objects.create(
+            user=another_user,
+            first_name="Ivan",
+            last_name="Pavlenko",
+            email="ivan@example.com",
+            phone="+380222222222",
+            date=now().date() + timedelta(days=1),
+            time=(now() + timedelta(hours=3)).time(),
+            add_info="Some info",
+            is_active=True,
+        )
+
+        url = reverse("adoption:appointment-active")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertIn("emma@example.com", [a["email"] for a in response.data])
+        self.assertIn("ivan@example.com", [a["email"] for a in response.data])
+
+
+#########################AdoptionFormTests#######################
 
 
 class TestUnauthenticatedAdoptionAccess(TestCase):
