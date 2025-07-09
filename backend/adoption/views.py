@@ -111,14 +111,14 @@ class AdoptionViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action == "create":
-            permission_classes = [AllowAny()]
+            permission_classes = [IsAuthenticated()]
         else:
             permission_classes = [IsOwnerOrAdmin()]
         return permission_classes
 
     def get_queryset(self):
         queryset = self.queryset
-        if not self.request.user.is_staff:
+        if not self.request.user.is_staff and self.action == "list":
             queryset = queryset.filter(user=self.request.user)
         return queryset
 
