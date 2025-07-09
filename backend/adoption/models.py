@@ -7,11 +7,17 @@ from django.db import models
 from pet.models import Pet
 
 User = get_user_model()
+
+
 def get_first_user():
-    return User.objects.first()
+    user = User.objects.first()
+    return user.id
+
+
 def get_first_user_email():
     user = User.objects.first()
     return user.email
+
 
 class Appointment(models.Model):
     # name = models.CharField(max_length=100, null=True, blank=True)
