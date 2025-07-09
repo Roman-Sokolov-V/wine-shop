@@ -116,6 +116,12 @@ class AdoptionViewSet(ModelViewSet):
             permission_classes = [IsOwnerOrAdmin()]
         return permission_classes
 
+    def get_queryset(self):
+        queryset = self.queryset
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(user=self.request.user)
+        return queryset
+
     def perform_create(self, serializer):
         form = serializer.save()
         # send emails with form to staff
