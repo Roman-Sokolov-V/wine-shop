@@ -10,8 +10,13 @@ User = get_user_model()
 
 
 class Appointment(models.Model):
-    name = models.CharField(max_length=100)
+    # name = models.CharField(max_length=100, null=True, blank=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     email = models.EmailField()
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="appointments"
+    )
     phone = models.CharField(max_length=100)
     date = models.DateField()
     time = models.TimeField()
@@ -51,8 +56,16 @@ STATUS_CHOICES = (
 
 
 class AdoptionForm(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='adoption_forms')
-    pet = models.ForeignKey(Pet, on_delete=models.CASCADE, null=True, blank=True, related_name='adoption_forms')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="adoption_forms",
+    )
+    pet = models.ForeignKey(
+        Pet,
+        on_delete=models.CASCADE,
+        related_name="adoption_forms",
+    )
     application_date = models.DateField(auto_now_add=True)
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)
