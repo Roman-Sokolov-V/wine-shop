@@ -9,7 +9,7 @@ from pet.models import Pet
 User = get_user_model()
 def get_first_user():
     return User.objects.first()
-def get_first_user_email()
+def get_first_user_email():
     user = User.objects.first()
     return user.email
 
