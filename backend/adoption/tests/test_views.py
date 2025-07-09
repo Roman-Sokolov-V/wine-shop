@@ -232,7 +232,7 @@ class TestAdminAccess(TestCase):
         self.assertIn("ivan@example.com", [a["email"] for a in response.data])
 
 
-#########################AdoptionFormTests#######################
+# AdoptionFormTests#######################
 
 
 class TestUnauthenticatedAdoptionAccess(TestCase):
