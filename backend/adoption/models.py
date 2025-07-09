@@ -11,8 +11,8 @@ User = get_user_model()
 
 class Appointment(models.Model):
     # name = models.CharField(max_length=100, null=True, blank=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, default="default_name")
+    last_name = models.CharField(max_length=255, default="default_name")
     email = models.EmailField()
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="appointments"
