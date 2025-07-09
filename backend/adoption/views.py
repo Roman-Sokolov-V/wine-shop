@@ -75,6 +75,10 @@ class AppointmentViewSet(
 
     def get_queryset(self):
         if self.action == "active":
+            if not self.request.user.is_staff:
+                return Appointment.objects.filter(
+                    is_active=True, user=self.request.user
+                )
             return Appointment.objects.filter(is_active=True)
         if self.action == "list" and not self.request.user.is_staff:
             return Appointment.objects.filter(user=self.request.user)
