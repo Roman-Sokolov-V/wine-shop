@@ -33,43 +33,21 @@ class AppointmentSerializer(serializers.ModelSerializer):
         )
         return attrs
 
-    # def get_extra_kwargs(self):
-    #     """
-    #     Dynamically sets the parameters of fields 'first_name' and 'last_name'
-    #     depending on whether the appropriate fields are filled in the current user.
-    #
-    #     - If the user field is absent, it will be required to fill (Required = TRUE).
-    #     - If the user field is already filled, it will only be available for reading (read_only = TRUE),
-    #       And should not be sent in the request.
-    #
-    #     This avoids re -entering the user already stored and
-    #     Provides that the necessary personal data will be collected if they are not yet.
-    #     """
-    #     extra_kwargs = super().get_extra_kwargs()
-    #     user = self.context["request"].user
-    #     if user.is_authenticated:
-    #         if not user.first_name:
-    #             extra_kwargs["first_name"] = {"required": True}
-    #         else:
-    #             extra_kwargs["first_name"] = {"read_only": True}
-    #         if not user.last_name:
-    #             extra_kwargs["last_name"] = {"required": True}
-    #         else:
-    #             extra_kwargs["last_name"] = {"read_only": True}
-    #     return extra_kwargs
-
     def create(self, validated_data):
         """
         Create a new Appointment instance for an authenticated user.
 
-        - Injects the authenticated user into the `user` field of the appointment.
+        - Injects the authenticated user into the `user` field
+        of the appointment.
         - Ensures the `email` field is populated from the user's email.
         - Synchronizes `first_name` and `last_name`:
-            - If the user already has `first_name` and `last_name`, those values are used.
+            - If the user already has `first_name` and `last_name`,
+            those values are used.
             - Otherwise, values from the request are used to update the user.
             - Raises a ValidationError if either name is missing.
         - Saves the updated user only if any name field was modified.
-        - Raises a ValidationError with 403 status code if the user is anonymous.
+        - Raises a ValidationError with 403 status code
+        if the user is anonymous.
 
         Args:
             validated_data (dict): The validated data from the serializer.
@@ -78,7 +56,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
             Appointment: The newly created Appointment instance.
 
         Raises:
-            ValidationError: If the user is not authenticated, or if required fields are missing.
+            ValidationError: If the user is not authenticated, or if
+            required fields are missing.
         """
         user = self.context["request"].user
         if user.is_authenticated:
@@ -153,11 +132,15 @@ class AdoptionFormSerializer(serializers.ModelSerializer):
 
     def get_extra_kwargs(self, *args, **kwargs):
         """
-        Returns extra keyword arguments for serializer fields to control their behavior.
+        Returns extra keyword arguments for serializer fields to control
+        their behavior.
 
-        - Makes the 'status' field read-only during creation (when instance is None).
-        - For authenticated users, sets 'email' as read-only to prevent client modification.
-        - For unauthenticated users, sets 'email' as required to ensure it is provided.
+        - Makes the 'status' field read-only during creation
+        (when instance is None).
+        - For authenticated users, sets 'email' as read-only to prevent
+        client modification.
+        - For unauthenticated users, sets 'email' as required to ensure
+        it is provided.
         """
         extra_kwargs = super().get_extra_kwargs()
         if self.instance is None:
@@ -171,9 +154,12 @@ class AdoptionFormSerializer(serializers.ModelSerializer):
         - Assigns the authenticated user to the 'user' field.
         - Populates the 'email' field from the user's email.
         - Synchronizes 'first_name' and 'last_name':
-            - If the user already has a name set, that value is used in the form.
-            - Otherwise, the provided value from the form is used to update the user.
-            - Raises a ValidationError if either name is missing from both the user and the request.
+            - If the user already has a name set, that value is used in
+            the form.
+            - Otherwise, the provided value from the form is used to update
+            the user.
+            - Raises a ValidationError if either name is missing from both
+            the user and the request.
         - Saves the user object only if name data has been updated.
         - Raises a 403 ValidationError if the user is anonymous.
 
@@ -184,7 +170,8 @@ class AdoptionFormSerializer(serializers.ModelSerializer):
             AdoptionForm: The newly created AdoptionForm instance.
 
         Raises:
-            ValidationError: If the user is not authenticated or required name fields are missing.
+            ValidationError: If the user is not authenticated or required
+            name fields are missing.
         """
 
         user = self.context["request"].user

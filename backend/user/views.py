@@ -6,7 +6,11 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiResponse,
+)
 
 from user.models import TempToken
 from user.serializers import (
@@ -22,12 +26,31 @@ User = get_user_model()
 
 
 @extend_schema_view(
-    list=extend_schema(description="Get the list of all users."),
-    retrieve=extend_schema(description="Retrieve a specific user by ID."),
-    create=extend_schema(description="Create a new user."),
-    update=extend_schema(description="Fully update a user."),
-    partial_update=extend_schema(description="Partially update a user."),
-    destroy=extend_schema(description="Delete a user."),
+    list=extend_schema(
+        summary="List users",
+        description="Admin only. Get the list of all registered users.",
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve user",
+        description="Admin or the user themself. Retrieve user details by ID.",
+    ),
+    create=extend_schema(
+        summary="Register new user",
+        description="Open for all. Creates a new user account.",
+    ),
+    update=extend_schema(
+        summary="Update user",
+        description="Admin or the user themself. Fully update user details.",
+    ),
+    partial_update=extend_schema(
+        summary="Partially update user",
+        description="Admin or the user themself. Partially update "
+        "user details.",
+    ),
+    destroy=extend_schema(
+        summary="Delete user",
+        description="Admin only. Delete a user account.",
+    ),
 )
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -39,7 +62,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """
-        Instantiates and returns the list of permissions that this view requires.
+        Instantiates and returns the list of permissions that this view
+        requires.
         """
         if self.action == "create":
             return [permissions.AllowAny()]
@@ -48,6 +72,13 @@ class UserViewSet(viewsets.ModelViewSet):
         return [permissions.IsAdminUser()]
 
 
+@extend_schema(
+    summary="Login user",
+    description="Authenticate user and return token along with user data.",
+    responses={
+        200: OpenApiResponse(description="Token and user information.")
+    },
+)
 class LoginView(ObtainAuthToken):
     """
     Login view that return response with TokenAuthentication and user data.
@@ -77,6 +108,11 @@ class LoginView(ObtainAuthToken):
         )
 
 
+@extend_schema(
+    summary="Logout user",
+    description="Authenticated users can log out by deleting their token.",
+    responses={200: OpenApiResponse(description="Successfully logged out.")},
+)
 class LogoutView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = LoginSerializer
@@ -89,7 +125,8 @@ class LogoutView(generics.GenericAPIView):
             token = Token.objects.get(user=request.user)
             token.delete()
             return Response(
-                {"detail": "Successfully logged out."}, status=status.HTTP_200_OK
+                {"detail": "Successfully logged out."},
+                status=status.HTTP_200_OK,
             )
         except Token.DoesNotExist:
             return Response(
@@ -103,6 +140,11 @@ class LogoutView(generics.GenericAPIView):
             )
 
 
+@extend_schema(
+    summary="Get authenticated user",
+    description="Returns user information for the authenticated user.",
+    responses={200: UserSerializer},
+)
 class MeView(generics.GenericAPIView):
     """Show authenticated user data"""
 
@@ -115,7 +157,13 @@ class MeView(generics.GenericAPIView):
         return Response(serializer.data)
 
 
-@extend_schema(request=TempTokenSerializer, responses={201: None})
+@extend_schema(
+    summary="Request password reset token",
+    description="Create a temporary token to reset a forgotten password. "
+    "Sends a token to the user's email.",
+    request=TempTokenSerializer,
+    responses={201: OpenApiResponse(description="Token sent via email.")},
+)
 class TemporaryTokenView(APIView):
     """
     Endpoint to create a temporary token to update forgotten password
@@ -137,6 +185,12 @@ class TemporaryTokenView(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 
+@extend_schema(
+    summary="Reset password",
+    description="Use a temporary token to reset a forgotten password.",
+    request=UpdatePasswordSerializer,
+    responses={200: OpenApiResponse(description="Password has been updated.")},
+)
 class UpdatePasswordView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = UpdatePasswordSerializer
@@ -153,7 +207,8 @@ class UpdatePasswordView(APIView):
             serializer.update(instance=user, validated_data=validated_data)
             temp_token.delete()
             return Response(
-                {"detail": "Password has been updated"}, status=status.HTTP_200_OK
+                {"detail": "Password has been updated"},
+                status=status.HTTP_200_OK,
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
