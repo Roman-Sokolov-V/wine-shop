@@ -27,4 +27,4 @@ echo "Certificate has renewed, nginx has reloaded successfully"
 
 # створити періодичне завдання
 # crontab -e
-# 0 3 * * * /home/ubuntu/wine-shop/backend/commands/cert_init.sh >> /var/log/certbot-renew.log 2>&1
+# 0 3 * * * /home/ubuntu/wine-shop/backend/commands/cert_renew.sh >> /var/log/certbot-renew.log 2>&1
