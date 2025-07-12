@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getPetById } from '../../api/pets';
 import { Pet } from '../../types/Pet';
 import { ModalError } from '../../components/ModalError';
@@ -36,13 +36,15 @@ import { PetInfoSwiper } from '../../components/PetInfoSwiper';
 import { ModalSuccess } from '../../components/ModalSuccess';
 import { PetAdoptionFormModal } from '../../components/PetAdoptionFormModal';
 import { textBeautifier } from '../../utils/helperFormater';
+import { VALID_ROUTES } from '../../types/validRoutes';
 
 export const PetInfoPage = () => {
   const { favorites } = useAppSelector(state => state.favorite);
   const { loggedIn } = useAppSelector(state => state.auth);
-
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [pet, setPet] = useState<Pet | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -75,6 +77,30 @@ export const PetInfoPage = () => {
       });
   }, [id]);
 
+  const handleShowingModal = (caller: 'form' | 'appointment') => {
+    if (!loggedIn) {
+      navigate(`/${VALID_ROUTES.LOGIN}`, {
+        state: {
+          from: {
+            pathname: location.pathname,
+          },
+        },
+      });
+
+      return;
+    }
+
+    if (caller === 'form') {
+      setIsAdoptionFormModalOpen(true);
+      return;
+    }
+
+    if (caller === 'appointment') {
+      setIsAppointmentModalOpen(true);
+      return;
+    }
+  };
+
   const handleAppointmentSubmitSuccess = () => {
     setSuccess(
       'Appointment request submitted, someone will contact you to confirm appoitment.',
@@ -87,14 +113,16 @@ export const PetInfoPage = () => {
     );
   };
 
+  if (loading) {
+    return <ModalLoader />;
+  }
+
   if (!pet) {
     return <p>Pet not found.</p>;
   }
 
   return (
     <Container>
-      {loading && <ModalLoader />}
-
       <ModalError
         isActive={!!error}
         title="Error"
@@ -109,18 +137,22 @@ export const PetInfoPage = () => {
         onClose={() => setSuccess('')}
       />
 
-      <PetAdoptionFormModal
-        petId={pet.id}
-        isActive={isAdoptionFormModalOpen}
-        onClose={() => setIsAdoptionFormModalOpen(false)}
-        onSuccess={handleAdoptionFormSubmitSuccess}
-      />
+      {loggedIn && (
+        <>
+          <PetAdoptionFormModal
+            petId={pet.id}
+            isActive={isAdoptionFormModalOpen}
+            onClose={() => setIsAdoptionFormModalOpen(false)}
+            onSuccess={handleAdoptionFormSubmitSuccess}
+          />
 
-      <AppointmentModal
-        isOpen={isAppointmentModalOpen}
-        onClose={() => setIsAppointmentModalOpen(false)}
-        onSuccess={handleAppointmentSubmitSuccess}
-      />
+          <AppointmentModal
+            isOpen={isAppointmentModalOpen}
+            onClose={() => setIsAppointmentModalOpen(false)}
+            onSuccess={handleAppointmentSubmitSuccess}
+          />
+        </>
+      )}
 
       <div className={style.pageContainer}>
         <Columns>
@@ -144,7 +176,13 @@ export const PetInfoPage = () => {
                     size={4}
                     className="is-flex is-flex-direction-column"
                   >
-                    <span className="pb-3">{textBeautifier(pet.breed)}</span>
+                    <span className="pb-1">{textBeautifier(pet.pet_type)}</span>
+
+                    <div className="pb-3">
+                      <span>Breed: </span>
+
+                      <span>{textBeautifier(pet.breed)}</span>
+                    </div>
 
                     <span className={style.sexIndicator}>
                       <p className="p-0 m-0 pr-3">Sex: </p>
@@ -257,7 +295,7 @@ export const PetInfoPage = () => {
                 <Button
                   color="primary"
                   size="large"
-                  onClick={() => setIsAdoptionFormModalOpen(true)}
+                  onClick={() => handleShowingModal('form')}
                 >
                   Apply to Adopt Me
                 </Button>
@@ -265,7 +303,7 @@ export const PetInfoPage = () => {
                 <Button
                   color="light"
                   size="large"
-                  onClick={() => setIsAppointmentModalOpen(true)}
+                  onClick={() => handleShowingModal('appointment')}
                 >
                   Schedule Appointment to see me
                 </Button>

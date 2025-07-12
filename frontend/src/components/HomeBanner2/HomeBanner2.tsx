@@ -1,6 +1,8 @@
 import React from 'react';
 import { Columns, Container, Heading } from 'react-bulma-components';
 import { Link } from 'react-router-dom';
+import bannerImg from '../../assets/how-to-help-banner-sqr.png';
+import { VALID_ROUTES } from '../../types/validRoutes';
 
 export const HomeBanner2 = () => {
   return (
@@ -10,7 +12,7 @@ export const HomeBanner2 = () => {
           <Columns.Column size={6}>
             <figure className="image  mb-5">
               <img
-                src="assets\how-to-help-banner-sqr.png"
+                src={bannerImg}
                 alt="A banner showing happy pets"
                 style={{
                   borderRadius: '38px',
@@ -33,7 +35,7 @@ export const HomeBanner2 = () => {
               forever families.
             </p>
             <Link
-              to="/how-to-help"
+              to={`/${VALID_ROUTES.HOW_TO_HELP}`}
               className="button is-primary mt-5"
             >
               Learn More

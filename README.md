@@ -1,183 +1,135 @@
-# 🐾 Animal Shelter Website
+# 🐾 Adaptable - Full-Stack Animal Shelter Platform
 
-## 🌟 Overview
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-A full-stack web application for animal shelter management and pet adoption. This project enables 
-shelters to manage pets, process adoptions, and connect loving animals with new families. It features
-a modern React frontend and a Django backend, all containerized with Docker for easy deployment.
+## About The Project
+
+Every year, millions of wonderful, loving animals wait in shelters for a second chance. Adaptable was created to bridge the gap between these pets and potential adopters. We tackle the common frustrations of the adoption journey—like visiting multiple shelters and browsing outdated websites—by creating a single, reliable, and seamless experience.
+
+By leveraging modern technology, including an AI-powered assistant, we make finding and adopting a pet easier and more joyful than ever before.
 
 ### Key Goals
-- **Connect Animals with Families**: Help homeless animals find loving homes
-- **Streamline Adoption Process**: Simplify the adoption workflow for both shelters and adopters
-- **Increase Shelter Support**: Provide easy ways for people to donate and volunteer
-- **Educate the Community**: Share information about animal care and welfare
+- **Connect Animals with Families**: Help homeless animals find loving and permanent homes.
+- **Streamline the Adoption Process**: Simplify the adoption workflow for both shelters and adopters.
+- **Increase Shelter Support**: Provide easy and accessible ways for the community to donate and volunteer.
+- **Educate the Community**: Share valuable information about responsible pet ownership and animal welfare.
+
+---
 
 ## ✨ Features
 
-### For Visitors/Adopters
-- 🔍 **Browse Available Pets**: Search and filter animals by type, age, size, and characteristics
-- 📱 **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- 💝 **Adoption Applications**: Submit adoption requests online
-- 💰 **Donation System**: Support the shelter through secure online donations
-- 📚 **Educational Content**: Learn about pet care, training, and animal welfare
-- 📧 **Contact Integration**: Easy communication with shelter staff
+### For Visitors & Adopters
+- 🔍 **Advanced Pet Catalog**: Browse, search, and filter available animals by type, age, size, breed, and other characteristics.
+- 🤖 **AI-Powered Pet Matching**: An intelligent agent (in development) asks personalized questions to recommend the perfect pet for your lifestyle.
+- ❤️ **Favorites List**: Save pets you're interested in to your personal list.
+- 📝 **Online Applications**: Submit adoption applications and schedule appointments directly through the platform.
+- 📱 **Responsive Design**: Enjoy a seamless experience on desktop, tablet, and mobile devices.
+- 💰 **Donation System**: Support the shelter through secure online donations.
+- 📚 **Educational Content**: Learn about pet care, training, and the importance of adoption.
+- 📧 **Newsletter & Contact**: Sign up for updates and easily communicate with shelter staff.
 
 ### For Shelter Staff
-- 🏥 **Pet Management**: Add, update, and list pets available for adoption, including multiple photos.
-- 📋 **Adoption Applications:** Submit and review detailed adoption forms online.
-- 📝 **Content Management**: Update shelter information and news
-- 👥 **User Management**: Register, login, and manage user accounts with authentication.
-- **Admin Panel:** Manage users, pets, and adoption requests via a secure admin interface.
-- **Donation Support:** Information for donations and QR code for fast support.
-- **API Documentation:** Swagger and Redoc docs for all backend endpoints.
-- **Helpful Information:** Educational resources on why to adopt, how to help, and support for animal welfare partners.
+- 🏥 **Pet Management**: Add, update, and manage pet profiles, including descriptions, characteristics, and multiple photos.
+- 📋 **Application Review**: View and manage incoming adoption applications and appointments.
+- 👥 **User Management**: Secure registration, login, and account management for adopters.
+- 🔒 **Admin Panel**: A comprehensive admin interface to manage users, pets, and site content.
+- 📄 **API Documentation**: Interactive API documentation with Swagger and Redoc.
 
-## Technologies Used
+---
 
-- **Frontend:** React, TypeScript, Bulma, SCSS
-- **Backend:** Django, Django REST Framework, Celery, Celery-beat, Redis, Docker
-- **Database:** (Configured in Docker, e.g., PostgreSQL)
-- **Mail Service:** Configurable via Mailtrap for development/testing
-- **Other:** Docker Compose for local development
+## 🛠️ Technologies Used
 
-### Additional Tools
+- **Frontend:** React, TypeScript, Redux Toolkit, React Router, Bulma, SCSS
+- **Backend:** Django, Django REST Framework, Celery, Celery-beat, Redis
+- **Database:** PostgreSQL (configured via Docker)
+- **Containerization:** Docker & Docker Compose
+- **Mail Service:** Mailtrap for development and testing.
 - **API Testing**: Postman
 - **Version Control**: Git
-- **Deployment**: Docker + AWS(E2C) /github.io
-- **CI/CD**: GitHub Actions (for beckend)
 
+---
 
-## Getting Started
+## 🚀 Getting Started
+
+To get a local copy of the project up and running, please follow these steps.
 
 ### Prerequisites
 
-- [Docker](https://www.docker.com/get-started) installed
+- [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/) must be installed on your machine.
+- [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) for the frontend setup.
 
-### Backend Setup
+### Backend Setup (Docker)
 
-1. Rename `.env.sample` to `.env` and configure environment variables as needed.
-2. From project root, navigate to backend directory:
+1.  Navigate to the project root and then into the `backend` directory.
     ```bash
     cd backend/
     ```
-3. Build and start backend services:
+2.  Rename `.env.sample` to `.env` and configure the environment variables as needed.
+3.  Build and start the backend services using Docker Compose.
     ```bash
     docker compose up --build
     ```
-4. (If needed, stop with `docker compose down`)
-5. Create a superuser for admin access:
+4.  To stop the services, run `docker compose down`.
+5.  Create a superuser to access the Django admin panel.
     ```bash
     docker compose exec shelter python manage.py createsuperuser
     ```
-6. Access the admin panel at [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
+6.  Access the admin panel at [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/).
 
 #### API Documentation
 
-- Swagger UI: [http://127.0.0.1:8000/api/v1/swagger/](http://127.0.0.1:8000/api/v1/swagger/)
-- Redoc: [http://127.0.0.1:8000/api/v1/redoc/](http://127.0.0.1:8000/api/v1/redoc/)
-
-#### Mail Service
-
-- Register at [Mailtrap](https://mailtrap.io/) for email testing.
-- Edit `EMAIL_HOST_USER` and `EMAIL_HOST_PASSWORD` in `backend/config/settings/dev.py` with Mailtrap credentials.
-
-#### Database Management
-
-- Save DB to file:
-    ```bash
-    docker exec shelter python manage.py dumpdata > file_name.json
-    ```
-- Load DB from file:
-    ```bash
-    docker exec shelter python manage.py loaddata file_name.json
-    ```
+Once the backend is running, you can access the interactive API documentation:
+- **Swagger UI**: [http://127.0.0.1:8000/api/v1/swagger/](http://127.0.0.1:8000/api/v1/swagger/)
+- **Redoc**: [http://127.0.0.1:8000/api/v1/redoc/](http://127.0.0.1:8000/api/v1/redoc/)
 
 ### Frontend Setup
 
-1. From project root, go to frontend directory:
+1.  From the project root, navigate to the `frontend` directory.
     ```bash
     cd frontend
     ```
-2. Install dependencies:
+2.  Install the necessary dependencies.
     ```bash
     npm install
     ```
-3. Start local server:
+3.  Create a `.env` file and add the backend API URL.
+    ```
+    REACT_APP_PET_API_BASE_URL=[http://127.0.0.1:8000](http://127.0.0.1:8000)
+    ```
+4.  Start the local development server.
     ```bash
     npm start
     ```
-4. Visit `http://localhost:3000` in your browser.
-
-## Example API Endpoints
-
-- `POST /api/v1/pets/` — Create a pet (with photo upload)
-- `GET /api/v1/pets/` — List all pets with filters
-- `GET /api/v1/pets/<id>/` — Retrieve pet by ID
-- `POST /api/v1/users/` — Register user
-- `POST /api/v1/users/login/` — Login user (returns token)
-- `POST /api/v1/adoption/adoption_form/` — Submit adoption form (auth required)
-
-For a full list, see Swagger/Redoc docs above.
-
-## Why Adopt?
-
-Adopting saves lives, supports animal welfare, and is often more cost-effective than buying from breeders. Many shelter pets are well-socialized and ready for a loving home.
-
-## How to Help
-
-- **Adopt:** Give a pet a second chance.
-- **Donate:** Your support helps provide food, medical care, and shelter.
-- **Volunteer:** Contact us to learn about volunteering opportunities.
-- **Share:** Spread the word about our cause.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+5.  Visit the application at [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
-
-**Repository:** [github.com/Roman-Sokolov-V/wine-shop](https://github.com/Roman-Sokolov-V/wine-shop)
-
-
-A comprehensive web application for animal shelters that allows users to browse adoptable pets, learn about animals, and support the shelter through donations and adoptions.
-
 
 ## 🔮 Future Enhancements
 
-- [ ] Mobile app development
-- [ ] Integration with social media platforms
-- [ ] Advanced matching algorithm for pets and adopters
-- [ ] Volunteer management system
-- [ ] Multi-language support
-- [ ] Real-time chat system
-
-
-## 📧 Contact
-
-For questions, suggestions, or support, please contact:
-
-- **Project Maintainer (frontend)**: Sviatoslav Podolskyi
-- **Email**: [your-email@example.com]
-- **GitHub**: 
-
-
-- **Project Maintainer (backend)**: Roman Sokolov
-- **Email**: [gnonasis@gmail.com]
-- **GitHub**: [@Roman-Sokolov-V](https://github.com/Roman-Sokolov-V)
-
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- All the volunteers and staff who help animals find loving homes
-- The open-source community for providing excellent tools and libraries
-- Animal welfare organizations for their dedication to helping animals in need
+- [ ] Advanced matching algorithm for pets and adopters.
+- [ ] Real-time chat system for adopter/shelter communication.
+- [ ] Volunteer management and scheduling system.
+- [ ] Integration with social media platforms for sharing pet profiles.
+- [ ] Multi-language support.
 
 ---
 
-**Made with ❤️ for animals in need**
+## 🤝 Contributing
 
-*Every adoption saves a life and makes room for another rescue. Thank you for supporting animal welfare!*
+Contributions make the open-source community an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. Please fork the repo and create a pull request, or open an issue with your suggestions.
+
+---
+
+## 📧 Contact
+
+- **Project Maintainer (Frontend)**: Sviatoslav Podolskyi
+- **Project Maintainer (Backend)**: Roman Sokolov - gnonasis@gmail.com - [@Roman-Sokolov-V](https://github.com/Roman-Sokolov-V)
+
+---
+
+## 🙏 Acknowledgments
+
+- To all the volunteers and staff who dedicate their time to helping animals find loving homes.
+- To the open-source community for providing the excellent tools and libraries that made this project possible.
+
+**Made with ❤️ for animals in need.**

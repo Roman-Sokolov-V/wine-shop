@@ -1,8 +1,9 @@
-import classNames from 'classnames';
 import React from 'react';
+import classNames from 'classnames';
 import { Button, Columns, Heading } from 'react-bulma-components';
 import { useNavigate } from 'react-router-dom';
 import style from './HomeBanner1.module.scss';
+import { VALID_ROUTES } from '../../types/validRoutes';
 
 export const HomeBanner1 = () => {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ export const HomeBanner1 = () => {
       >
         <Heading
           className={classNames(
-            'is-size-4-mobile is-size-1-desktop is-size-3-touch has-text-weight-extrabold ',
+            'is-size-4-mobile is-size-1-desktop is-size-3-touch has-text-weight-extrabold has-text-white',
+            style.bunnerFirst__txt,
           )}
         >
           Find your new best friend. Give a pet a forever home.
@@ -28,7 +30,7 @@ export const HomeBanner1 = () => {
               rounded
               size="large"
               onClick={() => {
-                navigate('/catalog');
+                navigate(`/${VALID_ROUTES.CATALOG}`);
               }}
             >
               Adopt
@@ -40,7 +42,7 @@ export const HomeBanner1 = () => {
               rounded
               size="large"
               onClick={() => {
-                navigate('/donate');
+                navigate(`/${VALID_ROUTES.HOW_TO_HELP}`);
               }}
             >
               Suport the cause
