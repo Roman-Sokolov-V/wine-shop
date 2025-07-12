@@ -3,6 +3,7 @@ import { ModalError } from '../ModalError';
 import { ModalSuccess } from '../ModalSuccess';
 import { subscribeApi } from '../../api/subscribe';
 import { ModalLoader } from '../ModalLoader';
+import { AxiosError } from 'axios';
 
 export function SubscribeNews() {
   const [email, setEmail] = useState('');
@@ -10,19 +11,29 @@ export function SubscribeNews() {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      await subscribeApi(email);
-      setShowSuccess(true);
-    } catch (error) {
-      setShowError(true);
-    } finally {
-      setLoading(false);
-      setEmail('');
-    }
+    subscribeApi(email)
+      .then(() => setShowSuccess(true))
+      .catch((e: AxiosError) => {
+        const data = e?.response?.data as Record<string, string[]> | undefined;
+        const alreadyExist =
+          data &&
+          Object.values(data)[0][0] === 'This subscription already exists.';
+
+        if (alreadyExist) {
+          setShowError(false);
+          setShowSuccess(true);
+        } else {
+          setShowError(true);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+        setEmail('');
+      });
   };
 
   if (loading) {

@@ -8,13 +8,13 @@
   flex-direction: column;
   align-items: center;
   height: 350px;
-  max-width: 250px;
+  width: 250px;
   background-color: #f9f9f9;
 }
 
 .cardImageContainer {
   height: 50%;
-  width: 170px;
+  // width: 170px;
   padding: 8px;
   background-color: #ffffff;
   border-radius: 25px;
@@ -43,6 +43,7 @@
   justify-content: space-between;
   align-self: flex-end;
   gap: 1rem;
+  margin-inline: 0.5rem;
   align-items: center;
   margin-top: 0.1rem;
   margin-bottom: 0.5rem;

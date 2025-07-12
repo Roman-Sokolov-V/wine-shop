@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>New Appointment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #212529;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .pet-info {
+      margin-top: 20px;
+    }
+    .pet-info p {
+      margin: 5px 0;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+      <h2>🎉 Призначена нова зустріч</h2>
+
+      <div class="pet-info">
+        <h3>Інформація про зустріч:</h3>
+
+        <p><strong>Ім'я:</strong> {{ name }}</p>
+        <p><strong>email:</strong> {{ email }}</p>
+        <p><strong>phone:</strong> {{ phone }}</p>
+        <p><strong>date:</strong> {{ date }}</p>
+        <p><strong>time:</strong> {{ time }}</p>
+        <p><strong>additional info:</strong> {{ add_info }}</p>
+      </div>
+
+    </div>
+
+
+</body>
+</html>
