@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.86.176:3000","localhost:3000","localhost"]
 
 
 # Application definition
@@ -211,7 +211,13 @@ RESTORE_FORM_URL = os.getenv("RESTORE_FORM_URL")
 UNSUBSCRIBE_URL = os.getenv("UNSUBSCRIBE_URL")
 
 
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost",
+    "http://localhost:3000",
+    "https://91.193.174.2",
+    "https://syavayki.github.io",
+    "http://syavayki.github.io",
+]
 if FRONT_HOST:
     CORS_ALLOWED_ORIGINS.append(FRONT_HOST)
 
