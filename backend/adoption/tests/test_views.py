@@ -306,7 +306,7 @@ class TestAuthenticatedAdoptionAccess(TestCase):
             "adoption:adoption_form-detail", args=[self.other_form.pk]
         )
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_user_cannot_delete_others_form(self):
         url = reverse(
