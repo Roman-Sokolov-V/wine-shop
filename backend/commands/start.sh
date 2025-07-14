@@ -1,6 +1,6 @@
 #!/bin/bash
-echo "🔄 Створюємо міграції..."
-python manage.py makemigrations --noinput
+#echo "🔄 Створюємо міграції..."
+#python manage.py makemigrations --noinput
 echo "🔄 Застосовуємо міграції..."
 python manage.py migrate --noinput
 

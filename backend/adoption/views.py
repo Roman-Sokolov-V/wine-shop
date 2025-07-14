@@ -235,7 +235,9 @@ class AdoptionViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
-        if not self.request.user.is_staff and self.action == "list":
+        if self.request.method == "GET":
+            if self.request.user.is_staff:
+                return queryset
             queryset = queryset.filter(user=self.request.user)
         return queryset
 

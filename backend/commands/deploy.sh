@@ -35,8 +35,8 @@ chmod +x ./commands/cert_renew.sh
 chmod +x ./commands/start.sh
 
 
-#echo "📦 remove irrelevant containers and services"
-#docker compose -f docker-compose-prod.yml down --remove-orphans || echo "⚠️ Warning: Down with Orphans not completed "
+echo "📦 down containers and services"
+docker compose -f docker-compose-prod.yml down || echo "⚠️ Warning: Down with is not completed "
 
 # Build and run Docker containers with Docker Compose v2
 docker compose -f docker-compose-prod.yml up -d --build || handle_error "Failed to build and run Docker containers using docker-compose-prod.yml."
