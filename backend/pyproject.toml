@@ -26,7 +26,8 @@ dependencies = [
     "django-minio-storage (>=0.5.8,<0.6.0)",
     "django-celery-beat (>=2.8.1,<3.0.0)",
     "celery (>=5.5.3,<6.0.0)",
-    "gunicorn (>=23.0.0,<24.0.0)"
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "redis (>=6.2.0,<7.0.0)"
 ]
 
 [tool.poetry]
@@ -83,17 +84,3 @@ exclude = '''
   | migrations/
 )/
 '''  # Шаблон для виключення файлів
-# pip install flake8-pyproject
-
-[tool.flake8]
-max-line-length = 79  # Максимальна довжина рядка
-extend-ignore = ["Q001"]  # Ігнорувати попередження Q001 (лапки)
-exclude = ".*/migrations/.*|.*/__pycache__/.*|.*\\.pyc"  # Виключити папки і
-#файли (регулярний вираз)
-ignore = [
-    "E203",  # Ігнорувати конкретні правила
-    "W503"
-]
-
-[tool.flake8.plugins]
-flake8-quotes = {string = "double"}  # Використовуємо подвійні лапки

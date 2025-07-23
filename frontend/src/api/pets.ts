@@ -1,5 +1,4 @@
 import { AxiosResponse } from 'axios';
-import { Pet } from '../types/Pet';
 import api from './api';
 import { accessLocalStorage } from '../utils/accessLocalStorage';
 import { LocalAccessKeys } from '../types/LocalAccessKeys';
@@ -9,8 +8,8 @@ export const getPetsData = (): Promise<AxiosResponse> => {
   return api.get(`api/v1/pets/`);
 };
 
-export const getPetsFilter = (): Promise<Pet[]> => {
-  return api.get(`api/v1/pets/`);
+export const getPetsAvailableFilters = (): Promise<AxiosResponse> => {
+  return api.get(`api/v1/pets/filters/`);
 };
 
 export const getPetById = (id: string): Promise<AxiosResponse> => {
@@ -52,9 +51,7 @@ export const clearPetFavorites = async () => {
   }
 };
 
-export const updatePetsApi = async (ids: number[]) => {
-  await clearPetFavorites();
-
+export const updateFavotitesPetsApi = async (ids: number[]) => {
   ids.forEach(async itm => {
     try {
       await setPetFavorite(itm);
@@ -62,4 +59,8 @@ export const updatePetsApi = async (ids: number[]) => {
       console.error('Error adding user favorite');
     }
   });
+};
+
+export const getFilterPets = async (filter: URLSearchParams | string) => {
+  return api.get(`api/v1/pets/?${filter.toString()}`);
 };

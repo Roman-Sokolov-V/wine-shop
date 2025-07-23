@@ -1,0 +1,8 @@
+Призначена нова зустріч
+
+Ім'я: {{ name }}
+email: {{ email }}
+phone: {{ phone }}
+date: {{ date }}
+time: {{ time }}
+add_info: {{ add_info }}

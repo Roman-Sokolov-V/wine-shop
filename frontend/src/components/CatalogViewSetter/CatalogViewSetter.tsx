@@ -6,7 +6,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
-import { Button, Dropdown } from 'react-bulma-components';
+import { Button, Columns, Dropdown } from 'react-bulma-components';
 import { PageSize, SortOrder } from '../../types/ViewControlle';
 
 interface Props {
@@ -23,8 +23,8 @@ export const CatalogViewSetter: React.FC<Props> = ({
   const [query, setQuery] = useState<string>('');
 
   return (
-    <div className="is-flex">
-      <div>
+    <Columns>
+      <Columns.Column>
         <Dropdown
           icon={
             <FontAwesomeIcon
@@ -51,7 +51,9 @@ export const CatalogViewSetter: React.FC<Props> = ({
             Decending
           </Dropdown.Item>
         </Dropdown>
+      </Columns.Column>
 
+      <Columns.Column>
         <Dropdown
           icon={
             <FontAwesomeIcon
@@ -62,7 +64,6 @@ export const CatalogViewSetter: React.FC<Props> = ({
           label="Pets Per Page"
           closeOnSelect
           onChange={(e: PageSize) => onPerPage(e)}
-          className="ml-5"
         >
           <Dropdown.Item
             renderAs="a"
@@ -99,9 +100,12 @@ export const CatalogViewSetter: React.FC<Props> = ({
             All
           </Dropdown.Item>
         </Dropdown>
-      </div>
+      </Columns.Column>
 
-      <div className="field is-flex has-addons ml-5 is-flex-grow-1 is-align-items-center">
+      <Columns.Column
+        size={'half'}
+        className="field is-flex has-addons is-flex-grow-1 is-align-items-center"
+      >
         <Button
           className={classNames('icon is-small is-left mr-1', {
             'is-invisible': !query,
@@ -121,6 +125,7 @@ export const CatalogViewSetter: React.FC<Props> = ({
             className={classNames('pl-1')}
           />
         </Button>
+
         <p className="control has-icons-left is-flex-grow-1">
           <input
             className="input"
@@ -156,7 +161,7 @@ export const CatalogViewSetter: React.FC<Props> = ({
             Search
           </button>
         </div>
-      </div>
-    </div>
+      </Columns.Column>
+    </Columns>
   );
 };

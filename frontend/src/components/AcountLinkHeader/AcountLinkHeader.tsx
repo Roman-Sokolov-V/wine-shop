@@ -1,14 +1,17 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
-import { Button, Navbar } from 'react-bulma-components';
+import { Heading, Navbar } from 'react-bulma-components';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import style from './AcountLinkHeader.module.scss';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { logout } from '../../features/authentication';
 
-export const AcountLinkHeader = () => {
+type Props = {
+  onLinkClick: (pth: string, filterKey?: string, filteVal?: string) => void;
+};
+
+export const AcountLinkHeader: React.FC<Props> = ({ onLinkClick }) => {
   const naviagate = useNavigate();
   const dispatch = useAppDispatch();
   const { visible: mobileMenuVisible } = useAppSelector(
@@ -28,23 +31,17 @@ export const AcountLinkHeader = () => {
           <>
             <Navbar.Link
               arrowless
-              className={classNames('p-0', {
-                [style.custom_hover]: !mobileMenuVisible,
-                [style.header_txt]: mobileMenuVisible,
-              })}
+              onClick={() => onLinkClick('/account')}
             >
               <span
+                onClick={() => onLinkClick('/account')}
                 className={classNames(
                   'icon-text has-text-link',
                   'is-align-items-center',
                   'is-flex-direction-column',
-                  style.icon_text_header,
                 )}
               >
-                <span
-                  className={classNames('icon')}
-                  onClick={() => naviagate('/account')}
-                >
+                <span className={classNames('icon')}>
                   <FontAwesomeIcon
                     icon={faUser}
                     size="2x"
@@ -58,21 +55,40 @@ export const AcountLinkHeader = () => {
 
             <Navbar.Dropdown right>
               <Navbar.Item onClick={() => naviagate('/account')}>
-                <Navbar.Link arrowless>Account</Navbar.Link>
+                <Navbar.Link arrowless>
+                  <Heading size={6}>Account</Heading>
+                </Navbar.Link>
               </Navbar.Item>
 
               <Navbar.Item onClick={handleLogout}>
-                <Navbar.Link arrowless>Logout</Navbar.Link>
+                <Navbar.Link arrowless>
+                  <Heading size={6}>Logout</Heading>
+                </Navbar.Link>
               </Navbar.Item>
             </Navbar.Dropdown>
           </>
         ) : (
-          <Button
-            rounded
-            className={style.header_txt}
-          >
-            Account
-          </Button>
+          <>
+            <Navbar.Link
+              className="pl-0"
+              arrowless
+            >
+              <Heading
+                size={4}
+                onClick={() => onLinkClick('/account')}
+              >
+                Account
+              </Heading>
+            </Navbar.Link>
+
+            <Navbar.Link
+              className="pl-0"
+              onClick={handleLogout}
+              arrowless
+            >
+              <Heading size={5}>Logout</Heading>
+            </Navbar.Link>
+          </>
         )}
       </>
     );
@@ -84,17 +100,13 @@ export const AcountLinkHeader = () => {
         <>
           <Navbar.Link
             arrowless
-            className={classNames('p-0', {
-              [style.custom_hover]: !mobileMenuVisible,
-              [style.header_txt]: mobileMenuVisible,
-            })}
+            className="p-0"
           >
             <span
               className={classNames(
                 'icon-text has-text-link',
                 'is-align-items-center',
                 'is-flex-direction-column',
-                style.icon_text_header,
               )}
             >
               <span
@@ -114,21 +126,36 @@ export const AcountLinkHeader = () => {
 
           <Navbar.Dropdown right>
             <Navbar.Item onClick={() => naviagate('/login')}>
-              <Navbar.Link arrowless>Login</Navbar.Link>
+              <Navbar.Link arrowless>
+                <Heading size={6}>Login</Heading>
+              </Navbar.Link>
             </Navbar.Item>
 
             <Navbar.Item onClick={() => naviagate('/register')}>
-              <Navbar.Link arrowless>Register</Navbar.Link>
+              <Navbar.Link arrowless>
+                <Heading size={6}>Register</Heading>
+              </Navbar.Link>
             </Navbar.Item>
           </Navbar.Dropdown>
         </>
       ) : (
-        <Button
-          rounded
-          className={style.header_txt}
-        >
-          Account
-        </Button>
+        <>
+          <Navbar.Link
+            arrowless
+            className="pl-0"
+            onClick={() => onLinkClick('/login')}
+          >
+            <Heading size={5}>Login</Heading>
+          </Navbar.Link>
+
+          <Navbar.Link
+            arrowless
+            onClick={() => onLinkClick('/register')}
+            className="pl-0"
+          >
+            <Heading size={5}>Register</Heading>
+          </Navbar.Link>
+        </>
       )}
     </>
   );

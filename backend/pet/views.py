@@ -1,7 +1,10 @@
 from django.db.models import Max, Min
 from django_filters.rest_framework import DjangoFilterBackend
-from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiResponse,
+)
 from rest_framework import viewsets, generics, permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
@@ -19,6 +22,38 @@ from pet.serializers import (
 )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List pets",
+        description=(
+            "Publicly accessible.\n"
+            "- Staff users see all pets."
+            "- Anonymous users see only pets that are not yet adopted "
+            "(i.e., no owner)."
+        ),
+        responses={200: PetSerializer(many=True)},
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve pet",
+        description="Publicly accessible. Retrieve a pet by its ID.",
+        responses={200: PetSerializer},
+    ),
+    create=extend_schema(
+        summary="Create pet",
+        description="Admin only. Create a new pet entry in the system.",
+        responses={201: PetSerializer},
+    ),
+    partial_update=extend_schema(
+        summary="Update pet",
+        description="Admin only. Partially update a pet's information.",
+        responses={200: PetSerializer},
+    ),
+    destroy=extend_schema(
+        summary="Delete pet",
+        description="Admin only. Delete a pet by its ID.",
+        responses={204: OpenApiResponse(description="Deleted successfully.")},
+    ),
+)
 class PetViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser]
     filter_backends = (DjangoFilterBackend, SearchFilter)
@@ -45,7 +80,8 @@ class PetViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """
-        Instantiates and returns the list of permissions that this view requires.
+        Instantiates and returns the list of permissions that this
+        view requires.
         """
         if self.action in ["list", "retrieve"]:
             return [permissions.AllowAny()]
@@ -60,9 +96,10 @@ class PetViewSet(viewsets.ModelViewSet):
         return serializer.save()
 
     def create(self, request, *args, **kwargs):
+        """create pet"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        pet = self.perform_create(serializer)
+        self.perform_create(serializer)
         # user = get_user_model().objects.first()
         # notify_we_found_pet_for_you(pet=pet, user=user)
         headers = self.get_success_headers(serializer.data)
@@ -70,6 +107,29 @@ class PetViewSet(viewsets.ModelViewSet):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
+    def list(self, request, *args, **kwargs):
+        """List pets"""
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Retrieve pet by id"""
+        return super().retrieve(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Partial update pet by id"""
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete pet by id"""
+        return super().destroy(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="Upload pet image",
+        description="Admin only. Upload an image and attach it to the "
+        "selected pet.",
+        responses={200: UploadImageSerializer},
+        request=UploadImageSerializer,
+    )
     @action(
         methods=["post"],
         detail=True,
@@ -77,6 +137,7 @@ class PetViewSet(viewsets.ModelViewSet):
         url_path="upload",
     )
     def upload_image(self, request, pk=None):
+        """Upload pets image"""
         pet = self.get_object()
         data = {
             "file": request.data["file"],
@@ -90,6 +151,24 @@ class PetViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        summary="Add pet to favorites",
+        description="Authenticated users can add a pet to their "
+        "favorites list.",
+        responses={
+            200: OpenApiResponse(description="Pet added to favorites.")
+        },
+    ),
+    delete=extend_schema(
+        summary="Remove pet from favorites",
+        description="Authenticated users can remove a pet from their "
+        "favorites list.",
+        responses={
+            204: OpenApiResponse(description="Pet removed from favorites.")
+        },
+    ),
+)
 class FavoriteView(generics.GenericAPIView):
     """Add a pet to the authenticated user's favorites."""
 
@@ -98,6 +177,7 @@ class FavoriteView(generics.GenericAPIView):
     serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
+        """add pet to the authenticated user's favorites."""
         pet = self.get_object()
         user = request.user
         if not user.favorites.filter(pk=pet.pk).exists():
@@ -105,6 +185,7 @@ class FavoriteView(generics.GenericAPIView):
         return Response(status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
+        """remove pet from the authenticated user's favorites."""
         obj = self.get_object()
         user = request.user
         user.favorites.remove(obj)
@@ -113,8 +194,10 @@ class FavoriteView(generics.GenericAPIView):
 
 
 @extend_schema(
-    responses=FiltersReportSerializer,
-    description="Отримати всі доступні фільтри для тварин",
+    summary="Get pet filters",
+    description="Publicly accessible. Returns available filter options for "
+    "pet search (e.g., breed, weight, age).",
+    responses={200: FiltersReportSerializer},
 )
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -122,7 +205,9 @@ def filter_report(request):
     """Get filters"""
     breed = Pet.objects.values_list("breed", flat=True).distinct()
     coloration = Pet.objects.values_list("coloration", flat=True).distinct()
-    is_sterilized = Pet.objects.values_list("is_sterilized", flat=True).distinct()
+    is_sterilized = Pet.objects.values_list(
+        "is_sterilized", flat=True
+    ).distinct()
     pet_type = Pet.objects.values_list("pet_type", flat=True).distinct()
     sex = ["M", "F", "U"]
 

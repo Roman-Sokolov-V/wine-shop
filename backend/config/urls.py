@@ -29,8 +29,10 @@ urlpatterns = [
     path("api/v1/pets/", include("pet.urls", namespace="pet")),
     path("api/v1/users/", include("user.urls", namespace="user")),
     path(
-        "api/v1/subscriptions/", include("notification.urls", namespace="subscription")
+        "api/v1/subscriptions/",
+        include("notification.urls", namespace="subscription"),
     ),
+    path("api/v1/adoption/", include("adoption.urls", namespace="adoption")),
 ]
 urlpatterns += [
     path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),
@@ -41,6 +43,8 @@ urlpatterns += [
         name="swagger-ui",
     ),
     path(
-        "api/v1/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"
+        "api/v1/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
     ),
 ]

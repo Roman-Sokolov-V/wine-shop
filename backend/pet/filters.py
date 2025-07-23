@@ -16,10 +16,18 @@ class CaseInsensitiveInFilter(django_filters.BaseInFilter):
 
 class PetFilter(django_filters.FilterSet):
 
-    weight__gt = django_filters.NumberFilter(field_name="weight", lookup_expr="gt")
-    weight__lt = django_filters.NumberFilter(field_name="weight", lookup_expr="lt")
-    weight__gte = django_filters.NumberFilter(field_name="weight", lookup_expr="gte")
-    weight__lte = django_filters.NumberFilter(field_name="weight", lookup_expr="lte")
+    weight__gt = django_filters.NumberFilter(
+        field_name="weight", lookup_expr="gt"
+    )
+    weight__lt = django_filters.NumberFilter(
+        field_name="weight", lookup_expr="lt"
+    )
+    weight__gte = django_filters.NumberFilter(
+        field_name="weight", lookup_expr="gte"
+    )
+    weight__lte = django_filters.NumberFilter(
+        field_name="weight", lookup_expr="lte"
+    )
     age__gt = django_filters.NumberFilter(
         field_name="age", lookup_expr="gt", label="age__gt"
     )
@@ -28,16 +36,26 @@ class PetFilter(django_filters.FilterSet):
     age__lte = django_filters.NumberFilter(field_name="age", lookup_expr="lte")
 
     date_after = django_filters.DateFilter(
-        field_name="date_created", lookup_expr="gte", label="Created on or after"
+        field_name="date_created",
+        lookup_expr="gte",
+        label="Created on or after",
     )
     date_before = django_filters.DateFilter(
-        field_name="date_created", lookup_expr="lte", label="Created on or before"
+        field_name="date_created",
+        lookup_expr="lte",
+        label="Created on or before",
     )
     pet_type = CaseInsensitiveInFilter(field_name="pet_type", lookup_expr="in")
-    coloration = CaseInsensitiveInFilter(field_name="coloration", lookup_expr="in")
+    coloration = CaseInsensitiveInFilter(
+        field_name="coloration", lookup_expr="in"
+    )
     breed = CaseInsensitiveInFilter(field_name="breed", lookup_expr="in")
-    name = django_filters.CharFilter(field_name="name", lookup_expr="icontains")
-    owner = CaseInsensitiveInFilter(field_name="owner", lookup_expr="icontains")
+    name = django_filters.CharFilter(
+        field_name="name", lookup_expr="icontains"
+    )
+    owner = CaseInsensitiveInFilter(
+        field_name="owner", lookup_expr="icontains"
+    )
 
     class Meta:
         model = Pet

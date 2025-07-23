@@ -25,17 +25,27 @@ class Pet(models.Model):
     description = models.TextField(null=True, blank=True)
     date_created = models.DateField(auto_now_add=True)
     owner = models.ForeignKey(
-        User, null=True, blank=True, related_name="pets", on_delete=models.PROTECT
+        User,
+        null=True,
+        blank=True,
+        related_name="pets",
+        on_delete=models.PROTECT,
     )
-    users_like = models.ManyToManyField(User, related_name="favorites", blank=True)
+    users_like = models.ManyToManyField(
+        User, related_name="favorites", blank=True
+    )
 
     class Meta:
         verbose_name_plural = "pets"
 
     def __str__(self):
-        return f"id {self.id}, a {self.pet_type} named {self.name.capitalize()}"
+        return (
+            f"id {self.id}, a {self.pet_type} named {self.name.capitalize()}"
+        )
 
 
 class Image(models.Model):
     file = models.ImageField(upload_to="images/")
-    pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name="images")
+    pet = models.ForeignKey(
+        Pet, on_delete=models.CASCADE, related_name="images"
+    )

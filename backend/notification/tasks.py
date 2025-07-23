@@ -11,9 +11,9 @@ FULL_UNSUBSCRIBE_URL = settings.FRONT_HOST + settings.UNSUBSCRIBE_URL
 @shared_task
 def send_mailing_task(mailing_id: int):
 
-    subscriptions = Subscription.objects.filter(mailing_id=mailing_id).select_related(
-        "user", "mailing"
-    )
+    subscriptions = Subscription.objects.filter(
+        mailing_id=mailing_id
+    ).select_related("user", "mailing")
     for subscription in subscriptions:
         email = subscription.email or (
             subscription.user.email if subscription.user else None

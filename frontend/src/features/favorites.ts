@@ -46,8 +46,13 @@ const FavoritesSlice = createSlice({
       state.favorites = [];
       accessLocalStorage.clearKey(LocalAccessKeys.FAVORITES);
     },
+
+    set: (state, action: { payload: number[] }) => {
+      state.favorites = action.payload;
+      accessLocalStorage.set(LocalAccessKeys.FAVORITES, action.payload);
+    },
   },
 });
 
 export default FavoritesSlice.reducer;
-export const { init, toggle, clear } = FavoritesSlice.actions;
+export const { init, toggle, clear, set } = FavoritesSlice.actions;

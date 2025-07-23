@@ -36,9 +36,7 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra_fields)
 
-
-    def create_superuser(self, email, password=None,
-                         **extra_fields):
+    def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -50,10 +48,9 @@ class CustomUserManager(UserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-
-
 class User(AbstractUser):
     """User model"""
+
     username = None
     email = models.EmailField(_("email address"), unique=True)
     USERNAME_FIELD = "email"
@@ -62,12 +59,12 @@ class User(AbstractUser):
     objects = CustomUserManager()
 
 
-
 class TempToken(models.Model):
     key = models.CharField(_("Key"), max_length=40, primary_key=True)
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, related_name='temp_token',
-        on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="temp_token",
+        on_delete=models.CASCADE,
     )
     created = models.DateTimeField(_("Created"), auto_now_add=True)
 

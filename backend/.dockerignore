@@ -5,3 +5,5 @@ README.md
 docker-compose.yml
 Dockerfile
 db.sqlite3
+docker-compose-prod.yml
+docker-compose-update-cert.yml

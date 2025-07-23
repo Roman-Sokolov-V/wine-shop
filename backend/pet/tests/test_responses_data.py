@@ -19,7 +19,9 @@ def check_response(instance, pet, data):
                 pet[key], value.lower()
             ), f"pet.{key} should by equal {value.lower()}"
         else:
-            instance.assertEqual(pet[key], value), f"pet.{key} should by equal {value}"
+            instance.assertEqual(
+                pet[key], value
+            ), f"pet.{key} should by equal {value}"
     instance.assertIsNotNone(pet["id"])
     instance.assertEqual(pet["images"], [])
     instance.assertEqual(pet["owner"], None)
@@ -59,9 +61,10 @@ class StaffUserTestCase(TestCase):
         response = self.client.get(
             reverse("pet:pet-detail", kwargs={"pk": self.pet.pk})
         )
-        self.assertEqual(status.HTTP_200_OK, response.status_code), "for all users"
+        self.assertEqual(
+            status.HTTP_200_OK, response.status_code
+        ), "for all users"
         pet = response.json()
-        print(response.json())
         check_response(self, pet, self.pet_data)
 
     def test_create_pet(self):
@@ -81,7 +84,6 @@ class StaffUserTestCase(TestCase):
             status.HTTP_201_CREATED, response.status_code
         ), "for staff only"
         pet = response.json()
-        print(response.json())
         check_response(self, pet, data)
 
     def test_patch_pet(self):
@@ -152,17 +154,29 @@ class FilterTestCase(TestCase):
         self.assertCountEqual(types, response.json().get("pet_type", []))
         breeds = Pet.objects.values_list("breed", flat=True).distinct()
         self.assertCountEqual(breeds, response.json().get("breed", []))
-        coloration = Pet.objects.values_list("coloration", flat=True).distinct()
-        self.assertCountEqual(coloration, response.json().get("coloration", []))
-        is_sterilized = Pet.objects.values_list("is_sterilized", flat=True).distinct()
-        self.assertCountEqual(is_sterilized, response.json().get("is_sterilized", []))
+        coloration = Pet.objects.values_list(
+            "coloration", flat=True
+        ).distinct()
+        self.assertCountEqual(
+            coloration, response.json().get("coloration", [])
+        )
+        is_sterilized = Pet.objects.values_list(
+            "is_sterilized", flat=True
+        ).distinct()
+        self.assertCountEqual(
+            is_sterilized, response.json().get("is_sterilized", [])
+        )
         sex = Pet.objects.values_list("sex", flat=True).distinct()
         self.assertCountEqual(sex, response.json().get("sex", []))
         weight_age = Pet.objects.aggregate(
             Max("weight"), Min("weight"), Max("age"), Min("age")
         )
-        self.assertEqual(weight_age["age__max"], response.json().get("age_max", None))
-        self.assertEqual(weight_age["age__min"], response.json().get("age_min", None))
+        self.assertEqual(
+            weight_age["age__max"], response.json().get("age_max", None)
+        )
+        self.assertEqual(
+            weight_age["age__min"], response.json().get("age_min", None)
+        )
         self.assertEqual(
             weight_age["weight__min"], response.json().get("weight_min", None)
         )

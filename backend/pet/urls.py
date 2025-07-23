@@ -3,7 +3,9 @@ from pet.views import PetViewSet, FavoriteView, filter_report
 
 app_name = "pet"
 
-pets_list_create = PetViewSet.as_view(actions={"get": "list", "post": "create"})
+pets_list_create = PetViewSet.as_view(
+    actions={"get": "list", "post": "create"}
+)
 pet_detail = PetViewSet.as_view(
     actions={"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
 )

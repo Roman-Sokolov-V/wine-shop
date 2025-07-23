@@ -5,13 +5,12 @@ import { userLogout } from '../api/auth';
 
 const initialValue = {
   loggedIn: accessLocalStorage.get(LocalAccessKeys.LOGGEDIN),
-  user: undefined,
 };
 
 const logout = createAsyncThunk('auth/logout', async () => {
-  const response = await userLogout();
+  await userLogout();
 
-  return response;
+  return null;
 });
 
 const AuthSlice = createSlice({
@@ -29,15 +28,17 @@ const AuthSlice = createSlice({
       }
     },
   },
+
   extraReducers: builder => {
     builder
       .addCase(logout.fulfilled, state => {
         state.loggedIn = undefined;
-        state.user = undefined;
         accessLocalStorage.clearKey(LocalAccessKeys.LOGGEDIN);
       })
 
       .addCase(logout.rejected, (state, action) => {
+        state.loggedIn = undefined;
+        accessLocalStorage.clearKey(LocalAccessKeys.LOGGEDIN);
         console.error(action.error.message || 'Failed to logout.');
       });
   },

@@ -13,9 +13,13 @@ def trigger_create_update_mailing(sender, instance, created, **kwargs):
     if clocked_time.tzinfo is None:
         from django.utils.timezone import get_current_timezone
 
-        clocked_time = make_aware(clocked_time, timezone=get_current_timezone())
+        clocked_time = make_aware(
+            clocked_time, timezone=get_current_timezone()
+        )
 
-    clocked, created = ClockedSchedule.objects.get_or_create(clocked_time=clocked_time)
+    clocked, created = ClockedSchedule.objects.get_or_create(
+        clocked_time=clocked_time
+    )
 
     PeriodicTask.objects.filter(
         name__startswith=f"One-off mailing {instance.id}"
