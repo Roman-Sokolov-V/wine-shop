@@ -1,5 +1,7 @@
 # 🐾 Adaptable - Full-Stack Animal Shelter Platform
 
+[Live Demo](https://syavayki.github.io/adaptable-site/)
+
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ## About The Project
@@ -9,6 +11,7 @@ Every year, millions of wonderful, loving animals wait in shelters for a second 
 By leveraging modern technology, including an AI-powered assistant, we make finding and adopting a pet easier and more joyful than ever before.
 
 ### Key Goals
+
 - **Connect Animals with Families**: Help homeless animals find loving and permanent homes.
 - **Streamline the Adoption Process**: Simplify the adoption workflow for both shelters and adopters.
 - **Increase Shelter Support**: Provide easy and accessible ways for the community to donate and volunteer.
@@ -19,6 +22,7 @@ By leveraging modern technology, including an AI-powered assistant, we make find
 ## ✨ Features
 
 ### For Visitors & Adopters
+
 - 🔍 **Advanced Pet Catalog**: Browse, search, and filter available animals by type, age, size, breed, and other characteristics.
 - 🤖 **AI-Powered Pet Matching**: An intelligent agent (in development) asks personalized questions to recommend the perfect pet for your lifestyle.
 - ❤️ **Favorites List**: Save pets you're interested in to your personal list.
@@ -29,6 +33,7 @@ By leveraging modern technology, including an AI-powered assistant, we make find
 - 📧 **Newsletter & Contact**: Sign up for updates and easily communicate with shelter staff.
 
 ### For Shelter Staff
+
 - 🏥 **Pet Management**: Add, update, and manage pet profiles, including descriptions, characteristics, and multiple photos.
 - 📋 **Application Review**: View and manage incoming adoption applications and appointments.
 - 👥 **User Management**: Secure registration, login, and account management for adopters.
@@ -79,6 +84,7 @@ To get a local copy of the project up and running, please follow these steps.
 #### API Documentation
 
 Once the backend is running, you can access the interactive API documentation:
+
 - **Swagger UI**: [http://127.0.0.1:8000/api/v1/swagger/](http://127.0.0.1:8000/api/v1/swagger/)
 - **Redoc**: [http://127.0.0.1:8000/api/v1/redoc/](http://127.0.0.1:8000/api/v1/redoc/)
 
